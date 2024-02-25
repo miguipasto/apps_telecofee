@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
-  appName: 'TeleCoffe_Clients',
+  appName: 'TeleCoffee_Workers',
   webDir: 'www',
   server: {
     androidScheme: 'https'
