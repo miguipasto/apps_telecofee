@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  selector: 'app-signup',
+  templateUrl: 'signup.page.html',
+  styleUrls: ['signup.page.scss'],
 })
-export class HomePage {
+export class SignUpPage {
 
   constructor(private router: Router) {}
 
@@ -14,7 +14,4 @@ export class HomePage {
     this.router.navigate(['login']);
   }
 
-  redirigir_home_signup() {
-    this.router.navigate(['signup']);
-  }
 }

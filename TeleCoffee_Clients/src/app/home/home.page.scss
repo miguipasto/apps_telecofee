@@ -1,27 +1,79 @@
-#container {
-  text-align: center;
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 100vh;
+  background-color: #ffffff;
+}
 
+.circulos {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 20px;
+  width: 100vw;
+  height: 100vh;
+}
+
+.ellipse-1, .ellipse-2, .ellipse-3, .ellipse-4 {
+  background-color: #f8f1d8;
+  border-radius: 50%;
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.ellipse-1 {
+  height: 309px;
+  width: 279px;
+  top: -92px;
+  left: 229px;
+}
+.ellipse-3 {
+  height: 219px;
+  width: 201px;
+  top: -65px;
+  left: -143px;
+}
+.ellipse-4 {
+  height: 300px;
+  width: 291px;
+  top: 614px;
+  left: 259px;
+}
+.ellipse-2 {
+  height: 244px;
+  width: 230px;
+  top: 408px;
+  left: -115px;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
+.botón {
+  margin-bottom: 20px;
+  border-radius: 40px;
+  height: 58px;
+  width: 308px;
+  position: absolute;
+  bottom: 30px;
+  background-color: #e8dbab;
 }
 
-#container a {
-  text-decoration: none;
+.text-1 {
+  font-size: 18px;
+  font-family: Nunito;
+  font-weight: bold;
+  color: #5C5353;
+}
+
+.text-2 {
+  font-size: 18px;
+  bottom: 25px;
+  color: #000;
+}
+
+.sign-up {
+  color: #70442b; 
+  text-decoration: underline; 
+  font-weight: bold;
+  cursor: pointer;
 }
