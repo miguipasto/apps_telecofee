@@ -1,23 +1,22 @@
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <ion-content class="log-in">
   <div class="ellipse-7"></div>
   <div class="rectangulo">
-  <div class="botón" style="position: absolute; left: 50%; transform: translate(-50%,-50%);">
-    <ion-button class="text-1" expand="block" color="#5C5353">Log In</ion-button>
-  </div>
+    <div class="botón" style="position: absolute; left: 50%; transform: translate(-50%,-50%);">
+      <ion-button class="text-1" expand="block" color="#5C5353" (click)="validateForm()">Log In</ion-button>
+    </div>
     <p class="text-2">Forgot password?</p>
     <p class="text-3" style="position: absolute; top: 30%; left: 50%; transform: translate(-50%,-50%);">Welcome to TeleCoffe</p>
     <div class="mail">
-      <p class="text-4" style="position: absolute; top: 45%; left: 50%; transform: translate(-50%,-50%);">E-Mail</p>
-      <div class="line-1" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);"></div>
+      <input type="email" class="input-email" placeholder="E-Mail" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); border: none; outline: none; background: transparent; width: 200px;" [(ngModel)]="email" (focus)="onFocusEmail()" (blur)="onBlurEmail()">
+      <div class="line-1" style="position: absolute; top: 53%; left: 50%; transform: translate(-50%,-50%);"></div>
     </div>
     <div class="password">
-      <p class="text-5" style="position: absolute; top: 62%; left: 50%; transform: translate(-50%,-50%);">Password</p>
-      <div class="line-1" style="position: absolute; top: 67%; left: 50%; transform: translate(-50%,-50%);"></div>
+      <input type="password" class="input-password" placeholder="Password" style="position: absolute; top: 67%; left: 50%; transform: translate(-50%,-50%); border: none; outline: none; background: transparent; width: 200px;" [(ngModel)]="password">
+      <div class="line-1" style="position: absolute; top: 70%; left: 50%; transform: translate(-50%,-50%);"></div>
     </div>
     <div class="botón_largo" style="position: absolute; top: 15%; left: 50%; transform: translate(-50%,-50%);">
       <p class="botón" expand="block" style="width: 149px; height: 50px; position: absolute; top: 16.2%; left: 27%; transform: translate(-50%,-50%);">Log In</p>
-      <ion-button class="botón_largo" expand="block" color="#d6cdcd" style="width: 100px; height: 40px; position: absolute; margin-top: 7.7%; margin-left: 50%;" (click)="redirigir_home_signup()">Sign Up</ion-button>
+      <ion-button class="botón_largo" expand="block" color="#d6cdcd" style="width: 100px; height: 40px; position: absolute; margin-top: 7.65%; margin-left: 50%;" (click)="redirigir_home_signup()">Sign Up</ion-button>
     </div>
   </div>
   <div class="icono">

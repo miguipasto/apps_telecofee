@@ -7,6 +7,9 @@ import { Router } from '@angular/router';
   styleUrls: ['signup.page.scss'],
 })
 export class SignUpPage {
+  email: string = '';
+  password: string = '';
+  name: String= '';
 
   constructor(private router: Router) {}
 
@@ -14,4 +17,12 @@ export class SignUpPage {
     this.router.navigate(['login']);
   }
 
+  register() {
+    // Aquí puedes agregar cualquier lógica adicional antes de enviar el formulario
+    // Por ejemplo, validaciones adicionales o llamadas a servicios de registro
+
+    // Después de realizar cualquier validación adicional, puedes redirigir a la página de inicio de sesión
+    this.router.navigate(['login']);
+  }
 }
+
