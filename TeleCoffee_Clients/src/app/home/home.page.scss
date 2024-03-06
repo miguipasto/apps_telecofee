@@ -1,39 +1,124 @@
 .home {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
+    display: grid;
+    height: 100vh; 
+    width: 100vw; 
     background-color: #ffffff;
+    overflow: hidden;
 }
 
-.ellipse-8 {
-    height: 150vw;
-    width: 150vw;
-    border-radius: 50%;
-    top: -30%;
-    left: -25%;
+/* HEADER */
+.header {
+    display: grid;
+    grid-template-rows: 1fr 2fr;
+    align-items: center;
+    height: 34%;
+    width: 100%;
     background-color: #f8f1d7;
-    position: absolute;
+    border-bottom-left-radius: 50%;
+    border-bottom-right-radius: 50%;
 }
 
-.ellipse-5 {
-    height: 25vw;
-    width: 25vw;
-    border-radius: 50%;
-    position: absolute;
-    background-color: white;
-}
-  
-.icono {
-    display: flex;
+.logo-container{
+    display: grid;
     justify-content: center;
     align-items: center;
-    margin-top: 20%;
+}
+
+.logo-box{
+    display: block;
+    background-color: white;  
+    width: 25vw;
+    height: 25vw;
+    border-radius: 50%;
+    margin-top: 15%;
 }
 
 .logo{
-    position: absolute;
-    height: 20vw;
-    width: 20vw;
+    width: 25vw;
+    height: 25vw;
 }
+
+.header-text{
+    display: grid;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+.header-text h1{
+    font-size: 25px;
+}
+
+.input-id {
+    background: #cccccc; 
+    border-radius: 25px; 
+    padding: 5px 15px; 
+    border: none;
+    box-sizing: border-box;
+    text-align: center;
+    margin-bottom: 20%;
+
+}
+
+/* COTENIDO */
+.content{
+    display: grid;
+    grid-template-rows: 1fr 6fr;
+    height: 57%;
+}
+
+.titles-container{
+    display: flex;
+    justify-content: space-around;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+.titles-container h2{
+    font-size: 22px;
+}
+
+.products-containter{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    overflow: scroll;
+}
+
+.producto{
+    display: grid;
+    grid-template-rows: 2fr 1fr;
+    background-color: #f8f1d7;
+    margin: 5%;
+    justify-content: center;
+    align-items: center;
+    border-radius: 7%;
+}
+
+.foto-producto{
+    display: block;
+    justify-content: center;
+    align-items: center;
+}
+
+.texto-producto{
+    display: block;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+
+/* FOOTER */
+.footer{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    height: 4%;
+    align-items: center;
+}
+
+.home-foto{
+    height: 30%;
+}
+
