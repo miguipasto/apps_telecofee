@@ -1,27 +1,22 @@
 <ion-content class="log-in">
   <div class="ellipse-7"></div>
   <div class="rectangulo">
-    <form (ngSubmit)="register()" #registerForm="ngForm">
+    <form [formGroup]="formReg" (ngSubmit)="onSubmit()">
       <div class="botón" style="position: absolute; left: 50%; transform: translate(-50%,-50%);">
-        <ion-button class="text-1" expand="block" color="#5C5353">Sign Up</ion-button>
+        <ion-button class="text-1" expand="block" color="#5C5353" type="submit">Sign Up</ion-button>
       </div>
-      <p class="text-2">Forgot password?</p>
-      <p class="text-3" style="position: absolute; top: 25%; left: 50%; transform: translate(-50%,-50%);">Welcome to TeleCoffe</p>
+      <p class="text-3" style="position: absolute; top: 30%; left: 50%; transform: translate(-50%,-50%);">Welcome to TeleCoffe</p>
       <div class="mail">
-        <input type="email" name="email" ngModel class="form-control" placeholder="E-Mail" style="position: absolute; top: 52%; left: 50%; transform: translate(-50%,-50%); border: none; outline: none; background: transparent; width: 200px;">
-        <div class="line-1" style="position: absolute; top: 55%; left: 50%; transform: translate(-50%,-50%);"></div>
+        <input formControlName="email" type="email" placeholder="E-Mail" style="position: absolute; top: 49%; left: 50%; transform: translate(-50%,-50%); border: none; outline: none; background: transparent; width: 200px;" required>
+        <div class="line-1" style="position: absolute; top: 52%; left: 50%; transform: translate(-50%,-50%);"></div>
       </div>
       <div class="password">
-        <input type="password" name="password" ngModel class="form-control" placeholder="Password" style="position: absolute; top: 65%; left: 50%; transform: translate(-50%,-50%); border: none; outline: none; background: transparent; width: 200px;">
-        <div class="line-1" style="position: absolute; top: 68%; left: 50%; transform: translate(-50%,-50%);"></div>
-      </div>
-      <div class="name">
-        <input type="text" name="name" ngModel class="form-control" placeholder="Name" style="position: absolute; top: 40%; left: 50%; transform: translate(-50%,-50%); border: none; outline: none; background: transparent; width: 200px;">
-        <div class="line-1" style="position: absolute; top: 43%; left: 50%; transform: translate(-50%,-50%);"></div>
+        <input formControlName="password" type="password" placeholder="Password" style="position: absolute; top: 62%; left: 50%; transform: translate(-50%,-50%); border: none; outline: none; background: transparent; width: 200px;" required>
+        <div class="line-1" style="position: absolute; top: 65%; left: 50%; transform: translate(-50%,-50%);"></div>
       </div>
       <div class="botón_largo" style="position: absolute; top: 15%; left: 50%; transform: translate(-50%,-50%);">
         <ion-button class="botón_largo"  expand="block" color="#d6cdcd" style="width: 100px; height: 50px; position: absolute; top: 41.8%; left: 20%; transform: translate(-50%,-50%);" (click)="redirigir_home_login()">Log In</ion-button>
-        <p class="botón" expand="block" style="width: 149px; height: 50px; position: absolute; top: 16%; left: 73%; transform: translate(-50%,-50%);">Sign Up</p>
+        <p class="botón" expand="block" style="width: 149px; height: 50px; position: absolute; top: 16%; left: 73%; transform: translate(-50%,-50%);" (click)="onSubmit()">Sign Up</p>
       </div>
     </form>
   </div>

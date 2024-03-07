@@ -18,8 +18,5 @@ export class StartPage {
     this.router.navigate(['signup']);
   }
 
-  redirigir_start_home() {
-    this.router.navigate(['home']);
-  }
 
 }

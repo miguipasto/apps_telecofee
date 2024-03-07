@@ -21,6 +21,21 @@ const routes: Routes = [
   },
 
   {
+    path: 'home-snack',
+    loadChildren: () => import('./home-snack/home-snack.module').then( m => m.HomeSnackPageModule)
+  },
+
+  {
+    path: 'home-drink',
+    loadChildren: () => import('./home-drink/home-drink.module').then( m => m.HomeDrinkPageModule)
+  },
+
+  {
+    path: 'soporte',
+    loadChildren: () => import('./soporte/soporte.module').then( m => m.SoportePageModule)
+  },
+
+  {
     path: '',
     redirectTo: 'start',
     pathMatch: 'full'

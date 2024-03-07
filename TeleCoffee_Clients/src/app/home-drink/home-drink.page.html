@@ -14,39 +14,31 @@
     </div>
     <div class="content">
         <div class="titles-container">
-            <div>
-                <h2 style="color: #70442b; font-weight: bold;">Café</h2>
-                <hr class="linea-decorativa">
-            </div>
-            <ion-button class="boton-transparente"  color="transparent" (click)="redirigir_snack()">
-                <h2>Aperitivos</h2>
-            </ion-button>
-            <ion-button class="boton-transparente"  color="transparent" (click)="redirigir_drink()">
-                <h2>Bebidas</h2>
+            <ion-button class="boton-transparente"  color="transparent" (click)="redirigir_home()">
+                <h2>Café</h2>
             </ion-button>
     
+            <ion-button class="boton-transparente"  color="transparent" (click)="redirigir_home()">
+                <h2>Aperitivos</h2>
+            </ion-button>
+
+            <div>
+                <h2 style="color: #70442b; font-weight: bold;">Bebidas</h2>
+                <hr class="linea-decorativa">
+            </div>
         </div>
         
         <div class="products-containter">
             <div class="producto">
                 <div class="foto-producto">
-                    <ion-img src="../../assets/cafe_con_leche.jpg" class="producto-foto"></ion-img>       
+                    <ion-img src="../../assets/leche.png" class="producto-foto"></ion-img>       
                 </div>
                 <div class="texto-producto">
-                    <p>Café con leche</p>
-                    <p>1,35€</p>
+                    <p>Leche</p>
+                    <p>0,50€</p>
                 </div>
                 
-            </div>
-            <div class="producto">
-                <div class="foto-producto">
-                    <ion-img src="../../assets/cafe_americano.png" class="producto-foto"></ion-img>       
-                </div>
-                <div class="texto-producto">
-                    <p>Café americano</p>
-                    <p>1,15€</p>
-                </div>
-                
+            
             </div>
         </div>
     </div>
@@ -57,12 +49,11 @@
         <ion-button color="transparent" class="boton-transparente">
             <ion-icon class="fas fa-wallet icono-pequeño"></ion-icon>
         </ion-button>
-        <ion-button (click)="redirigir_soporte()" color="transparent" class="boton-transparente"> <!-- Corregido el evento click -->
+        <ion-button (click)="redirigir_soporte()" color="transparent" class="boton-transparente">
             <ion-icon class="fa-solid fa-triangle-exclamation icono-custom"></ion-icon>
         </ion-button>
         <ion-button color="transparent" class="boton-transparente">
             <ion-icon class="fa-solid fa-user icono-pequeño"></ion-icon>
         </ion-button>
-        
     </div>
 </ion-content>

@@ -17,4 +17,16 @@ export class HomePage {
   redirigir_home_signup() {
     this.router.navigate(['signup']);
   }
+
+  redirigir_snack() {
+    this.router.navigate(['home-snack']);
+  }
+  redirigir_drink() {
+    this.router.navigate(['home-drink']);
+  }
+
+  redirigir_soporte() {
+    this.router.navigate(['soporte']);
+  }
+
 }

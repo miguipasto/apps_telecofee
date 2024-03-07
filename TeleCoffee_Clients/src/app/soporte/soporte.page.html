@@ -1,0 +1,48 @@
+<ion-content class="home">
+    <div class="header">
+        <div class="logo-container">
+            <div class="logo-box">
+                <ion-img src="../../assets/icon/v5_133.png" class="logo"></ion-img>
+            </div>
+        </div>
+        <div class="header-text">
+            <h1 style="font-weight: bold;">SOPORTE</h1>
+            <h4>647893214</h4>
+            <h4>telecoffee&#64;gmail.com</h4>
+        </div>
+    </div>
+    <div class="content">
+        <div class="descripcion">
+            <h3 style="font-weight: bold;  text-align: center;" >Problemas o Dudas</h3>
+            <ion-item>
+                <ion-label position="floating">Nombre</ion-label>
+                <ion-input></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label position="floating">Descripción del problema</ion-label>
+                <ion-textarea></ion-textarea>
+            </ion-item>
+
+            <div class="botón" style="position: absolute; left: 50%; transform: translate(-50%,-50%);">
+                <ion-button color="transparent"  style="color: black;" >Enviar</ion-button>
+            </div>
+            
+        </div>
+    </div>
+    <div class="footer">
+        <ion-button (click)="redirigir_home()" color="transparent" class="boton-transparente">
+            <ion-icon class="fas fa-home icono-pequeño"></ion-icon>
+        </ion-button>
+        <ion-button color="transparent" class="boton-transparente">
+            <ion-icon class="fas fa-wallet icono-pequeño"></ion-icon>
+        </ion-button>
+        <ion-button color="transparent" class="boton-transparente">
+            <ion-icon class="fa-solid fa-triangle-exclamation icono-custom"></ion-icon>
+        </ion-button>
+        <ion-button color="transparent" class="boton-transparente">
+            <ion-icon class="fa-solid fa-user icono-pequeño"></ion-icon>
+        </ion-button>
+        
+       
+    </div>
+</ion-content>
