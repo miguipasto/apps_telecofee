@@ -1,0 +1,28 @@
+<div class="wallet-container">
+  <div class="wallet-header">
+    <div class="wallet-titulo">
+      <h1>WALLET</h1>
+    </div>
+    <div class="wallet-datos">
+      <h2>Mi balance</h2>
+      <h2>Pepe Perez</h2>
+    </div>
+    <div class="wallet-balance">
+      <h3>15.50€</h3>
+    </div>
+  </div>
+  <div class="wallet-content">
+    <div *ngFor="let compra of compras" class="compra">
+      <div class="icono-container">
+        <!-- Mostrar ícono de café si el producto incluye "Café" en su nombre -->
+        <i *ngIf="compra.producto.includes('Café')" class="fa-solid fa-mug-hot icono"></i>
+        <!-- Mostrar ícono de galleta si el producto no incluye "Café" en su nombre -->
+        <i *ngIf="!compra.producto.includes('Café')" class="fa-solid fa-cookie-bite icono"></i>
+      </div>
+      <div class="text-container">
+        <p style="color: black;">{{ compra.producto }}</p>
+        <p style="color: red;">{{ compra.precio }}</p>
+      </div>
+    </div>
+  </div>
+</div>

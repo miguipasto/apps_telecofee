@@ -1,0 +1,34 @@
+<div class="home-container">
+  <div class="home-header">
+    <h1>¿Qué quieres tomar?</h1>
+    <input class="input-id" placeholder="Introduce el ID de la máquina"/>
+  </div>
+  <div class="home-content">
+    <div class="titles-container">
+      <div class="title-box" (click)="selectCategory('cafe')" [ngClass]="{'active': selectedCategory === 'cafe'}">
+        <h2>Café</h2>
+        <hr class="linea-decorativa">
+      </div>
+      <div class="title-box" (click)="selectCategory('aperitivos')" [ngClass]="{'active': selectedCategory === 'aperitivos'}">
+        <h2>Aperitivos</h2>
+        <hr class="linea-decorativa">
+      </div>
+      <div class="title-box" (click)="selectCategory('bebidas')" [ngClass]="{'active': selectedCategory === 'bebidas'}">
+        <h2>Bebidas</h2>
+        <hr class="linea-decorativa">
+      </div>
+    </div>
+    <div class="products-content">
+      <div class="products-container">
+        <div *ngFor="let product of products[selectedCategory]" class="producto">
+          <div class="foto-producto">
+              <ion-img [src]="product.img" class="producto-foto"></ion-img>       
+          </div>
+          <div class="texto-producto">
+              <p>{{ product.name }}</p>
+              <p>{{ product.price }}</p>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>

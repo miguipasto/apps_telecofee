@@ -1,0 +1,96 @@
+@import "~@fortawesome/fontawesome-free/css/all.css";
+
+// Estilos para poder solapar header y poner texto
+.wallet-container{
+    margin-top: 35%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 0.5fr 2fr;
+    row-gap: 2%;
+}
+
+/* Header especial para cada pantalla */
+.wallet-header{
+    display: grid;
+    grid-template-rows: 1fr 2fr;
+    width: 100%;
+}
+
+.wallet-titulo{
+    display: grid;
+    margin-bottom: 0px;
+}
+.wallet-header h1{
+    text-align: center;
+    font-weight: bold;
+    color: black;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.wallet-datos {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    text-align: center;
+    padding-left: 5%;
+    padding-right: 5%;
+
+}
+
+.wallet-header h2{
+    color: black;
+    font-size: 20px;
+}
+
+.wallet-balance{
+    display:block;
+    color:#70442b;
+    font-size: 15px;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+
+/* Contenido */
+.wallet-content {
+    display: grid;
+    margin-top: 8%;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-bottom: 12%;
+    align-items: start; /* Cambio para alinear al inicio */
+    overflow-y: auto; /* Habilita el desplazamiento vertical si es necesario */
+    gap: 10px; /* Espacio entre cajones de compras */
+  }
+  
+.compra {
+    display: grid; /* Cambio para usar flex y asegurar alineación y distribución */
+    grid-template-columns: 0.8fr 3fr;
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+    background-color: rgb(255, 255, 255);
+    border-radius: 5%; /* Ajuste para un poco de redondeo de bordes */
+    height: 10vh; /* Altura fija para todos los cajones */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Añade sombra */
+    }
+
+.icono-container{
+    display: block;
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+    text-align: center;
+}
+.icono{
+    color: black;
+    font-size: 30px;
+}
+
+.text-container{
+    display: flex;
+    justify-content: space-around; /* Centra el contenido horizontalmente */
+    align-items: center;
+    margin-left: 0px;
+}

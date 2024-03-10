@@ -1,0 +1,22 @@
+// Estilos para poder solapar header y poner texto
+.profile-container{
+    margin-top: 35%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 0.5fr 2fr;
+    row-gap: 2%;
+}
+
+/* Header especial para cada pantalla */
+.profile-header{
+    display: grid;
+    justify-content: center;
+    text-align: center;
+}
+
+
+/* Contenido */
+.profile-content{
+    display: grid;
+    grid-template-rows: 1fr 6fr;
+}

@@ -1,0 +1,7 @@
+{
+  "name": "TeleCoffee_Clients",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
