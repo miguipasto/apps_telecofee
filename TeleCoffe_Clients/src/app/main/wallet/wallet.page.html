@@ -25,4 +25,15 @@
       </div>
     </div>
   </div>
+  <div class="wallet-add-balance">
+    <button (click)="showOverlay()">Añadir saldo</button>
+  </div>
+  <div class="overlay" *ngIf="isOverlayVisible">
+    <div class="add-balance-popup">
+      <h2 style="color: black;">Añadir saldo</h2>
+      <input type="number" [(ngModel)]="amountToAdd" placeholder="Cantidad a añadir">
+      <button (click)="addBalance()">Añadir</button>
+      <button (click)="closeOverlay()">Cancelar</button>
+    </div>
+  </div>
 </div>
