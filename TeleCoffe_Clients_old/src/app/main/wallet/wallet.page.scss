@@ -72,7 +72,7 @@
     justify-content: center; /* Centra el contenido horizontalmente */
     align-items: center; /* Centra el contenido verticalmente */
     background-color: rgb(255, 255, 255);
-    border-radius: 10%; /* Ajuste para un poco de redondeo de bordes */
+    border-radius: 5%; /* Ajuste para un poco de redondeo de bordes */
     height: 10vh; /* Altura fija para todos los cajones */
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Añade sombra */
     }
@@ -94,7 +94,6 @@
     align-items: center;
     margin-left: 5%;
     margin-right: 8%;
-
 }
 
 
@@ -132,7 +131,7 @@
     display: grid;
     background-color: white;
     padding: 20px;
-    border-radius: 40px; /* Bordes redondeados */
+    border-radius: 5px; /* Bordes redondeados */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
     text-align: center; /* Alinea el texto al centro */
 }
@@ -140,26 +139,21 @@
 
 .add-balance-popup input{
     height: 5vh;
-    border-radius: 5px;
     margin-bottom: 5%;
     background-color: white;
     color: black;
-
 }
 
 .add-balance-popup button{
     cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
     border: none; /* Remueve el borde del botón */
-    border-radius: 40px; /* Esquinas redondeadas para el botón */
-    background-color: #E9DBAB; /* Color de fondo del botón */
-    color: #5C5353; /* Color del texto del botón */
+    border-radius: 5px; /* Esquinas redondeadas para el botón */
+    background-color: #70442b; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
     margin-left: 10%;
     margin-right: 10%;
     font-size: 20px;
     margin-bottom: 5%;
     height: 5vh;
-    width: 30vw;
-    font-weight: bold;
 }
-
   

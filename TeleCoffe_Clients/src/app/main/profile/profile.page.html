@@ -1,7 +1,50 @@
 <div class="profile-container">
-  <div class="profile-header">
+    <div class="profile-header">
+      <h1><b>PERFIL</b></h1>
+      <h4>Name:</h4>
+      <h4>Email:</h4>
+    </div>
+    <div class="profile-content">
+      <ion-button (click)=LogOut() class="corner-button" style="color: black;font-size: 160%" fill="clear">
+        <ion-icon name="log-out"></ion-icon>
+      </ion-button>      
+    <form [formGroup]="formPassword" >
+          <div class="Change-Password">
+          <h5 style="font-weight: bold; text-align: left; margin-left: 5%; color: black;">Cambiar Contraseña</h5>
+          <ion-button color="transparent" style="float: right; color:black ; float: right;margin-top: 13%; margin-right:5%; font-size: 160%;" (click)="showOverlay('Cambiar contraseña')">
+            <ion-icon  class="fa-solid fa-check"></ion-icon>
+          </ion-button>
+          <ion-item>
+            <ion-label position="floating" >Contraseña actual</ion-label>
+            <ion-input  formControlName="currentPassword"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Nueva contraseña</ion-label>
+            <ion-textarea formControlName="newPassword"></ion-textarea>
+          </ion-item>
+        </div>
+    </form>
+      
+  
+      <div class="Remove-Account">
+        <ion-button color="transparent" style="color:black ; float: right;margin-top: 7%; margin-right: 5%; font-size: 160%;"(click)="showOverlay('Eliminar cuenta')">
+          <ion-icon class="fas fa-trash"  ></ion-icon>
+        </ion-button>  
+        <h5 style="font-weight: bold;  text-align: left; margin-left:5%; color: black; margin-top:13% " >Eliminar cuenta</h5>      
+      </div>
+    </div>
   </div>
-  <div class="profile-content">
-
-  </div>
+  
+  <div class="confirmation-popup" *ngIf="isOverlayVisible">
+    <div class="popup-content">
+        <h2><b>{{ cadena }}</b></h2>
+        <p>¿Está seguro de que desea continuar?</p>
+        <div class="button-container">
+            <button (click)="Confirm('cadena')">Confirmar</button>
+            <button (click)="Cancel()">Cancelar</button>
+            
+        </div>
+    </div>
 </div>
+
+  

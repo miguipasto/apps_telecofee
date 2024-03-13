@@ -47,11 +47,6 @@ export class LoginPage implements OnInit {
     this.formLogIn.reset();
   }
 
-  redirigir_forgot() {
-    this.router.navigate(['password']);
-    this.formLogIn.reset();
-  }
-
   resetForm() {
     this.formLogIn.reset();
   }

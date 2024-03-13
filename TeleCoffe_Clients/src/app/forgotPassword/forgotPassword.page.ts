@@ -4,57 +4,58 @@ import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: 'login.page.html',
-  styleUrls: ['login.page.scss'],
+  selector: 'app-forgotPassword',
+  templateUrl: 'forgotPassword.page.html',
+  styleUrls: ['forgotPassword.page.scss'],
 })
-export class LoginPage implements OnInit {
-  formLogIn!: FormGroup;
+export class ForgotPasswordPage implements OnInit {
+  formForgotPassword!: FormGroup;
+  
 
-  constructor(private router: Router,private userService:UserService,public formBuilder: FormBuilder) {
+  constructor(private router: Router,private userService:UserService,public formBuilder: FormBuilder){
+
     
   }
   ngOnInit(): void {
-    this.formLogIn=new FormGroup({
+    this.formForgotPassword=new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', Validators.required),
+
     })
   }
 
 
   onSubmit() {
-    if (this.formLogIn.invalid) {
+    if (this.formForgotPassword.invalid) {
       alert('Please fill in all fields');
-      this.formLogIn.reset();
+      this.formForgotPassword.reset();
       return;
     }
-    this.userService.logIn(this.formLogIn.value)
+    console.log(this.formForgotPassword.value)
+    const email=JSON.stringify((this.formForgotPassword.value).email)
+    this.userService.resetPassword(email.replace(/^"(.*)"$/, '$1'))
       .then(response => {
         console.log(response);
-        this.router.navigate(['main']);
+        this.router.navigate(['login']);
       })
       .catch(error => {
         console.log(error);
         // Si hay un error en el inicio de sesión, muestra un mensaje de error
         alert('Invalid email or password. Please try again.');
-        this.formLogIn.reset();
+        this.formForgotPassword.reset();
       });
   }
-
+  
+  
 
   redirigir_home_signup() {
     this.router.navigate(['signup']);
-    this.formLogIn.reset();
-  }
-
-  redirigir_forgot() {
-    this.router.navigate(['password']);
-    this.formLogIn.reset();
+    this.formForgotPassword.reset();
   }
 
   resetForm() {
-    this.formLogIn.reset();
+    this.formForgotPassword.reset();
   }
-  
+
+
   
 }

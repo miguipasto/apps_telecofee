@@ -1,4 +1,4 @@
-<div class="main">
+<div class="main" [ngClass]="{ 'home': currentPageClass === 'home', 'wallet': currentPageClass === 'wallet', 'support': currentPageClass === 'support', 'profile': currentPageClass === 'profile' }">
   <!-- HEADER  -->
   <div class="header">
     <div class="logo-container">
@@ -8,24 +8,23 @@
     </div>
   </div>
 
-
   <!-- FOOTER -->
   <ion-tabs>
     <ion-tab-bar slot="bottom">
       <ion-tab-button  href="/main/main/home">
-        <ion-icon class="fas fa-home"></ion-icon>
+        <ion-icon [style.color]="currentPageClass === 'home' ? 'red' : ''" class="fas fa-home"></ion-icon>
       </ion-tab-button>
 
       <ion-tab-button  href="/main/main/wallet">
-        <ion-icon class="fas fa-wallet"></ion-icon>
+        <ion-icon [style.color]="currentPageClass === 'wallet' ? 'blue' : ''" class="fas fa-wallet"></ion-icon>
       </ion-tab-button>
 
       <ion-tab-button  href="/main/main/support">
-        <ion-icon class="fa-solid fa-triangle-exclamation "></ion-icon>
+        <ion-icon [style.color]="currentPageClass === 'support' ? 'green' : ''" class="fa-solid fa-triangle-exclamation"></ion-icon>
       </ion-tab-button>
 
       <ion-tab-button  href="/main/main/profile">
-        <ion-icon class="fa-solid fa-user"></ion-icon>
+        <ion-icon [style.color]="currentPageClass === 'profile' ? 'orange' : ''" class="fa-solid fa-user"></ion-icon>
       </ion-tab-button>
     </ion-tab-bar>
   </ion-tabs>

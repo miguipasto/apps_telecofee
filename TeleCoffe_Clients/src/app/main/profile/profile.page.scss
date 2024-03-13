@@ -1,3 +1,5 @@
+@import "~@fortawesome/fontawesome-free/css/all.css";
+
 // Estilos para poder solapar header y poner texto
 .profile-container{
     margin-top: 35%;
@@ -20,3 +22,113 @@
     display: grid;
     grid-template-rows: 1fr 6fr;
 }
+
+// Estilos para poder solapar header y poner texto
+.support-container{
+    margin-top: 35%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 0.5fr 2fr;
+    row-gap: 2%;
+}
+
+
+/* Contenido */
+
+.descripcion {
+    padding: 20px;
+}
+
+.descripcion h3 {
+    margin-bottom: 10px;
+}
+
+.descripcion ion-textarea {
+    height: 300%; /* Cambia la altura mínima según tus necesidades */
+}
+
+.boton-transparente {
+    background-color: transparent;
+    color: black; /* Define el color de texto que desees */
+    border: none; /* Elimina el borde si lo hay */
+    padding: 0; /* Elimina el relleno interno */
+}
+
+.botón {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    margin-bottom: 20px;
+    border-radius: 40px;
+    height: 7%;
+    width: 40%;
+    position: absolute;
+    bottom: 10%;
+    background-color: #e9dbab;
+    
+  }
+.ion-button{
+   color: black;
+   font-size: 160%;
+}
+
+.corner-button {
+    position: fixed;
+    top: 10px; /* Puedes ajustar esta posición según tu preferencia */
+    right: 10px; /* Puedes ajustar esta posición según tu preferencia */
+    z-index: 999; /* Asegura que esté sobre otros elementos */
+  }
+  
+/* Confirmar */
+.confirmation-popup {
+    position: fixed; /* Posición fija sobre todo lo demás */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /* Fondo semitransparente */
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    z-index: 9999;
+    
+}
+
+.popup-content {
+    display: grid;
+    background-color: white;
+    padding: 20px;
+    border-radius: 40px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    text-align: center; /* Alinea el texto al centro */
+}
+
+.popup-content h2 {
+    color: #70442b;
+    margin-bottom: 10px;
+}
+
+.popup-content p {
+    margin-bottom: 20px;
+}
+
+.button-container button {
+    margin: 0 10px;
+    cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
+    border: none; /* Remueve el borde del botón */
+    border-radius: 40px; /* Esquinas redondeadas para el botón */
+    background-color: #E9DBAB; /* Color de fondo del botón */
+    color: #5C5353; /* Color del texto del botón */
+    margin-left: 10%;
+    margin-right: 10%;
+    font-size: 20px;
+    margin-bottom: 5%;
+    height: 5vh;
+    width: 30vw;
+    font-weight: bold;
+}
+
+
+
+
+

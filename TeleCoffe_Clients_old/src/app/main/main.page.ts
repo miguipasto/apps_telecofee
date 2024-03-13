@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-main',
@@ -7,11 +6,10 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./main.page.scss'],
 })
 export class MainPage implements OnInit {
-  currentPageClass: string | undefined;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor() { }
 
   ngOnInit() {
-   
   }
+
 }

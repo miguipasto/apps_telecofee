@@ -7,6 +7,9 @@ import { reload } from '@angular/fire/auth';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
+  isOverlayVisible: boolean = false;
+  amountToAdd=0;
+  productoSeleccionado: string="";
 
   constructor() { }
 
@@ -31,4 +34,43 @@ export class HomePage implements OnInit {
     this.selectedCategory = category;
   }
 
+  showOverlay(nombre:string) {
+    this.isOverlayVisible = true;
+    this.productoSeleccionado=nombre;
+  }
+
+  closeOverlay() {
+    this.isOverlayVisible = false;
+  }
+  
+  addBalance() {
+    console.log("Añadiendo azúcar:", this.amountToAdd);
+    // Aquí puedes agregar la lógica para efectivamente añadir el saldo.
+    this.closeOverlay();
+  }
+
+  incrementAmount() {
+    if (this.amountToAdd < 5) {
+      this.amountToAdd++;
+    }
+  }
+
+  decrementAmount() {
+    if (this.amountToAdd > 0) {
+      this.amountToAdd--;
+    }
+  }
+
+  validateAmount(event: Event) {
+    let value = +(<HTMLInputElement>event.target).value;
+    if (isNaN(value) || value < 0) {
+      this.amountToAdd = 0;
+    } else if (value > 5) {
+      this.amountToAdd = 5;
+    } else {
+      this.amountToAdd = Math.floor(value);
+    }
+  }
 }
+
+
