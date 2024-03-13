@@ -14,7 +14,7 @@
     position: relative;
     margin-bottom: 20px;
     width: 100vw;
-    height: 100vh;
+    height: 91vh;
   }
   
   .ellipse-1, .ellipse-2, .ellipse-3, .ellipse-4 {
@@ -24,51 +24,53 @@
   }
   
   .ellipse-1 {
-    height: 309px;
-    width: 279px;
-    top: -92px;
-    left: 229px;
+    height: 41%;
+    width: 41%;
+    top: 15%;
+    left: 76%;
   }
   .ellipse-3 {
-    height: 219px;
-    width: 201px;
-    top: -65px;
-    left: -143px;
+    height: 40%;
+    width: 50%;
+    top: -15%;
+    left: -15%;
   }
   .ellipse-4 {
-    height: 300px;
-    width: 291px;
-    top: 614px;
-    left: 259px;
+    height: 30%;
+    width: 30%;
+    top: 86%;
+    left: 72%;
   }
   .ellipse-2 {
-    height: 244px;
-    width: 230px;
-    top: 408px;
-    left: -115px;
+    height:32%;
+    width: 32%;
+    top: 57%;
+    left: -12%;
   }
   
   .botón {
     margin-bottom: 20px;
     border-radius: 40px;
-    height: 58px;
-    width: 308px;
+    height: 8%;
+    width: 85%;
     position: absolute;
     bottom: 30px;
     background-color: #e8dbab;
   }
   
   .text-1 {
-    font-size: 18px;
+    font-size: 120%;
     font-family: Nunito;
     font-weight: bold;
     color: #5C5353;
   }
   
   .text-2 {
-    font-size: 18px;
+    font-size: 110%;
     bottom: 25px;
     color: #000;
+    text-align: center;
+    padding: 3%; // espacio entre elementos
   }
   
   .sign-up {

@@ -17,4 +17,16 @@ export class DataService {
     });
     console.log("Document written with ID: ", docRef.id);
   }
+
+  async crearUsuario(nombre: string, apellidos: string, email:string) {
+    const docRef = await addDoc(collection(this.firestore, 'usuarios'), {
+      nombre: nombre,
+      apellidos:apellidos,
+      email:email,
+      saldo:0,
+      create_at:new Date()
+      
+    });
+    console.log("Document written with ID: ", docRef.id);
+  }
 }
