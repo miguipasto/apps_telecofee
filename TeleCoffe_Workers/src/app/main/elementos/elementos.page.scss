@@ -151,9 +151,29 @@ button {
 
 
 #tus_maquinas_texto{
-    top:10%;
+    top:40vh;
     left:50%;
     color: #70442b;
     font-weight: bold;
     font-size: 30px;
 }
+
+.tanque {
+    width: 50px; /* Ancho del tanque */
+    height: 100px; /* Altura del tanque */
+    border: 1px solid black; /* Borde del tanque */
+    position: relative; /* Posición relativa para los elementos internos */
+  }
+  
+  .contenido {
+    background-color: blue; /* Color del contenido (representa el líquido) */
+    position: absolute; /* Posición absoluta para ajustar la altura */
+    bottom: 0; /* Colocar el contenido al fondo del tanque */
+    left: 0; /* Alinear el contenido a la izquierda */
+    width: 100%; /* Ancho completo del contenido */
+  }
+  
+  .nombre {
+    margin-top: 10px; /* Espacio entre el tanque y el nombre del producto */
+  }
+  

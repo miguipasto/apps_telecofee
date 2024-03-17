@@ -1,0 +1,81 @@
+.welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 100vh;
+    background-color: #ffffff;
+  }
+  
+  .circulos {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 20px;
+    width: 100vw;
+    height: 91vh;
+  }
+  
+  .ellipse-1, .ellipse-2, .ellipse-3, .ellipse-4 {
+    background-color: #70442b;
+    border-radius: 50%;
+    position: absolute;
+  }
+  
+  .ellipse-1 {
+    height: 41%;
+    width: 41%;
+    top: 15%;
+    left: 76%;
+  }
+  .ellipse-3 {
+    height: 40%;
+    width: 50%;
+    top: -15%;
+    left: -15%;
+  }
+  .ellipse-4 {
+    height: 30%;
+    width: 30%;
+    top: 86%;
+    left: 72%;
+  }
+  .ellipse-2 {
+    height:32%;
+    width: 32%;
+    top: 57%;
+    left: -12%;
+  }
+  
+  .botón {
+    margin-bottom: 20px;
+    border-radius: 40px;
+    height: 8%;
+    width: 85%;
+    position: absolute;
+    bottom: 30px;
+    background-color: #e8dbab;
+  }
+  
+  .text-1 {
+    font-size: 120%;
+    font-family: Nunito;
+    font-weight: bold;
+    color: #70442b;
+  }
+  
+  .text-2 {
+    font-size: 110%;
+    bottom: 25px;
+    color: #000;
+    text-align: center;
+    padding: 3%; // espacio entre elementos
+  }
+  
+  .sign-up {
+    color: #e9dbab; 
+    text-decoration: underline; 
+    font-weight: bold;
+    cursor: pointer;
+  }

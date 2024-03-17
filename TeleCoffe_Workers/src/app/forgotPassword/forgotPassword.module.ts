@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { LoginPage } from './login.page';
+import { ForgotPasswordPage } from './forgotPassword.page';
 
-import { LoginPageRoutingModule } from './login-routing.module';
+import { ForgotPasswordPageRoutingModule } from './forgotPassword-routing.module';
 
 
 @NgModule({
@@ -13,8 +13,8 @@ import { LoginPageRoutingModule } from './login-routing.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    LoginPageRoutingModule
+    ForgotPasswordPageRoutingModule
   ],
-  declarations: [LoginPage]
+  declarations: [ForgotPasswordPage]
 })
-export class LoginPageModule {}
+export class ForgotPasswordPageModule {}

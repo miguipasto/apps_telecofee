@@ -1,5 +1,28 @@
 <div class="home-container">
   <div class="home-header">
-    
   </div>
   <div class="home-content">
+    <div class="titles-container">
+      <div class="title-box">
+        <h2 id="tus_maquinas_texto">Tus máquinas</h2>
+        <hr class="linea-decorativa">
+      </div>
+    </div>
+    <div class="products-content">
+      <div class="products-container">
+        <div *ngFor="let product of products" class="producto">
+          <div class="foto-producto">
+            <button (click)="redirect_to_elementos(product.name)">
+              <ion-img [src]="product.img" class="producto-foto"></ion-img>  
+            </button>
+                   
+          </div>
+          <div class="texto-producto">
+              <p>{{ product.name }}</p>
+          </div>
+        </div>
+
+      </div>
+      
+  </div>
+</div>
