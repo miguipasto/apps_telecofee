@@ -34,4 +34,27 @@
 }
 
 /* Footer */
+.tab-bar {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    padding: 10px 0;
+
+  }
+  
+  .tab-button {
+    text-decoration: none;
+    color: #000;
+  }
+  
+  .tab-button i {
+    font-size: 24px;
+  }
+  
+  /* Aquí definimos los colores para cada página activa */
+  .home.active i { color: red; }
+  .wallet.active i { color: blue; }
+  .support.active i { color: green; }
+  .profile.active i { color: orange; }
+  
 

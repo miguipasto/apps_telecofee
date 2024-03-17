@@ -5,10 +5,10 @@
     </div>
     <div class="wallet-datos">
       <h2>Mi balance</h2>
-      <h2>Pepe Perez</h2>
+      <h2>{{ nombre }}</h2>
     </div>
     <div class="wallet-balance">
-      <h3>15.50€</h3>
+      <h3>{{wallet}}€</h3>
     </div>
   </div>
   <div class="wallet-content">
@@ -21,12 +21,12 @@
       </div>
       <div class="text-container">
         <p style="color: black;">{{ compra.producto }}</p>
-        <p style="color: red;">{{ compra.precio }}</p>
+        <p style="color: red;">{{ compra.precio }}€</p>
       </div>
     </div>
   </div>
   <div class="wallet-add-balance">
-    <button  (click)="showOverlay()">Añadir saldo</button>
+    <button (click)="showOverlay()">Añadir saldo</button>
   </div>
   <div class="overlay" *ngIf="isOverlayVisible">
     <div class="add-balance-popup">

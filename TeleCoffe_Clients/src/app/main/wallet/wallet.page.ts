@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
   selector: 'app-wallet',
@@ -7,25 +8,26 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WalletPage implements OnInit {
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-  compras: any = [
-    { id: 1, producto: 'Café Americano', precio: '1,15€', fecha: '01/01/2024'},
-    { id: 2, producto: 'Café Americano', precio: '1,15€', fecha: '02/01/2024'},
-    { id: 3, producto: 'Patatas', precio: '0,85€', fecha: '02/01/2024'},
-    { id: 4, producto: 'Café con Leche', precio: '1,35€', fecha: '03/01/2024'},
-    { id: 5, producto: 'Café Americano', precio: '1,15€', fecha: '01/01/2024'},
-    { id: 6, producto: 'Café Americano', precio: '1,15€', fecha: '02/01/2024'},
-    { id: 7, producto: 'Patatas', precio: '0,85€', fecha: '02/01/2024'},
-    { id: 8, producto: 'Café con Leche', precio: '1,35€', fecha: '03/01/2024'},
-    
-  ];
-
+  userData : any;
+  wallet : number = 0;
+  nombre : string = "";
+  compras : any = [];
   isOverlayVisible: boolean = false;
-  amountToAdd: number | null = null;
+  amountToAdd: number = 0;
+
+
+  constructor(private dataService : DataService) { }
+
+  async ngOnInit() {
+    this.userData = await this.dataService.obetenerDatosUsuario();
+    if (this.userData) {
+      this.wallet = this.userData.saldo;
+      this.nombre = this.userData.nombre;
+    }
+
+    this.compras = await this.dataService.obtenerComprasUsuario();
+    console.log(this.compras)
+  }
 
   showOverlay() {
     this.isOverlayVisible = true;
@@ -35,9 +37,12 @@ export class WalletPage implements OnInit {
     this.isOverlayVisible = false;
   }
 
-  addBalance() {
+  async addBalance() {
     console.log("Añadiendo saldo:", this.amountToAdd);
-    // Aquí puedes agregar la lógica para efectivamente añadir el saldo.
+    
+    this.wallet = this.amountToAdd + this.wallet;
+    await this.dataService.actualizarSaldoUsuario(this.wallet);
+
     this.closeOverlay();
   }
 

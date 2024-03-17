@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
   selector: 'app-profile',
@@ -12,20 +13,28 @@ export class ProfilePage implements OnInit {
   cadena: string="";
   isOverlayVisible: boolean=false;
   formPassword!: FormGroup;
+  datosUser: any = [];
 
-  constructor(public authService:UserService,public route:Router,private formBuilder: FormBuilder) { }
+  constructor(
+    public authService: UserService,
+    public route: Router,
+    private formBuilder: FormBuilder,
+    private dataService: DataService) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.formPassword=new FormGroup({
       newPassword: new FormControl('', Validators.required),
-      currentPassword:new FormControl('', Validators.required)
-    })
+      currentPassword: new FormControl('', Validators.required)
+    });
+
+    this.datosUser = await this.dataService.obetenerDatosUsuario();
   }
 
-  
 
   showOverlay(cadena:string) {
     if(cadena.includes('contraseña')){
+      console.log(this.formPassword.value.newPassword);
+      console.log(this.formPassword.value.currentPassword);
       if (this.formPassword.invalid) {
         alert('Please fill in all fields');
         this.formPassword.reset();
@@ -39,7 +48,7 @@ export class ProfilePage implements OnInit {
   Confirm(cadena:string) {
     if(cadena.includes('Eliminar')){
       this.authService.deleteAccount();
-    }else{
+    } else {
       console.log(this.formPassword.value.newPassword);
       console.log(this.formPassword.value.currentPassword);
       const np=this.formPassword.value.currentPassword
@@ -61,12 +70,5 @@ export class ProfilePage implements OnInit {
     this.route.navigate(['login'])
   }
 
-  
-
 }
-
-
-
-
-
 

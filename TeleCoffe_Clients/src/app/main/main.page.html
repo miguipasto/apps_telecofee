@@ -11,21 +11,23 @@
   <!-- FOOTER -->
   <ion-tabs>
     <ion-tab-bar slot="bottom">
-      <ion-tab-button  href="/main/main/home">
-        <ion-icon [style.color]="currentPageClass === 'home' ? 'red' : ''" class="fas fa-home"></ion-icon>
-      </ion-tab-button>
-
-      <ion-tab-button  href="/main/main/wallet">
-        <ion-icon [style.color]="currentPageClass === 'wallet' ? 'blue' : ''" class="fas fa-wallet"></ion-icon>
-      </ion-tab-button>
-
-      <ion-tab-button  href="/main/main/support">
-        <ion-icon [style.color]="currentPageClass === 'support' ? 'green' : ''" class="fa-solid fa-triangle-exclamation"></ion-icon>
-      </ion-tab-button>
-
-      <ion-tab-button  href="/main/main/profile">
-        <ion-icon [style.color]="currentPageClass === 'profile' ? 'orange' : ''" class="fa-solid fa-user"></ion-icon>
-      </ion-tab-button>
+      <div class="tab-bar">
+        <a href="/main/main/home" class="tab-button" [class.active]="currentPageClass === 'home'">
+          <i class="fas fa-home"></i>
+        </a>
+      
+        <a href="/main/main/wallet" class="tab-button" [class.active]="currentPageClass === 'wallet'">
+          <i class="fas fa-wallet"></i>
+        </a>
+      
+        <a href="/main/main/support" class="tab-button" [class.active]="currentPageClass === 'support'">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </a>
+      
+        <a href="/main/main/profile" class="tab-button" [class.active]="currentPageClass === 'profile'">
+          <i class="fa-solid fa-user"></i>
+        </a>
+      </div>
     </ion-tab-bar>
   </ion-tabs>
 </div>

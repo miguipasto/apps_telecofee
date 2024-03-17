@@ -13,7 +13,6 @@ export class ForgotPasswordPage implements OnInit {
   
 
   constructor(private router: Router,private userService:UserService,public formBuilder: FormBuilder){
-
     
   }
   ngOnInit(): void {

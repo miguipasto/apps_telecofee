@@ -7,6 +7,7 @@ import { reload } from '@angular/fire/auth';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
+
   isOverlayVisible: boolean = false;
   amountToAdd=0;
   productoSeleccionado: string="";

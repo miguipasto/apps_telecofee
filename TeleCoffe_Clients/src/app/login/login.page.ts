@@ -11,50 +11,49 @@ import { UserService } from '../services/user.service';
 export class LoginPage implements OnInit {
   formLogIn!: FormGroup;
 
-  constructor(private router: Router,private userService:UserService,public formBuilder: FormBuilder) {
-    
-  }
+  constructor(private router: Router, private userService: UserService, public formBuilder: FormBuilder) {}
+
   ngOnInit(): void {
-    this.formLogIn=new FormGroup({
+    this.initLoginForm();
+  }
+
+  initLoginForm(): void {
+    this.formLogIn = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', Validators.required),
-    })
+    });
   }
 
-
-  onSubmit() {
+  onSubmit(): void {
     if (this.formLogIn.invalid) {
       alert('Please fill in all fields');
       this.formLogIn.reset();
       return;
     }
     this.userService.logIn(this.formLogIn.value)
-      .then(response => {
-        console.log(response);
+      .then((response) => {
+        localStorage.setItem('isUserLoggedIn', 'true');
+        localStorage.setItem('uid', response.user.uid);
         this.router.navigate(['main']);
       })
       .catch(error => {
-        console.log(error);
-        // Si hay un error en el inicio de sesión, muestra un mensaje de error
+        console.error(error);
         alert('Invalid email or password. Please try again.');
         this.formLogIn.reset();
       });
   }
 
-
-  redirigir_home_signup() {
+  redirigir_home_signup(): void {
     this.router.navigate(['signup']);
     this.formLogIn.reset();
   }
 
-  redirigir_forgot() {
+  redirigir_forgot(): void {
     this.router.navigate(['password']);
     this.formLogIn.reset();
   }
 
-  resetForm() {
+  resetForm(): void {
     this.formLogIn.reset();
   }
-  
-  
 }

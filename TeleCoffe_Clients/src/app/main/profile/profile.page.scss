@@ -5,7 +5,7 @@
     margin-top: 35%;
     height: 100%;
     display: grid;
-    grid-template-rows: 0.5fr 2fr;
+    grid-template-rows: 0.8fr 2fr;
     row-gap: 2%;
 }
 
@@ -16,60 +16,16 @@
     text-align: center;
 }
 
-
-/* Contenido */
-.profile-content{
-    display: grid;
-    grid-template-rows: 1fr 6fr;
+.profile-header h1{
+    color:black;
+    font-weight: bold;
+    margin: 0px;
 }
 
-// Estilos para poder solapar header y poner texto
-.support-container{
-    margin-top: 35%;
-    height: 100%;
-    display: grid;
-    grid-template-rows: 0.5fr 2fr;
-    row-gap: 2%;
-}
-
-
-/* Contenido */
-
-.descripcion {
-    padding: 20px;
-}
-
-.descripcion h3 {
-    margin-bottom: 10px;
-}
-
-.descripcion ion-textarea {
-    height: 300%; /* Cambia la altura mínima según tus necesidades */
-}
-
-.boton-transparente {
-    background-color: transparent;
-    color: black; /* Define el color de texto que desees */
-    border: none; /* Elimina el borde si lo hay */
-    padding: 0; /* Elimina el relleno interno */
-}
-
-.botón {
-    display: flex;
-    justify-content: center; 
-    align-items: center;
-    margin-bottom: 20px;
-    border-radius: 40px;
-    height: 7%;
-    width: 40%;
-    position: absolute;
-    bottom: 10%;
-    background-color: #e9dbab;
-    
-  }
-.ion-button{
-   color: black;
-   font-size: 160%;
+.profile-header h4{
+    color:black;
+    font-size: 18px;
+    margin: 0px;
 }
 
 .corner-button {
@@ -78,7 +34,78 @@
     right: 10px; /* Puedes ajustar esta posición según tu preferencia */
     z-index: 999; /* Asegura que esté sobre otros elementos */
   }
-  
+
+/* Contenido */
+.profile-content{
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+}
+
+.change-password{
+    display: block;
+    padding: 2%;
+    justify-content: center;
+}
+
+h2{
+    color: black;
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 2%;
+    margin-top: 5%;
+
+}
+
+.change-password-confirm {
+    display: grid;
+    height: 15%;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5%;
+}
+
+.change-password-confirm button {
+    cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
+    border: none; /* Remueve el borde del botón */
+    border-radius: 5px; /* Esquinas redondeadas para el botón */
+    background-color: #70442b; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
+    font-size: 20px;
+    justify-content: center;
+    width: 80vw;
+    height: 100%;
+}
+
+i {
+    margin-left: 4%;
+}
+
+.delete-account{
+    display: block;
+    padding: 2%;
+    width: 100%;
+}
+
+.delete-account-confirm{
+    display: grid;
+    margin-top: 5%;
+    height: 15%;
+}
+
+.delete-account-confirm button {
+    cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
+    border: none; /* Remueve el borde del botón */
+    border-radius: 5px; /* Esquinas redondeadas para el botón */
+    background-color: #a31515; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
+    font-size: 20px;
+    width: 80%;
+    margin-left: 8%;
+    height: 5%;
+    justify-content: center;
+    position: absolute;
+}
+
 /* Confirmar */
 .confirmation-popup {
     position: fixed; /* Posición fija sobre todo lo demás */
@@ -124,11 +151,8 @@
     font-size: 20px;
     margin-bottom: 5%;
     height: 5vh;
-    width: 30vw;
+    width: 80%;
     font-weight: bold;
-}
-
-
-
+}   
 
 

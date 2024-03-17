@@ -18,7 +18,6 @@ export class SupportPage implements OnInit {
   enviar_incidencia() {
     this.dataService.crearIncidencia(this.nombre, this.descripcion).then(() => {
       console.log('Incidencia enviada con éxito');
-      // Opcional: Limpia los campos después de enviar
       this.nombre = '';
       this.descripcion = '';
     }).catch(error => {

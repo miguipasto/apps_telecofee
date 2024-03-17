@@ -35,8 +35,18 @@ export class SignUpPage implements OnInit{
     }
     this.userService.register(this.formReg.value)
       .then(response => {
-        console.log(response);
-        this.router.navigate(['login']);
+        //Creamos su entrada en la base de datos
+        const uid = response.user.uid;
+        const nombre=(this.formReg.value.name).split(" ")[0];
+        var apellidos=(this.formReg.value.name).split(" ")[1];
+        if(apellidos==undefined){
+          apellidos="";
+        } 
+
+        this.dataService.crearUsuario(uid, nombre,apellidos,this.formReg.value.email)
+        localStorage.setItem('isUserLoggedIn', 'true');
+        localStorage.setItem('uid', response.user.uid);
+        this.router.navigate(['main']);
       })
       .catch(error => {
         console.log(error);
@@ -44,13 +54,7 @@ export class SignUpPage implements OnInit{
         alert('Correo o contraseña inválida. Contraseña debe de tener al menos 6 caracteres. Porfavor vuelva a intentarlo.');
       });
 
-      const nombre=(this.formReg.value.name).split(" ")[0];
-      var apellidos=(this.formReg.value.name).split(" ")[1];
-      if(apellidos==undefined){
-        apellidos="";
-      } 
-
-      this.dataService.crearUsuario(nombre,apellidos,this.formReg.value.email)
+      
   }
 
   redirigir_home_login() {

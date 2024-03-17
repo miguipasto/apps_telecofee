@@ -22,9 +22,9 @@
       <div class="products-container">
         <div *ngFor="let product of products[selectedCategory]" class="producto">
           <div class="foto-producto">
-            <ion-button color="transparent" (click)="showOverlay(product.name)">
+            <button (click)="showOverlay(product.name)">
               <ion-img [src]="product.img" class="producto-foto"></ion-img>  
-            </ion-button>
+            </button>
                    
           </div>
           <div class="texto-producto">
