@@ -9,7 +9,9 @@ import { UserService } from '../services/user.service';
   styleUrls: ['login.page.scss'],
 })
 export class LoginPage implements OnInit {
+
   formLogIn!: FormGroup;
+
 
   constructor(private router: Router, private userService: UserService, public formBuilder: FormBuilder) {}
 

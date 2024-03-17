@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { DataService } from 'src/app/services/data.service';
@@ -23,34 +23,42 @@ export class ProfilePage implements OnInit {
 
   async ngOnInit() {
     this.formPassword=new FormGroup({
-      newPassword: new FormControl('', Validators.required),
-      currentPassword: new FormControl('', Validators.required)
+      currentPassword: new FormControl('', Validators.required),
+      newPassword: new FormControl('', Validators.required)
+      
     });
 
     this.datosUser = await this.dataService.obetenerDatosUsuario();
   }
 
 
-  showOverlay(cadena:string) {
-    if(cadena.includes('contraseña')){
+  showOverlay(cadena: string) {
+    if (cadena.includes('contraseña')) {
       console.log(this.formPassword.value.newPassword);
       console.log(this.formPassword.value.currentPassword);
+  
       if (this.formPassword.invalid) {
-        alert('Please fill in all fields');
+        const currentPasswordErrors = this.formPassword?.get('currentPassword')?.errors;
+        let errorMessage = 'Please fill in all fields or fix errors.';
+        if (currentPasswordErrors) {
+          errorMessage = Object.keys(currentPasswordErrors)[0] === 'required'
+            ? 'Current password is required.'
+            : 'There are errors in current password.';
+        }
+        alert(errorMessage);
         this.formPassword.reset();
         return;
-      } 
-   }
+      }
+    }
     this.isOverlayVisible = true;
-    this.cadena=cadena;
+    this.cadena = cadena;
   }
+  
   
   Confirm(cadena:string) {
     if(cadena.includes('Eliminar')){
       this.authService.deleteAccount();
     } else {
-      console.log(this.formPassword.value.newPassword);
-      console.log(this.formPassword.value.currentPassword);
       const np=this.formPassword.value.currentPassword
       const op=this.formPassword.value.newPassword
 
