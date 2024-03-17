@@ -10,8 +10,8 @@ import { DataService } from 'src/app/services/data.service';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  cadena: string="";
-  isOverlayVisible: boolean=false;
+  cadena: string = "";
+  isOverlayVisible: boolean = false;
   formPassword!: FormGroup;
   datosUser: any = [];
 
@@ -21,11 +21,10 @@ export class ProfilePage implements OnInit {
     private formBuilder: FormBuilder,
     private dataService: DataService) { }
 
-  async ngOnInit() {
-    this.formPassword=new FormGroup({
+  async ngOnInit() {  
+    this.formPassword = new FormGroup({
       currentPassword: new FormControl('', Validators.required),
       newPassword: new FormControl('', Validators.required)
-      
     });
 
     this.datosUser = await this.dataService.obetenerDatosUsuario();
@@ -34,8 +33,9 @@ export class ProfilePage implements OnInit {
 
   showOverlay(cadena: string) {
     if (cadena.includes('contraseña')) {
-      console.log(this.formPassword.value.newPassword);
-      console.log(this.formPassword.value.currentPassword);
+
+      console.log("Actual " + this.formPassword.value.newPassword);
+      console.log("Nueva " + this.formPassword.value.currentPassword);
   
       if (this.formPassword.invalid) {
         const currentPasswordErrors = this.formPassword?.get('currentPassword')?.errors;
@@ -55,19 +55,17 @@ export class ProfilePage implements OnInit {
   }
   
   
-  Confirm(cadena:string) {
-    if(cadena.includes('Eliminar')){
-      this.authService.deleteAccount();
-    } else {
-      const np=this.formPassword.value.currentPassword
-      const op=this.formPassword.value.newPassword
-
-      this.authService.reauthenticateWithCredential(np,op)
-
+  async Confirm(cadena: string) {
+    if (cadena.includes('Eliminar')) {
+      await this.authService.deleteAccount().then(() => {
+        console.log('Cuenta eliminada');
+        this.route.navigate(['login']);
+      }).catch(error => {
+        console.error('Error al eliminar la cuenta', error);
+      });
     }
-    
-    this.isOverlayVisible = false;
   }
+  
 
   Cancel() {
     this.isOverlayVisible = false;

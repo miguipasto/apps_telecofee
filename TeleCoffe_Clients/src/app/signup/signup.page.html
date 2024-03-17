@@ -1,31 +1,36 @@
-<ion-content class="log-in">
-  <div class="ellipse-7"></div>
-  <div class="rectangulo">
-    <form [formGroup]="formReg" (ngSubmit)="onSubmit()">
-      <div class="botón" style="position: absolute;  top: 90%; left: 50%; transform: translate(-50%,-50%);">
-        <ion-button class="text-1" expand="block" color="#5C5353" type="submit">Sign Up</ion-button>
+<div class="sign-up">
+  <div class="header">
+    <div class="logo-container">
+      <div class="logo-box">
+          <ion-img src="../../assets/icon/v5_133.png" class="logo"></ion-img>
       </div>
-      <p class="text-3" style="position: absolute; top: 30%; left: 50%; transform: translate(-50%,-50%);">Bienvenido a TeleCoffee</p>
-      <div class="name">
-        <input formControlName="name" type="name" placeholder="Nombre y apellidos" style="position: absolute; top: 49%; left: 50%; transform: translate(-50%,-50%); border: none; outline: none; background: transparent; width: 200px;" required>
-        <div class="line-1" style="position: absolute; top: 52%; left: 50%; transform: translate(-50%,-50%);"></div>
-      </div>
-      <div class="mail">
-        <input formControlName="email" type="email" placeholder="E-Mail" style="position: absolute; top: 62%; left: 50%; transform: translate(-50%,-50%); border: none; outline: none; background: transparent; width: 200px;" required>
-        <div class="line-1" style="position: absolute; top: 65%; left: 50%; transform: translate(-50%,-50%);"></div>
-      </div>
-      <div class="password">
-        <input formControlName="password" type="password" placeholder="Contraseña" style="position: absolute; top: 75%; left: 50%; transform: translate(-50%,-50%); border: none; outline: none; background: transparent; width: 200px;" required>
-        <div class="line-1" style="position: absolute; top: 78%; left: 50%; transform: translate(-50%,-50%);"></div>
-      </div>
-      <div class="botón_largo" style="position: absolute; top: 15%; left: 50%; transform: translate(-50%,-50%);">
-        <ion-button class="botón_largo"  expand="block" color="#d6cdcd" style="width: 100px; height: 50px; position: absolute; top: 41.8%; left: 20%; transform: translate(-50%,-50%);" (click)="redirigir_home_login()">Log In</ion-button>
-        <p class="botón" expand="block" style="width: 149px; height: 50px; position: absolute; top: 16%; left: 73%; transform: translate(-50%,-50%);" (click)="onSubmit()">Sign Up</p>
-      </div>
-    </form>
+    </div>
   </div>
-  <div class="icono">
-    <div class="ellipse-5"></div>
-    <ion-img src="../../assets/icon/v5_133.png" id="img_8" style="position: absolute; top: 70px; left: 127px; height: 179px; width: 145px;"></ion-img>
+  <div class="sign-up-container">
+    <div class="sign-up-buttons">
+      <button class="btn login" (click)="redirigir_home_login()" >Login</button>
+      <button class="btn signup" (click)="resetForm()">SignUp</button>
+    </div>
+    <div class="sign-up-form">
+      <h2>Regístrate en TeleCoffe</h2>
+      <form [formGroup]="formReg" (ngSubmit)="onSubmit()">
+        <ion-item>
+          <ion-label position="floating">Nombre y Apellidos</ion-label>
+          <ion-input formControlName="name" type="text"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input formControlName="email" type="email"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input formControlName="password" type="password"></ion-input>
+        </ion-item>
+      </form>
+    </div>
+    <div class="sign-up-button">
+      <button type="submit" (click)="onSubmit()">SignUp</button>
+    </div>
   </div>
-</ion-content>
+</div>
+

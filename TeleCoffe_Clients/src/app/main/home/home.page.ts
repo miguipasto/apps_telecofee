@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { reload } from '@angular/fire/auth';
+import { DataService } from 'src/app/services/data.service';
+
 
 @Component({
   selector: 'app-home',
@@ -10,9 +11,9 @@ export class HomePage implements OnInit {
 
   isOverlayVisible: boolean = false;
   amountToAdd=0;
-  productoSeleccionado: string="";
+  productoSeleccionado: any = [];
 
-  constructor() { }
+  constructor(private dataService: DataService) { }
 
   ngOnInit() {
   }
@@ -20,14 +21,14 @@ export class HomePage implements OnInit {
   selectedCategory: string = 'cafe'; // Valor inicial para mostrar algo al inicio
   products: any = {
     cafe: [
-      { name: 'Café con leche', price: '1,35€', img: '../../assets/cafe_con_leche.jpg' },
-      { name: 'Café americano', price: '1,15€', img: '../../assets/cafe_americano.png' }
+      { name: 'Café con leche', price: '1.35', img: '../../assets/cafe_con_leche.jpg' },
+      { name: 'Café americano', price: '1.15', img: '../../assets/cafe_americano.png' }
     ],
     aperitivos: [
-      { name: 'Patatillas', price: '0,85€', img: '../../assets/patatillas.png' }
+      { name: 'Patatillas', price: '0.85', img: '../../assets/patatillas.png' }
     ],
     bebidas: [
-      { name: 'Leche', price: '0,80€', img: '../../assets/leche.png' }
+      { name: 'Leche', price: '0.80', img: '../../assets/leche.png' }
     ]
   };
 
@@ -35,9 +36,13 @@ export class HomePage implements OnInit {
     this.selectedCategory = category;
   }
 
-  showOverlay(nombre:string) {
-    this.isOverlayVisible = true;
-    this.productoSeleccionado=nombre;
+  showOverlay(producto: any) {
+    this.productoSeleccionado = producto;
+    if(producto.name == "Café con leche" || producto.name == "Café americano"){
+      this.isOverlayVisible = true;
+    } else{
+      this.comprar(producto);
+    }
   }
 
   closeOverlay() {
@@ -46,8 +51,8 @@ export class HomePage implements OnInit {
   
   addBalance() {
     console.log("Añadiendo azúcar:", this.amountToAdd);
-    // Aquí puedes agregar la lógica para efectivamente añadir el saldo.
     this.closeOverlay();
+    this.comprar(this.productoSeleccionado);
   }
 
   incrementAmount() {
@@ -72,6 +77,24 @@ export class HomePage implements OnInit {
       this.amountToAdd = Math.floor(value);
     }
   }
+
+  comprar(producto: any){
+    console.log("Comprando " + producto.name)
+    const compra = {"producto": producto.name, "precio": producto.price, "fecha": new Date()};
+
+    this.dataService.crearCompra(compra)
+      .then((response: any) => {
+        if (response) {
+          console.log("Compra creada exitosamente")
+          alert("¡Compra realizada exitosamente!")
+        } else {
+          alert("No se pudo realizar la compra, revisa tu saldo")
+          console.log("No se pudo crear la compra.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error al crear la compra:", error);
+      });
+
+  }
 }
-
-

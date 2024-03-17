@@ -21,7 +21,7 @@ export class WalletPage implements OnInit {
   async ngOnInit() {
     this.userData = await this.dataService.obetenerDatosUsuario();
     if (this.userData) {
-      this.wallet = this.userData.saldo;
+      this.wallet = parseFloat(this.userData.saldo.toFixed(2));
       this.nombre = this.userData.nombre;
     }
 

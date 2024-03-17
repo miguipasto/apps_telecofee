@@ -18,7 +18,6 @@ export class SignUpPage implements OnInit{
 
   }
  
-
   ngOnInit(): void {
     this.formReg = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),

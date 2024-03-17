@@ -13,11 +13,11 @@
         <form [formGroup]="formPassword">
           <ion-item>
             <ion-label position="floating">Contraseña actual</ion-label>
-            <ion-input formcontrolname="currentPassword"></ion-input>
+            <ion-input formcontrolname="currentPassword" type="password"></ion-input>
           </ion-item>
           <ion-item>
             <ion-label position="floating">Nueva contraseña</ion-label>
-            <ion-textarea formControlName="newPassword"></ion-textarea>
+            <ion-input formcontrolname="newPassword" type="password"></ion-input>
           </ion-item>
         </form>
 
@@ -42,7 +42,7 @@
           <h2><b>{{ cadena }}</b></h2>
           <p>¿Está seguro de que desea continuar?</p>
           <div class="button-container">
-              <button (click)="Confirm('cadena')">Confirmar</button>
+              <button (click)="Confirm(cadena)">Confirmar</button>
               <button (click)="Cancel()">Cancelar</button>  
           </div>
       </div>

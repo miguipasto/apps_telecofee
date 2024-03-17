@@ -150,6 +150,19 @@ button {
 
 }
 
+.selector-azucar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2% 2%;
+}
+
+.selector-azucar button{
+    background: transparent;
+    border-width: 0px;
+}
+
+
 .add-balance-popup button{
     cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
     border: none; /* Remueve el borde del botón */
@@ -159,9 +172,9 @@ button {
     margin-left: 10%;
     margin-right: 10%;
     font-size: 20px;
+    margin-top: 5%;
     margin-bottom: 5%;
     height: 5vh;
-    width: 30vw;
     font-weight: bold;
 }
 

@@ -114,6 +114,39 @@ export class DataService {
     }
   }
 
-
+  async crearCompra(compra: any) {
+    const uid = this.userService.getUserUid();
+    if (!uid) {
+      console.error('No hay un usuario autenticado.');
+      return;
+    }
   
+    // Comprobamos el saldo del cliente
+    const datosUser: any = await this.obetenerDatosUsuario();
+    console.log(datosUser.saldo)
+  
+    if (datosUser.saldo < compra.precio) {
+      console.log("Dinero insuficiente.")
+      return null;
+    } else {
+      console.log("Saldo suficiente")
+      
+      // Actualizamos el saldo
+      const nuevoSaldo = datosUser.saldo - compra.precio;
+      await this.actualizarSaldoUsuario(nuevoSaldo);
+
+      // Referencia a la subcolección de compras para el usuario actual
+      const comprasRef = collection(this.firestore, `compras/${uid}/compras`);
+  
+      try {
+        const docRef = await addDoc(comprasRef, compra);
+        console.log("Compra registrada con ID: ", docRef.id);
+        // Actualiza el contador de compras aquí si es necesario
+        return docRef.id;
+      } catch (error) {
+        console.error("Error al crear la compra:", error);
+        return null;
+      }
+    }
+  }
 }

@@ -22,28 +22,28 @@
       <div class="products-container">
         <div *ngFor="let product of products[selectedCategory]" class="producto">
           <div class="foto-producto">
-            <button (click)="showOverlay(product.name)">
+            <button (click)="showOverlay(product)">
               <ion-img [src]="product.img" class="producto-foto"></ion-img>  
             </button>
                    
           </div>
           <div class="texto-producto">
               <p>{{ product.name }}</p>
-              <p>{{ product.price }}</p>
+              <p>{{ product.price }}€</p>
           </div>
         </div>
 
       </div>
       <div class="overlay" *ngIf="isOverlayVisible">
         <div class="add-balance-popup">
-          <h2 style="color: #70442b;"><b>{{ productoSeleccionado }}</b></h2>
-          <div>
-            <b>Azúcar</b> <!-- Aquí se agrega "Azúcar" -->
-            <ion-button style="color:black" color="transparent" (click)="decrementAmount()" [disabled]="amountToAdd <= 0"><span>&#9660;</span></ion-button>
+          <h2 style="color: #70442b;"><b>{{ productoSeleccionado.name }}</b></h2>
+          <div class="selector-azucar">
+            <b style="color: black">Azúcar</b> <!-- Aquí se agrega "Azúcar" -->
+            <button (click)="decrementAmount()" [disabled]="amountToAdd <= 0"><span>&#9660;</span></button>
             <input type="text" [(ngModel)]="amountToAdd" placeholder="Cantidad a añadir" (input)="validateAmount($event)">
-            <ion-button color="transparent" style="color:black" (click)="incrementAmount()" [disabled]="amountToAdd >= 5"><span>&#9650;</span></ion-button>
+            <button (click)="incrementAmount()" [disabled]="amountToAdd >= 5"><span>&#9650;</span></button>
           </div>
-          <button (click)="addBalance()">Añadir</button>
+          <button (click)="addBalance()">Comprar</button>
         </div>
       </div>
       

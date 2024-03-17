@@ -49,11 +49,13 @@
   }
   
   .botón {
+    position: absolute;
+    justify-content: center;
     margin-bottom: 20px;
     border-radius: 40px;
+    margin-left: 7.5%;
     height: 8%;
     width: 85%;
-    position: absolute;
     bottom: 30px;
     background-color: #e8dbab;
   }
@@ -71,6 +73,8 @@
     color: #000;
     text-align: center;
     padding: 3%; // espacio entre elementos
+    margin-top: 12%;
+    position: relative;
   }
   
   .sign-up {
@@ -78,4 +82,10 @@
     text-decoration: underline; 
     font-weight: bold;
     cursor: pointer;
+  }
+
+  .login-button{
+    background: transparent;
+    border-width: 0px;
+    
   }
