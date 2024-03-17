@@ -1,0 +1,7 @@
+{
+  "name": "TeleCoffe_Workers",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

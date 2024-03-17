@@ -1,0 +1,60 @@
+@import "~@fortawesome/fontawesome-free/css/all.css";
+
+.main{
+    background-color: white;
+    height: 100%;
+}
+
+.header {
+    align-items: center;
+    background-color: #f8f1d7;
+    border-bottom-left-radius: 50%;
+    border-bottom-right-radius: 50%;
+    height: 37%;
+}
+
+.logo-container{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-box{
+    display: block;
+    background-color: white;  
+    width: 25vw;
+    height: 25vw;
+    border-radius: 50%;
+    margin-top: 15%;
+}
+
+.logo{
+    width: 25vw;
+    height: 25vw;
+}
+
+/* Footer */
+.tab-bar {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    padding: 10px 0;
+
+  }
+  
+  .tab-button {
+    text-decoration: none;
+    color: #000;
+  }
+  
+  .tab-button i {
+    font-size: 24px;
+  }
+  
+  /* Aquí definimos los colores para cada página activa */
+  .home.active i { color: red; }
+  .wallet.active i { color: blue; }
+  .support.active i { color: green; }
+  .profile.active i { color: orange; }
+  
+

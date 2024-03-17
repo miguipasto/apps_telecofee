@@ -1,0 +1,22 @@
+// Estilos para poder solapar header y poner texto
+.home-container{
+    margin-top: 35%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 0.5fr 2fr;
+    row-gap: 5%;
+}
+
+/* Header especial para cada pantalla */
+.home-header{
+    display: grid;
+    justify-content: center;
+    text-align: center;
+}
+
+
+/* Contenido */
+.home-content{
+    display: grid;
+    grid-template-rows: 1fr 6fr;
+}
