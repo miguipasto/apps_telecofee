@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
+import { MqttService, IMqttMessage } from 'ngx-mqtt';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -14,22 +16,28 @@ export class HomePage implements OnInit {
   amountToAdd=0;
   productoSeleccionado: any = [];
 
-  constructor(private dataService: DataService) { }
+  private subscription: Subscription | undefined;
+  public receiveNews = '';
+  public isConnection = false;
+  private readonly topic = 'prototipo/sensores';
+
+  constructor(private dataService: DataService, private mqttService: MqttService) { }
 
   ngOnInit() {
+    this.subscribeToTopic();
   }
 
   selectedCategory: string = 'cafe'; // Valor inicial para mostrar algo al inicio
   products: any = {
     cafe: [
-      { name: 'Café con leche', price: '1.35', img: '../../assets/cafe_con_leche.jpg' },
-      { name: 'Café americano', price: '1.15', img: '../../assets/cafe_americano.png' }
+      { name: 'Café con leche', price: '1.35', img: '../../assets/cafe_con_leche.jpg', available: true },
+      { name: 'Café americano', price: '1.15', img: '../../assets/cafe_americano.png', available: true }
     ],
     aperitivos: [
-      { name: 'Patatillas', price: '0.85', img: '../../assets/patatillas.png' }
+      { name: 'Patatillas', price: '0.85', img: '../../assets/patatillas.png', available: true }
     ],
     bebidas: [
-      { name: 'Leche', price: '0.80', img: '../../assets/leche.png' }
+      { name: 'Leche', price: '0.80', img: '../../assets/leche.png', available: true }
     ]
   };
 
@@ -99,6 +107,60 @@ export class HomePage implements OnInit {
 
       
     this.closeOverlay();
+  }
+
+  private subscribeToTopic() {
+    this.isConnection = true; // Asumimos conexión inicialmente
+
+    // Intentamos suscribirnos al tópico
+    this.subscription = this.mqttService.observe(this.topic).subscribe({
+      next: (message: IMqttMessage) => {
+        this.receiveNews += message.payload.toString() + '\n';
+        //console.log(message.payload.toString());
+        this.checkAvailableProducto(message.payload.toString());
+      },
+      error: (error: any) => {
+        this.isConnection = false;
+        console.error(`Connection error: ${error}`);
+      }
+    });
+  }
+
+  checkAvailableProducto(data: string) {
+    let jsonData = JSON.parse(data);
+    console.log(jsonData);
+
+    // Café con leche
+    if(jsonData.nivel_leche_pr >= 5 && jsonData.nivel_cafe_pr >=5){
+      this.products.cafe[0].available = true;
+    } else {
+      this.products.cafe[0].available = false;
+    }
+
+    // Café americano
+    if(jsonData.nivel_leche_pr >= 5 && jsonData.nivel_cafe_pr >=10){
+      this.products.cafe[1].available = true;
+    } else {
+      this.products.cafe[1].available = false;
+    }
+
+    // Patatillas
+    if(jsonData.patatillas >= 1){
+      this.products.aperitivos[0].available = true;
+    } else {
+      this.products.aperitivos[0].available = false;
+    }
+
+    // Leche
+    if(jsonData.nivel_leche_pr >= 10){
+      this.products.bebidas[0].available = true;
+    } else {
+      this.products.bebidas[0].available = false;
+    }
+
+
 
   }
+
+
 }

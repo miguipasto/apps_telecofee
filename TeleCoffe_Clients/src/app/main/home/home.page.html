@@ -25,7 +25,7 @@
             <button (click)="showOverlay(product)">
               <ion-img [src]="product.img" class="producto-foto"></ion-img>  
             </button>
-                   
+            <div *ngIf="!product.available" class="producto-overlay">No disponible</div>
           </div>
           <div class="texto-producto">
               <p>{{ product.name }}</p>
