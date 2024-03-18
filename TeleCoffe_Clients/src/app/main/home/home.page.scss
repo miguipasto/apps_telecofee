@@ -96,18 +96,13 @@
     justify-content: center;
 }
 
-.foto-producto {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
 button {
     background: transparent;
 }
 
 .producto-foto {
     max-width: 100%;
+    max-height: 19vh;
     border-radius: 10px;
 }
 
@@ -179,3 +174,15 @@ button {
 }
 
 
+.producto-overlay {
+    border-radius: 10px;
+    width: 46%;
+    height: 33%;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente negro */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
