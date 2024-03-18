@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, addDoc, collection, setDoc, doc, getDoc, updateDoc, query, getDocs } from '@angular/fire/firestore';
+import { Firestore, addDoc, collection, setDoc, doc, getDoc, updateDoc, query, getDocs, deleteDoc } from '@angular/fire/firestore';
 import { UserService } from './user.service'; 
 
 @Injectable({
@@ -40,6 +40,21 @@ export class DataService {
       console.log("Usuario creado con ID: ", uid);
     } catch (error) {
       console.error("Error al crear el usuario: ", error);
+    }
+  }
+
+  async borrarUsuario() {
+    const uid = this.userService.getUserUid();
+    if (!uid) {
+      console.error('No hay un usuario autenticado.');
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(this.firestore, 'usuarios', uid));
+      console.log("Usuario borrado con ID: ", uid);
+    } catch (error) {
+      console.error("Error al borrar el usuario: ", error);
     }
   }
 

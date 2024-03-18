@@ -48,6 +48,7 @@ export class UserService {
   async deleteAccount() {
     const auth = getAuth();
     const user = auth.currentUser;
+
     if (user != null) {
       return deleteUser(user).then(() => {
         console.log('Usuario eliminado exitosamente');

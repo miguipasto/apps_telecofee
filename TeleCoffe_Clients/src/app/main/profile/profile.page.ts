@@ -34,8 +34,8 @@ export class ProfilePage implements OnInit {
   showOverlay(cadena: string) {
     if (cadena.includes('contraseña')) {
 
-      console.log("Actual " + this.formPassword.value.newPassword);
-      console.log("Nueva " + this.formPassword.value.currentPassword);
+      console.log("Nueva " + this.formPassword.value.newPassword);
+      console.log("Actual " + this.formPassword.value.currentPassword);
   
       if (this.formPassword.invalid) {
         const currentPasswordErrors = this.formPassword?.get('currentPassword')?.errors;
@@ -57,13 +57,25 @@ export class ProfilePage implements OnInit {
   
   async Confirm(cadena: string) {
     if (cadena.includes('Eliminar')) {
-      await this.authService.deleteAccount().then(() => {
-        console.log('Cuenta eliminada');
-        this.route.navigate(['login']);
+      await this.authService.deleteAccount().then(async () => {
+        await this.dataService.borrarUsuario().then(() => {
+          console.log('Cuenta eliminada');
+          this.route.navigate(['login']);
+        })
+        
       }).catch(error => {
         console.error('Error al eliminar la cuenta', error);
       });
+    }else{
+      const np=this.formPassword.value.currentPassword
+      const op=this.formPassword.value.newPassword
+
+      this.authService.reauthenticateWithCredential(np,op);
+      this.formPassword.reset();
+
+
     }
+    this.isOverlayVisible = false;
   }
   
 
