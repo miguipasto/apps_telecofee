@@ -34,7 +34,7 @@
         </div>
 
       </div>
-      <div class="overlay" *ngIf="isOverlayVisible">
+      <div class="overlay" *ngIf="isOverlayVisibleAzucar">
         <div class="add-balance-popup">
           <h2 style="color: #70442b;"><b>{{ productoSeleccionado.name }}</b></h2>
           <div class="selector-azucar">
@@ -44,6 +44,13 @@
             <button (click)="incrementAmount()" [disabled]="amountToAdd >= 5"><span>&#9650;</span></button>
           </div>
           <button (click)="addBalance()">Comprar</button>
+        </div>
+      </div>
+
+      <div class="overlay" *ngIf="isOVerlayVisible">
+        <div class="add-balance-popup">
+          <h2 style="color: #70442b;"><b>{{ productoSeleccionado.name }}</b></h2>
+          <button (click)="comprar(productoSeleccionado)">Comprar</button>
         </div>
       </div>
       
