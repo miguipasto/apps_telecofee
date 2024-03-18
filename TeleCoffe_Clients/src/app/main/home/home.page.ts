@@ -9,7 +9,8 @@ import { DataService } from 'src/app/services/data.service';
 })
 export class HomePage implements OnInit {
 
-  isOverlayVisible: boolean = false;
+  isOverlayVisibleAzucar: boolean = false;
+  isOVerlayVisible: boolean = false;
   amountToAdd=0;
   productoSeleccionado: any = [];
 
@@ -39,19 +40,19 @@ export class HomePage implements OnInit {
   showOverlay(producto: any) {
     this.productoSeleccionado = producto;
     if(producto.name == "Café con leche" || producto.name == "Café americano"){
-      this.isOverlayVisible = true;
+      this.isOverlayVisibleAzucar = true;
     } else{
-      this.comprar(producto);
+      this.isOVerlayVisible = true;
     }
   }
 
   closeOverlay() {
-    this.isOverlayVisible = false;
+    this.isOverlayVisibleAzucar = false;
+    this.isOVerlayVisible = false;
   }
   
   addBalance() {
     console.log("Añadiendo azúcar:", this.amountToAdd);
-    this.closeOverlay();
     this.comprar(this.productoSeleccionado);
   }
 
@@ -95,6 +96,9 @@ export class HomePage implements OnInit {
       .catch((error) => {
         console.error("Error al crear la compra:", error);
       });
+
+      
+    this.closeOverlay();
 
   }
 }
