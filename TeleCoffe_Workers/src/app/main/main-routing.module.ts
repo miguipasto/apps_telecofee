@@ -19,7 +19,15 @@ const routes: Routes = [
       {
         path: 'elementos/:nombre',
         loadChildren: () => import('./elementos/elementos.module').then(m => m.ElementosPageModule)
-      }
+      },
+      {
+        path: 'support',
+        loadChildren: () => import('./support/support.module').then(m => m.SupportPageModule)
+      },
+      {
+        path: 'profile',
+        loadChildren: () => import('./profile/profile.module').then(m => m.ProfilePageModule)
+      },
         
     ]
   },

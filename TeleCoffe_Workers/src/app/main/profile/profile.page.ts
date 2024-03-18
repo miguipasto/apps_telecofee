@@ -57,12 +57,9 @@ export class ProfilePage implements OnInit {
   
   async Confirm(cadena: string) {
     if (cadena.includes('Eliminar')) {
-      await this.authService.deleteAccount().then(async () => {
-        await this.dataService.borrarUsuario().then(() => {
-          console.log('Cuenta eliminada');
-          this.route.navigate(['login']);
-        })
-        
+      await this.authService.deleteAccount().then(() => {
+        console.log('Cuenta eliminada');
+        this.route.navigate(['login']);
       }).catch(error => {
         console.error('Error al eliminar la cuenta', error);
       });
