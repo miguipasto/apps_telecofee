@@ -17,13 +17,14 @@
 /* Contenido */
 .home-content{
     display: grid;
-    grid-template-rows: 1fr 6fr;
+    grid-template-rows: 0.5fr 8fr;
 }
 
 /* Linea de selección de productos */
 .titles-container{
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    justify-content: center;
+    align-items: center;
     padding-left: 10%;
     padding-right: 10%;
 }
@@ -37,6 +38,7 @@
 .title-box{
     justify-content: center;
     align-items: center;
+    margin-top: 0px;
 }
 
 .linea-decorativa {
@@ -71,7 +73,8 @@
     flex-direction: column; 
     align-items: center; 
     justify-content: center;
-    border-radius: 10px;
+    border-radius: 30px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .foto-producto {
@@ -151,8 +154,7 @@ button {
 
 
 #tus_maquinas_texto{
-    top:10%;
-    left:50%;
+    margin-top:7vh;
     color: #70442b;
     font-weight: bold;
     font-size: 30px;

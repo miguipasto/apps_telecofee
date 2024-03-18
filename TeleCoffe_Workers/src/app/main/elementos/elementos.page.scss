@@ -1,3 +1,5 @@
+@import "~@fortawesome/fontawesome-free/css/all.css";
+
 // Estilos para poder solapar header y poner texto
 .home-container{
     margin-top: 35%;
@@ -17,7 +19,7 @@
 /* Contenido */
 .home-content{
     display: grid;
-    grid-template-rows: 1fr 6fr;
+    grid-template-rows: 1fr 4fr 2fr;
 }
 
 /* Linea de selección de productos */
@@ -28,6 +30,7 @@
     padding-right: 10%;
 }
 
+
 .titles-container h2{
     font-size: 22px;
     color: rgba(192, 191, 191, 0.959);
@@ -37,6 +40,7 @@
 .title-box{
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
 
 .linea-decorativa {
@@ -56,13 +60,12 @@
     display: block;
 }
 
-/* Productos */
 .products-container {
     display: grid;
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(2, minmax(120px, 1fr)); /* Cambiar a tres columnas */
+    gap: 20px; /* Aumentar el espacio entre elementos */
     overflow: auto;
-    padding: 10px;
+    padding: 5% 5%;
 }
 
 .producto {
@@ -71,7 +74,10 @@
     flex-direction: column; 
     align-items: center; 
     justify-content: center;
-    border-radius: 10px;
+    border-radius: 30px;
+    width: 40vw;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding-top: 5%;
 }
 
 .foto-producto {
@@ -113,6 +119,7 @@ button {
     display: flex;
     justify-content: center; /* Centra horizontalmente */
     align-items: center; /* Centra verticalmente */
+    z-index:2;
   }
   
 .add-balance-popup {
@@ -122,6 +129,7 @@ button {
     border-radius: 40px; /* Bordes redondeados */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
     text-align: center; /* Alinea el texto al centro */
+    
 }
   
 
@@ -131,6 +139,7 @@ button {
     margin-bottom: 5%;
     background-color: white;
     color: black;
+    
 
 }
 
@@ -149,31 +158,52 @@ button {
     font-weight: bold;
 }
 
+#icono {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 135%;
+    width: 10%; /* Tamaño del icono */
+    height: auto; /* Para mantener la proporción del icono */
+    color: white;
+  }
+  
+  
 
 #tus_maquinas_texto{
-    top:40vh;
-    left:50%;
+    margin-top:7vh;
     color: #70442b;
     font-weight: bold;
     font-size: 30px;
 }
 
 .tanque {
-    width: 50px; /* Ancho del tanque */
-    height: 100px; /* Altura del tanque */
-    border: 1px solid black; /* Borde del tanque */
+    width: 30vw; /* Ancho del tanque */
+    height: 18vh; /* Altura del tanque */
+    border: 1px solid #70442b; /* Borde del tanque */
     position: relative; /* Posición relativa para los elementos internos */
   }
   
   .contenido {
-    background-color: blue; /* Color del contenido (representa el líquido) */
+    background-color: rgb(163, 204, 253);
     position: absolute; /* Posición absoluta para ajustar la altura */
     bottom: 0; /* Colocar el contenido al fondo del tanque */
     left: 0; /* Alinear el contenido a la izquierda */
     width: 100%; /* Ancho completo del contenido */
+    z-index: 0; 
   }
   
   .nombre {
     margin-top: 10px; /* Espacio entre el tanque y el nombre del producto */
+    color: black;
+  }
+
+  #porcentaje{
+    align-content: center;
+    text-align: center;
+    color: #6a6867;
+    font-weight: bold;
+    z-index: 1;
+    position: relative;
   }
   
