@@ -3,8 +3,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 
 import * as apex from "ng-apexcharts";
+import { DataService, MyData } from 'src/app/services/data.service';
+import { HttpClient} from '@angular/common/http';
+import {ApexXAxis } from 'ng-apexcharts';
 
    
+
+export type ChartOptions = {
+  xaxis: ApexXAxis;
+  };
+  
 @Component({
   selector: 'app-elementos',
   templateUrl: './elementos.page.html',
@@ -22,32 +30,56 @@ export class ElementosPage implements OnInit{
   series!: apex.ApexAxisChartSeries;
   chart!: apex.ApexChart;
   title!: apex.ApexTitleSubtitle;
+  //xaxis!: apex.ApexXAxis;
+  datos: any[] = [];
+  datos_fecha: String[]=[]
+  datos_porcentaje: number[]=[]
 
-  constructor(private route: ActivatedRoute, private router:Router) { 
+
+  constructor(private route: ActivatedRoute, private router:Router, private http: HttpClient) { 
   }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.nombre = params.get('nombre') || ''; // Obtener el valor del parámetro 'nombre' y asignarlo a nombre
     });
-    this.initializeChartOption();
+  
+    this.http.get<any>('assets/datos.JSON').subscribe(data => {
+      console.log(data);
+      data.datos.forEach((dato: { fecha: string; porcentaje: number; }) => {
+        this.datos_fecha.push(dato.fecha);
+        this.datos_porcentaje.push(dato.porcentaje);
+      });
 
-  }
-
-  private initializeChartOption(): void{
-    this.title= {
-      text: 'Nivel de' + this.selectedCategory
+  
+    for (let i = 0; i < this.datos_fecha.length; i++) {
+      this.datos.push({
+        x: this.datos_fecha[i],
+        y: this.datos_porcentaje[i]
+      });
     }
-
-    this.series= [{
-      name: 'Java',
-      data: [12,10,19]
+      
+      // Inicializar las opciones del gráfico después de obtener los datos
+      this.initializeChartOption();
+    });
+  }
+  
+  private initializeChartOption(): void {
+    this.title = {
+      text: 'Nivel de ' + this.selectedCategory
+    };
+  
+    this.series = [{
+      name: 'Porcentaje',
+      data: this.datos  
     }];
-
-    this.chart= {
+  
+    this.chart = {
       type: 'bar',
-    }
+    };
+  
   }
+  
 
   showOverlay(nombre: string) {
     this.isOverlayVisible = true;
