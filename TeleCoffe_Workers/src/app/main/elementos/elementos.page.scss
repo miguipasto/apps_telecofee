@@ -20,6 +20,7 @@
 .home-content{
     display: grid;
     grid-template-rows: 1fr 4fr 2fr;
+    position:relative;
 }
 
 /* Linea de selección de productos */
@@ -28,6 +29,16 @@
     justify-content: space-around;
     padding-left: 10%;
     padding-right: 10%;
+    z-index: 2;
+}
+
+.titles-container_2{
+    display: flex;
+    justify-content: space-around;
+    padding-left: 45%;
+    padding-right: 10%;
+    gap: 20px;
+    z-index: 2;
 }
 
 

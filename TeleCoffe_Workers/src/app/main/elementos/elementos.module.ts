@@ -7,11 +7,13 @@ import { IonicModule } from '@ionic/angular';
 import { ElementosPageRoutingModule } from './elementos-routing.module';
 
 import { ElementosPage } from './elementos.page';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
+    NgApexchartsModule,
     IonicModule,
     ElementosPageRoutingModule
   ],
