@@ -4,7 +4,16 @@ const { db } = require('./../Firebase');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.send('Api TeleCoffeWorkers');
+  res.send([
+    "http://localhost:5000/api/teleco/compras",
+    "http://localhost:5000/api/biologia/compras",
+    "http://localhost:5000/api/minas/compras",
+    "http://localhost:5000/api/industriales/compras",
+    "http://localhost:5000/api/teleco/nivel",
+    "http://localhost:5000/api/biologia/nivel",
+    "http://localhost:5000/api/minas/nivel",
+    "http://localhost:5000/api/industriales/nivel"
+]);
 });
 
 
