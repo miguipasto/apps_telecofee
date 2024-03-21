@@ -1,38 +1,95 @@
+
 <div class="home-container">
   <div class="home-header">
     <!-- Contenido del encabezado si lo tienes -->
+    <div id="icono">
+      <button color="transparent" id="icono" class="fas fa-arrow-left" (click)="redirigir_maquinas()"></button>
+    </div>
   </div>
+
   <div class="home-content">
     <div class="titles-container">
       <div class="title-box">
         <h2 id="tus_maquinas_texto">{{ nombre }}</h2> <!-- Mostrar la categoría seleccionada -->
         <hr class="linea-decorativa">
       </div>
-    </div>
-    <div class="products-content">
-      <div class="products-container">
-        <div *ngFor="let product of product[selectedCategory]" class="producto">
-          <div class="tanque">
-            <div class="contenido" [style.height.%]="calcularPorcentaje(product.porcentaje)">
-              <!-- Contenido del tanque -->
-            </div>
-          </div>
-          <div class="nombre">{{ product.name }}</div>
-        </div>
+         <!-- División adicional para la selección de categorías -->
+    <div class="titles-container_2" style="top:0; overflow-x: auto;" *ngIf="selectedCategory !== 'consumos'">
+      <div class="title-box" (click)="selectCategory('agua')" [ngClass]="{'active': selectedCategory === 'agua'}">
+        <h2>Agua</h2>
+        <hr class="linea-decorativa">
       </div>
-    </div>
-  </div>
-
-  <!-- División adicional para la selección de categorías -->
-  <div class="home-content">
-    <div class="titles-container">
-      <div class="title-box" (click)="selectCategory('consumos')" [ngClass]="{'active': selectedCategory === 'consumos'}">
-        <h2>Consumos</h2>
+      <div class="title-box" (click)="selectCategory('cafe')" [ngClass]="{'active': selectedCategory === 'cafe'}">
+        <h2>Café</h2>
+        <hr class="linea-decorativa">
+      </div>
+      <div class="title-box" (click)="selectCategory('leche')" [ngClass]="{'active': selectedCategory === 'leche'}">
+        <h2>Leche</h2>
+        <hr class="linea-decorativa">
+      </div>
+      <div class="title-box" (click)="selectCategory('patatas')" [ngClass]="{'active': selectedCategory === 'patatas'}">
+        <h2>Patatas</h2>
         <hr class="linea-decorativa">
       </div>
       <div class="title-box" (click)="selectCategory('ventas')" [ngClass]="{'active': selectedCategory === 'ventas'}">
         <h2>Ventas</h2>
         <hr class="linea-decorativa">
+      </div>
+    </div>
+    </div>
+
+ 
+
+    <div class="products-content" >
+      <!-- Añadir aquí el elemento canvas para la gráfica de barras -->
+      <div  class='grafica' *ngIf="selectedCategory !== 'consumos'">
+        <apx-chart [series]="series" [chart]="chart" [title]="title"></apx-chart>
+      </div>
+
+      <div class="products-container" *ngIf="selectedCategory === 'consumos'">
+        <div *ngFor="let product of product[selectedCategory]" class="producto">
+          <button color="transparent" (click)="showOverlay(product.name)">
+            <div class="tanque" *ngIf="product.name !== 'Patatillas'">
+              <h2 id="porcentaje"[ngStyle]="{'color': obtenerColorPorcentaje(product.porcentaje)}">{{product.porcentaje}}%</h2>
+              <div class="contenido" [ngStyle]="{'height': calcularPorcentaje(product.porcentaje) + '%'}"></div>
+            </div>
+            <div *ngIf="product.name !== 'Patatillas'" class="nombre">
+              <div class="nombre">{{ product.name }}</div>
+            </div>
+            <div *ngIf="product.name === 'Patatillas'" class="nombre">
+              <h2 id="porcentaje"[ngStyle]="{'color': obtenerColorPorcentaje(product.porcentaje)}">{{product.porcentaje}}</h2>
+              <h2 id="porcentaje"[ngStyle]="{'color': obtenerColorPorcentaje(product.porcentaje)}">Unidades</h2>
+              <div class="nombre">{{ product.name }}</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      
+    </div>
+
+    <!-- División adicional para la selección de categorías -->
+    <div class="titles-container">
+      <div class="title-box" (click)="selectCategory('consumos')" [ngClass]="{'active': selectedCategory === 'consumos'}">
+        <h2>Consumos</h2>
+        <hr class="linea-decorativa">
+      </div>
+      <div class="title-box" (click)="selectCategory('agua')" [ngClass]="{'active': selectedCategory !== 'consumos'}">
+        <h2>Estadísticas</h2>
+        <hr class="linea-decorativa">
+      </div>
+    </div>
+
+    <!-- Overlay para mostrar detalles del producto -->
+    <div class="overlay" *ngIf="isOverlayVisible">
+      <div class="add-balance-popup">
+        <h2 style="color: #70442b;"><b>{{ productoSeleccionado }}</b></h2>
+        <div class="selector-azucar">
+          <b style="color: black">Cantidad</b> <!-- Aquí se agrega "Azúcar" -->
+          <input type="text" [(ngModel)]="amountToAdd" placeholder="Cantidad a añadir" (input)="validateAmount($event)">
+        </div>
+        <button (click)="addBalance(productoSeleccionado)">Añadir</button>
+        <button (click)="closeOverlay()">Cancelar</button>
       </div>
     </div>
   </div>
