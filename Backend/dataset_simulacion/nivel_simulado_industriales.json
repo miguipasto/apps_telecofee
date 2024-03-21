@@ -1,0 +1,8 @@
+{
+    "nombre": "industriales",
+    "nivel_leche_ml": 50,
+    "nivel_leche_pr": 20,
+    "nivel_cafe_gr": 20,
+    "nivel_cafe_pr": 10,
+    "patatillas": 8
+}
