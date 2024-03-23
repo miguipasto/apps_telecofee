@@ -71,10 +71,6 @@ def actualizar_nivel(compra_data):
             nivel_actual = maquina_nivel['niveles']
             obtener_nuevo_nivel(compra_data['producto'], nivel_actual)
             print(f"Niveles actualizados para '{compra_data['maquina']}': {nivel_actual}")
-
-            # Publicación MQTT
-            mensaje = json.dumps(nivel_actual)
-            cliente.publish(f"{compra_data['maquina']}/nivel", mensaje)
             break
 
 def obtener_nuevo_nivel(producto, nivel_actual):
@@ -129,6 +125,14 @@ obtener_historial_reposiciones(db_workers)
 try:
     while True:
         obtener_datos(db_clientes)
+
+        # Publicación MQTT
+        for maquina_nivel in niveles:
+            mensaje = json.dumps(maquina_nivel)
+            print(mensaje)
+            cliente.publish(f"{maquina_nivel['maquina']}/nivel", mensaje)
+            time.sleep(1)
+
         time.sleep(5)
 except KeyboardInterrupt:
     print("\nTerminando el programa.")
