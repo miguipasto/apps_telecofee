@@ -16,6 +16,8 @@ router.get('/', (req, res) => {
 ]);
 });
 
+const path = "/home/lpro/apps_telecofee/Backend/dataset_simulacion"
+
 
 // Compras según máquina
 router.get('/:nombre_maquina/compras', async (req, res) => {
@@ -48,7 +50,7 @@ router.get('/:nombre_maquina/compras', async (req, res) => {
         // Leer de un archivo de compras simuladas
         try {
             // Se corrige la manera de incluir el nombre de la máquina en la ruta del archivo
-            const compras = await fs.readFile(`./dataset_simulacion/compras_simuladas_${nombre_maquina}.json`, 'utf8');
+            const compras = await fs.readFile(`${path}/compras_simuladas_${nombre_maquina}.json`, 'utf8');
             res.json(JSON.parse(compras));
         } catch (error) {
             console.error('Error al leer el archivo de compras simuladas:', error);
@@ -64,7 +66,7 @@ router.get('/:nombre_maquina/nivel', async (req, res) => {
     // Leer de un archivo de compras simuladas
     try {
         // Se corrige la manera de incluir el nombre de la máquina en la ruta del archivo
-        const compras = await fs.readFile(`./dataset_simulacion/nivel_simulado_${nombre_maquina}.json`, 'utf8');
+        const compras = await fs.readFile(`${path}/nivel_simulado_${nombre_maquina}.json`, 'utf8');
         res.json(JSON.parse(compras));
     } catch (error) {
         console.error('Error al leer el archivo de compras simuladas:', error);
