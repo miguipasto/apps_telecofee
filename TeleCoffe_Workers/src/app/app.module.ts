@@ -9,10 +9,13 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
+import { NgApexchartsModule } from 'ng-apexcharts';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
+    NgApexchartsModule,
     IonicModule.forRoot(),
     AppRoutingModule, 
     provideFirebaseApp(() => initializeApp({

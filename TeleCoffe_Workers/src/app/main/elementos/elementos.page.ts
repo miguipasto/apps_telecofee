@@ -1,25 +1,85 @@
-import { Component, OnInit } from '@angular/core';
+//import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 
+import * as apex from "ng-apexcharts";
+import { DataService, MyData } from 'src/app/services/data.service';
+import { HttpClient} from '@angular/common/http';
+import {ApexXAxis } from 'ng-apexcharts';
+
+   
+
+export type ChartOptions = {
+  xaxis: ApexXAxis;
+  };
+  
 @Component({
   selector: 'app-elementos',
   templateUrl: './elementos.page.html',
   styleUrls: ['./elementos.page.scss'],
 })
-export class ElementosPage implements OnInit {
+export class ElementosPage implements OnInit{
 
   isOverlayVisible: boolean = false;
   amountToAdd!: number | null;
   productoSeleccionado: string = "";
   nombre: string = ""; // Cambiado a string
 
-  constructor(private route: ActivatedRoute, private router:Router) { }
+
+
+  series!: apex.ApexAxisChartSeries;
+  chart!: apex.ApexChart;
+  title!: apex.ApexTitleSubtitle;
+  //xaxis!: apex.ApexXAxis;
+  datos: any[] = [];
+  datos_fecha: String[]=[]
+  datos_porcentaje: number[]=[]
+
+
+  constructor(private route: ActivatedRoute, private router:Router, private http: HttpClient) { 
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.nombre = params.get('nombre') || ''; // Obtener el valor del parámetro 'nombre' y asignarlo a nombre
     });
+  
+    this.http.get<any>('assets/datos.JSON').subscribe(data => {
+      console.log(data);
+      data.datos.forEach((dato: { fecha: string; porcentaje: number; }) => {
+        this.datos_fecha.push(dato.fecha);
+        this.datos_porcentaje.push(dato.porcentaje);
+      });
+
+  
+    for (let i = 0; i < this.datos_fecha.length; i++) {
+      this.datos.push({
+        x: this.datos_fecha[i],
+        y: this.datos_porcentaje[i]
+      });
+    }
+      
+      // Inicializar las opciones del gráfico después de obtener los datos
+      this.initializeChartOption();
+    });
   }
+  
+  private initializeChartOption(): void {
+    this.title = {
+      text: 'Nivel de ' + this.selectedCategory
+    };
+  
+    this.series = [{
+      name: 'Porcentaje',
+      data: this.datos  
+    }];
+  
+    this.chart = {
+      type: 'bar',
+    };
+  
+  }
+  
 
   showOverlay(nombre: string) {
     this.isOverlayVisible = true;
@@ -39,9 +99,20 @@ export class ElementosPage implements OnInit {
       { name: 'Leche',porcentaje:0},
       { name: 'Patatillas',porcentaje:0}
     ],
+    agua: [
+    ],
+    cafe: [
+      
+    ],
+    leche: [
+      
+    ],
+    patatillas: [
+      
+    ],
     ventas: [
       
-    ]
+    ]    
   };
 
   selectCategory(category: string) {
@@ -86,7 +157,7 @@ export class ElementosPage implements OnInit {
   }
 
   actualizarPorcentaje(categoria: string, indice: number, nuevoPorcentaje: number) {
-    if (categoria === 'consumos' || categoria === 'ventas') {
+    if (categoria === 'consumos' || categoria === 'estadisticas') {
       this.product[categoria][indice].porcentaje = nuevoPorcentaje;
     } else {
       console.error('Categoría no válida');
@@ -133,6 +204,9 @@ export class ElementosPage implements OnInit {
     }
     
   }
+
+
+
 }
 function rgb(arg0: number, arg1: number, arg2: number): string {
   throw new Error('Function not implemented.');
