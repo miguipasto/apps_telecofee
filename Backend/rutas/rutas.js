@@ -16,7 +16,6 @@ router.get('/', (req, res) => {
 ]);
 });
 
-
 // Compras según máquina
 router.get('/:nombre_maquina/compras', async (req, res) => {
     const { nombre_maquina } = req.params;
