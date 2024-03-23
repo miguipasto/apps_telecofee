@@ -76,12 +76,16 @@ def actualizar_nivel(compra_data):
 def obtener_nuevo_nivel(producto, nivel_actual):
     # Esta función actualiza los niveles basándose en el producto comprado
     if producto == 'Café con leche':
-        nivel_actual['nivel_leche_ml'] = max(nivel_actual.get('nivel_leche_ml', 200) - 10, 0)
-        nivel_actual['nivel_cafe_gr'] = max(nivel_actual.get('nivel_cafe_gr', 100) - 5, 0)
+        nivel_actual['nivel_leche_ml'] = nivel_actual.get('nivel_leche_ml') - 10
+        nivel_actual['nivel_leche_pr'] = (nivel_actual.get('nivel_leche_ml')*100) / niveles_maximos.get('nivel_leche_ml')
+
+        nivel_actual['nivel_cafe_gr'] = nivel_actual.get('nivel_cafe_gr') - 5
+        nivel_actual['nivel_cafe_pr'] = (nivel_actual.get('nivel_cafe_gr')*100) / niveles_maximos.get('nivel_cafe_gr')
     elif producto == 'Café americano':
-        nivel_actual['nivel_cafe_gr'] = max(nivel_actual.get('nivel_cafe_gr', 100) - 10, 0)
+        nivel_actual['nivel_cafe_gr'] = nivel_actual.get('nivel_cafe_gr') - 5
+        nivel_actual['nivel_cafe_pr'] = (nivel_actual.get('nivel_cafe_gr')*100) / niveles_maximos.get('nivel_cafe_gr')
     elif producto == 'Patatillas':
-        nivel_actual['patatillas'] = nivel_actual.get('patatillas', 10) - 1
+        nivel_actual['patatillas'] = nivel_actual.get('patatillas') - 1
 
 ### PUBLICACIÓN MQTT ###
 # Configuración
