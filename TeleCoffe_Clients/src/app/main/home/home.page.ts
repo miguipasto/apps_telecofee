@@ -131,21 +131,21 @@ export class HomePage implements OnInit {
     console.log(jsonData);
 
     // Café con leche
-    if(jsonData.nivel_leche_pr >= 5 && jsonData.nivel_cafe_pr >=5){
+    if(jsonData.niveles.nivel_leche_pr >= 5 && jsonData.niveles.nivel_cafe_pr >=5){
       this.products.cafe[0].available = true;
     } else {
       this.products.cafe[0].available = false;
     }
 
     // Café americano
-    if(jsonData.nivel_leche_pr >= 5 && jsonData.nivel_cafe_pr >=10){
+    if(jsonData.niveles.nivel_leche_pr >= 5 && jsonData.niveles.nivel_cafe_pr >=10){
       this.products.cafe[1].available = true;
     } else {
       this.products.cafe[1].available = false;
     }
 
     // Patatillas
-    if(jsonData.patatillas >= 1){
+    if(jsonData.niveles.patatillas >= 1){
       this.products.aperitivos[0].available = true;
     } else {
       this.products.aperitivos[0].available = false;

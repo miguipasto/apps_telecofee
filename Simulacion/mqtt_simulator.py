@@ -71,21 +71,21 @@ def actualizar_nivel(compra_data):
             nivel_actual = maquina_nivel['niveles']
             obtener_nuevo_nivel(compra_data['producto'], nivel_actual)
             print(f"Niveles actualizados para '{compra_data['maquina']}': {nivel_actual}")
-
-            # Publicación MQTT
-            mensaje = json.dumps(nivel_actual)
-            cliente.publish(f"{compra_data['maquina']}/nivel", mensaje)
             break
 
 def obtener_nuevo_nivel(producto, nivel_actual):
     # Esta función actualiza los niveles basándose en el producto comprado
     if producto == 'Café con leche':
-        nivel_actual['nivel_leche_ml'] = max(nivel_actual.get('nivel_leche_ml', 200) - 10, 0)
-        nivel_actual['nivel_cafe_gr'] = max(nivel_actual.get('nivel_cafe_gr', 100) - 5, 0)
+        nivel_actual['nivel_leche_ml'] = nivel_actual.get('nivel_leche_ml') - 10
+        nivel_actual['nivel_leche_pr'] = (nivel_actual.get('nivel_leche_ml')*100) / niveles_maximos.get('nivel_leche_ml')
+
+        nivel_actual['nivel_cafe_gr'] = nivel_actual.get('nivel_cafe_gr') - 5
+        nivel_actual['nivel_cafe_pr'] = (nivel_actual.get('nivel_cafe_gr')*100) / niveles_maximos.get('nivel_cafe_gr')
     elif producto == 'Café americano':
-        nivel_actual['nivel_cafe_gr'] = max(nivel_actual.get('nivel_cafe_gr', 100) - 10, 0)
+        nivel_actual['nivel_cafe_gr'] = nivel_actual.get('nivel_cafe_gr') - 5
+        nivel_actual['nivel_cafe_pr'] = (nivel_actual.get('nivel_cafe_gr')*100) / niveles_maximos.get('nivel_cafe_gr')
     elif producto == 'Patatillas':
-        nivel_actual['patatillas'] = nivel_actual.get('patatillas', 10) - 1
+        nivel_actual['patatillas'] = nivel_actual.get('patatillas') - 1
 
 ### PUBLICACIÓN MQTT ###
 # Configuración
@@ -129,6 +129,14 @@ obtener_historial_reposiciones(db_workers)
 try:
     while True:
         obtener_datos(db_clientes)
+
+        # Publicación MQTT
+        for maquina_nivel in niveles:
+            mensaje = json.dumps(maquina_nivel)
+            print(mensaje)
+            cliente.publish(f"{maquina_nivel['maquina']}/nivel", mensaje)
+            time.sleep(1)
+
         time.sleep(5)
 except KeyboardInterrupt:
     print("\nTerminando el programa.")

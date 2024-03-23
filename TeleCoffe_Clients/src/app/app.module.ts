@@ -16,7 +16,7 @@ import { MqttModule, IMqttServiceOptions } from 'ngx-mqtt';
 
 // Configuración de MQTT
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
-  hostname: 'localhost',
+  hostname: '83.35.221.176',
   port: 4500,
   path: '/mqtt',
   protocol: 'ws', 
