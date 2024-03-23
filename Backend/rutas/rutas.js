@@ -16,7 +16,8 @@ router.get('/', (req, res) => {
 ]);
 });
 
-const path = "/home/lpro/apps_telecofee/Backend/dataset_simulacion"
+//const path = "/home/lpro/apps_telecofee/Backend/dataset_simulacion"
+const path = "/home/miguel/LPRO/apps_telecofee/Backend/dataset_simulacion"
 
 
 // Compras según máquina

@@ -19,7 +19,7 @@ export class HomePage implements OnInit {
   private subscription: Subscription | undefined;
   public receiveNews = '';
   public isConnection = false;
-  private readonly topic = 'prototipo/sensores';
+  private readonly topic = 'teleco/nivel';
 
   constructor(private dataService: DataService, private mqttService: MqttService) { }
 
@@ -89,7 +89,7 @@ export class HomePage implements OnInit {
 
   comprar(producto: any){
     console.log("Comprando " + producto.name)
-    const compra = {"producto": producto.name, "precio": producto.price, "fecha": new Date()};
+    const compra = {"producto": producto.name, "precio": producto.price, "fecha": new Date(), "maquina": "teleco"};
 
     this.dataService.crearCompra(compra)
       .then((response: any) => {
@@ -158,9 +158,5 @@ export class HomePage implements OnInit {
       this.products.bebidas[0].available = false;
     }
 
-
-
   }
-
-
 }
