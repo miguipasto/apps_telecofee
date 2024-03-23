@@ -1,9 +1,9 @@
 // Estilos para poder solapar header y poner texto
 .home-container{
-    margin-top: 35%;
+    margin-top: 20%;
     height: 100%;
     display: grid;
-    grid-template-rows: 0.5fr 2fr;
+    grid-template-rows: 0.5fr 4fr;
     row-gap: 5%;
 }
 
@@ -14,52 +14,37 @@
     text-align: center;
 }
 
+
 /* Contenido */
 .home-content{
     display: grid;
     grid-template-rows: 0.5fr 8fr;
 }
 
-/* Linea de selección de productos */
 .titles-container{
     display: grid;
     justify-content: center;
     align-items: center;
-    padding-left: 10%;
-    padding-right: 10%;
 }
 
 .titles-container h2{
-    font-size: 22px;
-    color: rgba(192, 191, 191, 0.959);
-    margin-bottom: 0px;
-}
-
-.title-box{
-    justify-content: center;
-    align-items: center;
-    margin-top: 0px;
+    color: #70442b;
+    font-weight: bold;
+    font-size: 30px;
+    margin: 0;
 }
 
 .linea-decorativa {
-    display: none;
-    height: 4px; /* Grosor de la línea */
-    border-radius: 20px; /* Hacer la línea circular */
-    background-color: #70442b; /* Color de la línea */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra debajo de la línea */
-}
-
-.active h2 {
-    font-weight: bold;
-    color: #70442b;
-  }
-  
-.active .linea-decorativa {
-    display: block;
+    display: grid;
+    height: 5px;
+    width: 100%;
+    border-radius: 20px;
+    background-color: #70442b;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
 }
 
 /* Productos */
-.products-container {
+.products-content {
     display: grid;
     grid-template-columns: repeat(2, minmax(120px, 1fr));
     gap: 10px;
@@ -154,9 +139,3 @@ button {
 }
 
 
-#tus_maquinas_texto{
-    margin-top:7vh;
-    color: #70442b;
-    font-weight: bold;
-    font-size: 30px;
-}

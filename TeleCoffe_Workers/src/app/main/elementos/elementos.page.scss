@@ -1,77 +1,66 @@
 @import "~@fortawesome/fontawesome-free/css/all.css";
-
 // Estilos para poder solapar header y poner texto
-.home-container{
-    margin-top: 35%;
+.elementos-container{
+    margin-top: 20%;
     height: 100%;
     display: grid;
-    grid-template-rows: 0.5fr 2fr;
+    grid-template-rows: 0.5fr 4fr;
     row-gap: 5%;
 }
 
 /* Header especial para cada pantalla */
-.home-header{
+.elementos-header{
     display: grid;
     justify-content: center;
     text-align: center;
 }
+
+#icono {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 135%;
+    width: 10%; /* Tamaño del icono */
+    height: auto; /* Para mantener la proporción del icono */
+    color: white;
+  }
+
 
 /* Contenido */
-.home-content{
+.elementos-content{
     display: grid;
-    grid-template-rows: 1fr 4fr 2fr;
-    position:relative;
+    grid-template-rows: 0.5fr 7fr 1fr;
 }
 
-/* Linea de selección de productos */
 .titles-container{
-    display: flex;
-    justify-content: space-around;
-    padding-left: 10%;
-    padding-right: 10%;
-    z-index: 2;
-}
-
-.titles-container_2{
-    display: flex;
-    justify-content: space-around;
-    padding-left: 45%;
-    padding-right: 10%;
-    gap: 20px;
-    z-index: 2;
-}
-
-
-.titles-container h2{
-    font-size: 22px;
-    color: rgba(192, 191, 191, 0.959);
-    margin-bottom: 0px;
-}
-
-.title-box{
+    display: grid;
     justify-content: center;
     align-items: center;
-    text-align: center;
 }
 
-.linea-decorativa {
-    display: none;
-    height: 4px; /* Grosor de la línea */
-    border-radius: 20px; /* Hacer la línea circular */
-    background-color: #70442b; /* Color de la línea */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra debajo de la línea */
-}
-
-.active h2 {
-    font-weight: bold;
+.titles-container h2{
     color: #70442b;
-  }
-  
-.active .linea-decorativa {
-    display: block;
+    font-weight: bold;
+    font-size: 30px;
+    margin: 0;
 }
 
-.products-container {
+.linea-decorativa-titulo {
+    display: block;
+    height: 5px;
+    width: 100%;
+    border-radius: 20px;
+    background-color: #70442b;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+/* Main content */
+.main-content{
+    display: grid;
+}
+
+/* Contenedores */
+.contenedores-content{
     display: grid;
     grid-template-columns: repeat(2, minmax(120px, 1fr)); /* Cambiar a tres columnas */
     gap: 20px; /* Aumentar el espacio entre elementos */
@@ -97,12 +86,6 @@
     justify-content: center;
 }
 
-.foto-producto {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
 button {
     background: transparent;
 }
@@ -119,7 +102,92 @@ button {
     flex-direction: column;
     width: 100%; 
 }
-/* Añadir azucar */
+
+.tanque {
+    width: 30vw; /* Ancho del tanque */
+    height: 18vh; /* Altura del tanque */
+    border: 1px solid #70442b; /* Borde del tanque */
+    position: relative; /* Posición relativa para los elementos internos */
+}
+
+#porcentaje{
+    align-content: center;
+    text-align: center;
+    color: #6a6867;
+    font-weight: bold;
+    z-index: 1;
+    position: relative;
+}
+
+.nombre {
+    margin-top: 10px; /* Espacio entre el tanque y el nombre del producto */
+    color: black;
+}
+
+.contenido {
+    background-color: rgb(163, 204, 253);
+    position: absolute; /* Posición absoluta para ajustar la altura */
+    bottom: 0; /* Colocar el contenido al fondo del tanque */
+    left: 0; /* Alinear el contenido a la izquierda */
+    width: 100%; /* Ancho completo del contenido */
+    z-index: 0; 
+}
+
+/* Graficas */
+.graficas-content{
+    display: grid;
+    grid-template-rows: 2fr 5fr;
+}
+
+.selector-productos{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 6%;
+    overflow-x: auto;
+    margin-left: 0;
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+.grafica{
+    display: block;
+}
+
+
+/* Selector de categorias */
+.categoria-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6%;
+}
+
+.title-box h2 {
+    font-size: 22px;
+    color: rgba(192, 191, 191, 0.959);
+    margin: 0;
+}
+
+.linea-decorativa {
+    display: none;
+    height: 5px;
+    width: 100%;
+    border-radius: 20px;
+    background-color: #70442b;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.active h2 {
+    font-weight: bold;
+    color: #70442b;
+  }
+  
+.active .linea-decorativa {
+    display: block;
+}
+
+/* Overaly rellenar */
 .overlay {
     position: fixed; /* Posición fija sobre todo lo demás */
     top: 0;
@@ -143,7 +211,6 @@ button {
     
 }
   
-
 .add-balance-popup input{
     height: 5vh;
     width: 10vw;
@@ -168,53 +235,3 @@ button {
     width: 30vw;
     font-weight: bold;
 }
-
-#icono {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    font-size: 135%;
-    width: 10%; /* Tamaño del icono */
-    height: auto; /* Para mantener la proporción del icono */
-    color: white;
-  }
-  
-  
-
-#tus_maquinas_texto{
-    margin-top:7vh;
-    color: #70442b;
-    font-weight: bold;
-    font-size: 30px;
-}
-
-.tanque {
-    width: 30vw; /* Ancho del tanque */
-    height: 18vh; /* Altura del tanque */
-    border: 1px solid #70442b; /* Borde del tanque */
-    position: relative; /* Posición relativa para los elementos internos */
-  }
-  
-  .contenido {
-    background-color: rgb(163, 204, 253);
-    position: absolute; /* Posición absoluta para ajustar la altura */
-    bottom: 0; /* Colocar el contenido al fondo del tanque */
-    left: 0; /* Alinear el contenido a la izquierda */
-    width: 100%; /* Ancho completo del contenido */
-    z-index: 0; 
-  }
-  
-  .nombre {
-    margin-top: 10px; /* Espacio entre el tanque y el nombre del producto */
-    color: black;
-  }
-
-  #porcentaje{
-    align-content: center;
-    text-align: center;
-    color: #6a6867;
-    font-weight: bold;
-    z-index: 1;
-    position: relative;
-  }
-  
