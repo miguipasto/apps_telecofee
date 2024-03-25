@@ -33,7 +33,7 @@ def obtener_historial_reposiciones(db):
 
     for nivel_maquina in niveles:
         maquina = nivel_maquina['maquina']
-        path = f'reposicion/{maquina}/historial_reposiciones'
+        path = f'niveles/{maquina}/historial_reposiciones'
         documentos = db.collection(path).order_by('fecha', direction=firestore.Query.DESCENDING).limit(1).get()
         
         for documento in documentos:
