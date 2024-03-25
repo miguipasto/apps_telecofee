@@ -12,7 +12,7 @@ maquinas = ["minas", "industriales", "teleco", "biologia"]
 mensajes_recibidos = {}
 
 # Configuración Firebase
-credenciales_workers = credentials.Certificate('./lpro-workers-firebase-adminsdk-yf4f8-595b4803e9.json')
+credenciales_workers = credentials.Certificate('/home/lpro/apps_telecofee/Simulacion/lpro-workers-firebase-adminsdk-yf4f8-595b4803e9.json')
 app_workers = firebase_admin.initialize_app(credenciales_workers, name='workers')
 db_workers = firestore.client(app_workers)
 
