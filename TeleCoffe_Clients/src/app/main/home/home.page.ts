@@ -15,16 +15,16 @@ export class HomePage implements OnInit {
   isOVerlayVisible: boolean = false;
   amountToAdd=0;
   productoSeleccionado: any = [];
+  maquinaSeleccionada: String = "teleco"
 
   private subscription: Subscription | undefined;
   public receiveNews = '';
   public isConnection = false;
-  private readonly topic = 'teleco/nivel';
 
   constructor(private dataService: DataService, private mqttService: MqttService) { }
 
   ngOnInit() {
-    this.subscribeToTopic();
+    this.subscribeToTopic(this.maquinaSeleccionada);
   }
 
   selectedCategory: string = 'cafe'; // Valor inicial para mostrar algo al inicio
@@ -40,6 +40,10 @@ export class HomePage implements OnInit {
       { name: 'Leche', price: '0.80', img: '../../assets/leche.png', available: true }
     ]
   };
+
+  onMaquinaSeleccionada(){
+    this.subscribeToTopic(this.maquinaSeleccionada);
+  }
 
   selectCategory(category: string) {
     this.selectedCategory = category;
@@ -109,11 +113,18 @@ export class HomePage implements OnInit {
     this.closeOverlay();
   }
 
-  private subscribeToTopic() {
-    this.isConnection = true; // Asumimos conexión inicialmente
+  private subscribeToTopic(maquina : String) {
+    this.isConnection = true;
+    const topic = `${this.maquinaSeleccionada}/nivel`;
+
+    // Primero, verifica si ya hay una suscripción y desuscríbete
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      console.log('Desuscripto del tópico anterior.');
+    }
 
     // Intentamos suscribirnos al tópico
-    this.subscription = this.mqttService.observe(this.topic).subscribe({
+    this.subscription = this.mqttService.observe(topic).subscribe({
       next: (message: IMqttMessage) => {
         this.receiveNews += message.payload.toString() + '\n';
         //console.log(message.payload.toString());

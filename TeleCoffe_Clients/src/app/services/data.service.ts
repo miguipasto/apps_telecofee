@@ -9,18 +9,21 @@ export class DataService {
 
   constructor(public firestore: Firestore, private userService: UserService) { }
 
-  async crearIncidencia(nombre: string, descripcion: string) {
+  async crearIncidencia(nombre: string, descripcion: string, maquina: String) {
     const uid = this.userService.getUserUid();
     if (!uid) {
       console.error('No hay un usuario autenticado.');
       return;
     }
 
+
     try {
-      await setDoc(doc(this.firestore, 'incidencias', uid), {
-        uid: uid, 
+      await addDoc(collection(this.firestore, 'incidencias'), {
+        user_id: uid, 
         nombre: nombre,
-        descripcion: descripcion
+        descripcion: descripcion,
+        maquina: maquina,
+        create_at: new Date(),
       });
       console.log("Documento creado con ID");
     } catch (error) {

@@ -1,101 +1,51 @@
-<!-- <div class="profile-container">
-    <div class="profile-header">
-      <h1>PERFIL</h1>
-      <h4><b>Nombre: </b>{{datosUser.nombre}}</h4>
-      <h4><b>Email: </b>{{datosUser.email}}</h4>
-    </div>
-    <div class="profile-content">
-      <ion-button (click)=LogOut() class="corner-button" style="color: black;font-size: 160%" fill="clear">
-        <ion-icon name="log-out"></ion-icon>
-      </ion-button>  
-      <div>
-        <form [formGroup]="formPassword" >
-          <div class="Change-Password">
-          <h5 style="font-weight: bold; text-align: left; margin-left: 5%; color: black;">Cambiar Contraseña</h5>
-          <ion-button color="transparent" style="float: right; color:black ; float: right;margin-top: 13%; margin-right:5%; font-size: 160%;" (click)="showOverlay('Cambiar contraseña')">
-            <ion-icon  class="fa-solid fa-check"></ion-icon>
-          </ion-button>
-          <ion-item>
-            <ion-label position="floating" >Contraseña actual</ion-label>
-            <ion-input  formControlName="currentPassword"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating">Nueva contraseña</ion-label>
-            <ion-textarea formControlName="newPassword"></ion-textarea>
-          </ion-item>
-        </div>
-        </form> 
-      </div>    
-      <div class="Remove-Account">
-        <ion-button color="transparent" style="color:black ; float: right;margin-top: 7%; margin-right: 5%; font-size: 160%;"(click)="showOverlay('Eliminar cuenta')">
-          <ion-icon class="fas fa-trash"  ></ion-icon>
-        </ion-button>  
-        <h5 style="font-weight: bold;  text-align: left; margin-left:5%; color: black; margin-top:13% " >Eliminar cuenta</h5>      
-      </div>
-    </div>
+
+<div class="profile-container">
+  <ion-button (click)=LogOut() class="corner-button" style="color: black;font-size: 160%" fill="clear">
+    <ion-icon name="log-out"></ion-icon>
+  </ion-button> 
+  <div class="profile-header">
+    <h1>PERFIL</h1>
+    <h4><b>Email: </b>{{datosUser.email}}</h4>
+    <h4><b>Nombre: </b>{{datosUser.nombre}}</h4>
   </div>
-  
-  <div class="confirmation-popup" *ngIf="isOverlayVisible">
-    <div class="popup-content">
-        <h2><b>{{ cadena }}</b></h2>
-        <p>¿Está seguro de que desea continuar?</p>
-        <div class="button-container">
-            <button (click)="Confirm('cadena')">Confirmar</button>
-            <button (click)="Cancel()">Cancelar</button>
-            
-        </div>
-    </div>
-</div>
-
-   -->
-
-   <div class="profile-container">
-    <ion-button (click)=LogOut() class="corner-button" style="color: black;font-size: 160%" fill="clear">
-      <ion-icon name="log-out"></ion-icon>
-    </ion-button> 
-    <div class="profile-header">
-      <h1>PERFIL</h1>
-      <h4><b>Nombre: </b>{{datosUser.nombre}}</h4>
-      <h4><b>Email: </b>{{datosUser.email}}</h4>
-    </div>
-    <div class="profile-content">
-      <div class="change-password">
-        <h2>Cambiar contraseña</h2>
-        <form [formGroup]="formPassword">
-          <ion-item>
-            <ion-label position="floating">Contraseña actual</ion-label>
-            <ion-input formControlName="currentPassword"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating">Nueva contraseña</ion-label>
-            <ion-input formControlName="newPassword"></ion-input>
-          </ion-item>
-        </form>      
-          <div class="change-password-confirm">
-            <button (click)="showOverlay('Cambiar contraseña')">Confirmar
-              <i class="fa-solid fa-check"></i>
-            </button>
-          </div>
-          
-      </div>
-      <div class="delete-account">
-        <h2>Eliminar cuenta</h2>
-        <div class="delete-account-confirm">
-          <button (click)="showOverlay('Eliminar cuenta')">Eliminar
-            <i class="fas fa-trash"></i>
+  <div class="profile-content">
+    <div class="change-password">
+      <h2>Cambiar contraseña</h2>
+      <form [formGroup]="formPassword">
+        <ion-item>
+          <ion-label position="floating">Contraseña actual</ion-label>
+          <ion-input formControlName="currentPassword"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Nueva contraseña</ion-label>
+          <ion-input formControlName="newPassword"></ion-input>
+        </ion-item>
+      </form>      
+        <div class="change-password-confirm">
+          <button (click)="showOverlay('Cambiar contraseña')">Confirmar
+            <i class="fa-solid fa-check"></i>
           </button>
         </div>
-      </div>
-  
-      <div class="confirmation-popup" *ngIf="isOverlayVisible">
-        <div class="popup-content">
-            <h2><b>{{ cadena }}</b></h2>
-            <p>¿Está seguro de que desea continuar?</p>
-            <div class="button-container">
-                <button (click)="Confirm(cadena)">Confirmar</button>
-                <button (click)="Cancel()">Cancelar</button>  
-            </div>
-        </div>
-  
+        
     </div>
+    <div class="delete-account">
+      <h2>Eliminar cuenta</h2>
+      <div class="delete-account-confirm">
+        <button (click)="showOverlay('Eliminar cuenta')">Eliminar
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="confirmation-popup" *ngIf="isOverlayVisible">
+      <div class="popup-content">
+          <h2><b>{{ cadena }}</b></h2>
+          <p>¿Está seguro de que desea continuar?</p>
+          <div class="button-container">
+              <button (click)="Confirm(cadena)">Confirmar</button>
+              <button (click)="Cancel()">Cancelar</button>  
+          </div>
+      </div>
+
   </div>
+</div>

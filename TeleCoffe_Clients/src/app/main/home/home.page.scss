@@ -16,17 +16,28 @@
 
 .home-header h1{
     font-size: 25px;
+    font-weight: bold;
     color: black;
 }
 
-.input-id {
-    background: #cccccc; 
-    border-radius: 25px; 
-    padding: 15px 15px; 
-    border: none;
-    box-sizing: border-box;
+.home-header label{
+    font-size: 15px;
+    margin-bottom: 2%;
+    color: black;
+}
+
+.opciones {
     text-align: center;
+    background: white; 
+    color: black;
+    font-size: 20px;
     margin-bottom: 15%;
+    padding: 10px 10px; 
+    border: 2%;
+    border-radius: 25px; 
+    box-sizing: border-box;
+    border-color: #70442b;
+       
 
 }
 
@@ -128,6 +139,7 @@ button {
   
 .add-balance-popup {
     display: grid;
+    width: 80%;
     background-color: white;
     padding: 20px;
     border-radius: 40px; /* Bordes redondeados */
