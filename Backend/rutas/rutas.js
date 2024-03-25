@@ -71,4 +71,29 @@ router.get('/:nombre_maquina/nivel', async (req, res) => {
     }
 });
 
+// Incidencias
+router.get('/incidencias', async (req, res) => {
+
+        try {
+            const comprasSnapshot = await db.collectionGroup('incidencias').get();
+
+            if (comprasSnapshot.empty) {
+                console.log('No se encontraron documentos.');
+                return res.status(404).json([]);
+            }
+
+            const compras = comprasSnapshot.docs.map(doc => ({
+                id: doc.id,
+                parentPath: doc.ref.parent.path,
+                ...doc.data()
+            }));
+            
+            console.log(compras);
+            res.json(compras);
+        } catch (error) {
+            console.error('Error al acceder a Firestore:', error);
+            res.status(500).send('Error interno del servidor');
+        }
+});
+
 module.exports = router;
