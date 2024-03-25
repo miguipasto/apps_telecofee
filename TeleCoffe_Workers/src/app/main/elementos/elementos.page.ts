@@ -1,6 +1,6 @@
 //import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 
 import * as apex from "ng-apexcharts";
 import { HttpClient} from '@angular/common/http';
@@ -10,13 +10,6 @@ import { MqttService, IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
 
    
-
-export type ChartOptions = {
-  xaxis: ApexXAxis;
-  colors: string[];
-  };
-
-  
   
 @Component({
   selector: 'app-elementos',
@@ -30,28 +23,27 @@ export class ElementosPage implements OnInit{
   productoSeleccionado: string = "";
   nombre: string = ""; // Cambiado a string
 
-
-
   series!: apex.ApexAxisChartSeries;
   chart!: apex.ApexChart;
   title!: apex.ApexTitleSubtitle;
-  fill!: apex.ApexFill;
   
-  public chartOptions: Partial<ChartOptions> | undefined;
-
-  //xaxis!: apex.ApexXAxis;
   datos: any[] = [];
   datos_fecha: String[]=[]
   datos_porcentaje: number[]=[]
   datos_color: String[]=[]
 
-  constructor(private route: ActivatedRoute, private router:Router, private http: HttpClient) { 
+  private subscription: Subscription | undefined;
+  public receiveNews = '';
+  public isConnection = false;
+
+  constructor(private route: ActivatedRoute, private router:Router, private http: HttpClient, private mqttService: MqttService) { 
   }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.nombre = params.get('nombre') || ''; // Obtener el valor del parámetro 'nombre' y asignarlo a nombre
     });
+    this.subscribeToTopic(this.nombre);
   }
 
   private crearGrafica(): void{
@@ -151,43 +143,37 @@ export class ElementosPage implements OnInit{
   }
   }
 
-  calcularPorcentaje(porcentaje: number): number {
-    // Limitar el porcentaje entre 0 y 100
-    const porcentajeLimitado = Math.max(0, Math.min(100, porcentaje));
-    // Devolver la altura del tanque en función del porcentaje (asumiendo que la altura del tanque es fija)
-    return porcentajeLimitado;
-  }
-
-  obtenerColorPorcentaje(porcentaje: number): string {
-    if (porcentaje >= 0 && porcentaje <= 10) {
-        return "red";
-    } else if (porcentaje > 10 && porcentaje <= 50) {
-        return "orange";
-    } else if (porcentaje > 50 && porcentaje < 90) {
-        return "gray";
-    } else if (porcentaje >= 90) {
-        return "green";
-    } else {
-        return "negro"; // En caso de que el porcentaje no esté en ninguno de los rangos especificados
-    }
+  obtenerColorPorcentaje(porcentaje:number): string {
+      if (porcentaje >= 0 && porcentaje <= 10) {
+           return "red";
+      } else if (porcentaje > 10 && porcentaje <= 50) {
+           return "orange";
+      } else if (porcentaje > 50 && porcentaje < 90) {
+           return "gray";
+      } else if (porcentaje >= 90) {
+           return "green";
+      } else {
+           return "negro"; // En caso de que el porcentaje no esté en ninguno de los rangos especificados
+      };
   }
 
   obtenerColorTanque(nombre:string): string {
-    if (nombre==("Agua")) {
-        return  rgb(163, 204, 253);
-    }else if (nombre==("Café")) {
-        return "#70442b";
-    } else if (nombre==("Leche")) {
-        return "#E9DBAB";
-    } else {
-        return "negro"; // En caso de que el porcentaje no esté en ninguno de los rangos especificados
-    }
+          if (nombre==("Agua")) {
+            return "#A3CCFD";
+        }else if (nombre==("Café")) {
+            return "#70442b";
+        } else if (nombre==("Leche")) {
+            return "#E9DBAB";
+        } else {
+            return "negro"; // En caso de que el porcentaje no esté en ninguno de los rangos especificados
+        }
   }
 
   redirigir_maquinas(){
     this.router.navigate(['/main/main/home']);
   }
 
+  
   actualizarPorcentaje(categoria: string, indice: number, nuevoPorcentaje: number) {
     if (categoria === 'consumos' || categoria === 'estadisticas') {
       this.product[categoria][indice].porcentaje = nuevoPorcentaje;
@@ -196,6 +182,7 @@ export class ElementosPage implements OnInit{
     }
   }
   
+
   addBalance(nombre:string) {
     var indice:number=0;
     if(nombre=='Patatillas') {
@@ -237,10 +224,42 @@ export class ElementosPage implements OnInit{
     
   }
 
+  subscribeToTopic(maquina : String) {
+    this.isConnection = true;
+    const nombre=this.nombre.toLocaleLowerCase();
+    const topic = `${nombre}/nivel`;
+
+    // Primero, verifica si ya hay una suscripción y desuscríbete
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      console.log('Desuscripto del tópico anterior.');
+    }
+
+    console.log(topic)
+    // Intentamos suscribirnos al tópico
+    this.subscription = this.mqttService.observe(topic).subscribe({
+      next: (message: IMqttMessage) => {
+        this.receiveNews += message.payload.toString() + '\n';
+        console.log(message.payload.toString());// Convertir el mensaje recibido a un objeto JavaScript
+        let data = JSON.parse(message.payload.toString());
+        
+    
+        // Actualizar los porcentajes en this.product["consumo"][0]
+        this.product["consumos"][0].porcentaje = data.niveles.nivel_agua_pr;
+        this.product["consumos"][1].porcentaje = data.niveles.nivel_cafe_pr;
+        this.product["consumos"][2].porcentaje = data.niveles.nivel_leche_pr;
+        this.product["consumos"][3].porcentaje = data.niveles.patatillas;
+
+      },
+      error: (error: any) => {
+        this.isConnection = false;
+        console.error(`Connection error: ${error}`);
+      }
+    });
+  }
+
 
 
 }
-function rgb(arg0: number, arg1: number, arg2: number): string {
-  throw new Error('Function not implemented.');
-}
+
 
