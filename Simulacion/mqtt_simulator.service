@@ -1,0 +1,11 @@
+[Unit]
+Description=MQTT simulator
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python /home/lpro/apps_telecofee/Simulacion/mqtt_simulator.py
+WorkingDirectory=/home/lpro/apps_telecofee/Simulacion/
+User=lpro
+
+[Install]
+WantedBy=default.target
