@@ -1,21 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Firestore, addDoc, collection, setDoc, doc, getDoc, updateDoc, query, getDocs } from '@angular/fire/firestore';
 import { UserService } from './user.service'; 
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
+  
 
-  constructor(public firestore: Firestore, private userService: UserService,private http: HttpClient) { }
+  constructor(public firestore: Firestore, private userService: UserService) { }
 
-
-
-  getData(): Observable<MyData[]> {
-    return this.http.get<MyData[]>('assets/datos.JSON');
-  }
 
 
   async VerIncidencia() {
@@ -57,9 +51,4 @@ export class DataService {
   }
 
   
-}
-
-export interface MyData {
-  date: string;
-  percentage: number;
 }

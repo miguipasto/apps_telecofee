@@ -1,17 +1,22 @@
 //import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 
 import * as apex from "ng-apexcharts";
-import { DataService, MyData } from 'src/app/services/data.service';
 import { HttpClient} from '@angular/common/http';
 import {ApexXAxis } from 'ng-apexcharts';
+
+import { MqttService, IMqttMessage } from 'ngx-mqtt';
+import { Subscription } from 'rxjs';
 
    
 
 export type ChartOptions = {
   xaxis: ApexXAxis;
+  colors: string[];
   };
+
+  
   
 @Component({
   selector: 'app-elementos',
@@ -30,11 +35,15 @@ export class ElementosPage implements OnInit{
   series!: apex.ApexAxisChartSeries;
   chart!: apex.ApexChart;
   title!: apex.ApexTitleSubtitle;
+  fill!: apex.ApexFill;
+  
+  public chartOptions: Partial<ChartOptions> | undefined;
+
   //xaxis!: apex.ApexXAxis;
   datos: any[] = [];
   datos_fecha: String[]=[]
   datos_porcentaje: number[]=[]
-
+  datos_color: String[]=[]
 
   constructor(private route: ActivatedRoute, private router:Router, private http: HttpClient) { 
   }
@@ -43,25 +52,45 @@ export class ElementosPage implements OnInit{
     this.route.paramMap.subscribe(params => {
       this.nombre = params.get('nombre') || ''; // Obtener el valor del parámetro 'nombre' y asignarlo a nombre
     });
-  
+  }
+
+  private crearGrafica(): void{
+
+    this.datos_fecha=[];
+    this.datos_porcentaje=[];
+    this.datos_color=[];
+    this.datos=[];
+    
+    console.log("Cambios")
     this.http.get<any>('assets/datos.JSON').subscribe(data => {
       console.log(data);
       data.datos.forEach((dato: { fecha: string; porcentaje: number; }) => {
         this.datos_fecha.push(dato.fecha);
         this.datos_porcentaje.push(dato.porcentaje);
+        if(dato.porcentaje<10){
+          this.datos_color.push('#ff0000')
+
+        }else{
+          console.log(this.selectedCategory)
+          if(this.selectedCategory=="agua") this.datos_color.push("#A3CCFD");
+          else if(this.selectedCategory=="cafe") this.datos_color.push('#70442b');
+          else if(this.selectedCategory=="leche") this.datos_color.push("#E9DBAB");
+          else this.datos_color.push("#ff0000");
+
+        }
       });
 
-  
     for (let i = 0; i < this.datos_fecha.length; i++) {
       this.datos.push({
         x: this.datos_fecha[i],
-        y: this.datos_porcentaje[i]
-      });
-    }
+        y: this.datos_porcentaje[i],
+        fillColor: this.datos_color[i]
       
-      // Inicializar las opciones del gráfico después de obtener los datos
-      this.initializeChartOption();
-    });
+      });
+    } 
+  });
+
+    this.initializeChartOption();
   }
   
   private initializeChartOption(): void {
@@ -71,13 +100,15 @@ export class ElementosPage implements OnInit{
   
     this.series = [{
       name: 'Porcentaje',
-      data: this.datos  
+      data: this.datos , 
+      //color: this.datos_color
     }];
   
     this.chart = {
       type: 'bar',
     };
-  
+
+
   }
   
 
@@ -102,21 +133,22 @@ export class ElementosPage implements OnInit{
     agua: [
     ],
     cafe: [
-      
     ],
     leche: [
-      
     ],
     patatillas: [
-      
     ],
     ventas: [
-      
     ]    
   };
 
   selectCategory(category: string) {
     this.selectedCategory = category;
+
+     // Llama a la función de inicialización del gráfico si la categoría seleccionada es diferente de 'consumos'
+  if (this.selectedCategory !== 'consumos') {
+    this.crearGrafica();
+  }
   }
 
   calcularPorcentaje(porcentaje: number): number {

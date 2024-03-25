@@ -1,25 +1,24 @@
 <div class="support-container">
-    <div class="support-header">
-        <h1>SOPORTE</h1>
-        <h4>647893214</h4>
-        <h4>telecoffee&#64;gmail.com</h4>
-    </div>
-    <div class="support-content">
-        <div class="descripcion">
-            <h3 style="font-weight: bold;  text-align: center; color: black">Problemas o Dudas</h3>
-            <ion-item>
-                <ion-label position="floating">Nombre</ion-label>
-                <ion-input [(ngModel)]="nombre"></ion-input> 
-            </ion-item>
-            <ion-item>
-                <ion-label position="floating">Descripción del problema</ion-label>
-                <ion-textarea [(ngModel)]="descripcion"></ion-textarea>
-            </ion-item>
-  
-            <div class="botón" style="position: absolute; left: 50%; transform: translate(-50%, -50%);">
-                <button>Enviar</button>
-            </div>
-        </div>
+  <div class="support-header">
+    <h2 id="nombre">Incidencias</h2>
+  </div>
+  <div class="support-content">
+    <div *ngFor="let incidencia of datosIncidencia" class="incidencia" >
+      <button style="background-color: transparent; border: none;" (click)="showOverlay(incidencia.descripcion, incidencia.email, index)" class="text-container">
+        <p style="color: #E9DBAB;">{{ incidencia.maquina }}</p>
+        <p style="color: #E9DBAB;">{{ incidencia.fecha }}</p>
+        <p style="color: #E9DBAB;">{{ incidencia.descripcion }}</p>
+        <p style="color: #E9DBAB;">{{ incidencia.enviado}}</p>
+      </button>
+  </div>
+  <div class="overlay" *ngIf="isOverlayVisible">
+    <div class="add-balance-popup">
+      <h2 style="color: #70442b;"><b>Responder Incidencia</b></h2>
+      <h4 style="color: #70442b;"><b>{{ descripcionActual }}</b></h4>
+      <!-- Dentro del template del componente -->
+      <input type="text" [placeholder]="'Escriba su respuesta aquí'" #respuestaInput>
+      <button (click)="sendEmail($event)">Enviar</button>
+      <button (click)="closeOverlay()">Cancelar</button>
     </div>
   </div>
-  
+</div>
