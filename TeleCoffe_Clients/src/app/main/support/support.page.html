@@ -1,16 +1,25 @@
 <div class="support-container">
     <div class="support-header">
         <h1>SOPORTE</h1>
-        <h4>647893214</h4>
         <h4>telecoffee&#64;gmail.com</h4>
+        <h4>647893214</h4>
     </div>
     <div class="support-content">
         <div class="descripcion">
             <h3 style="font-weight: bold;  text-align: center; color: black">Problemas o Dudas</h3>
             <ion-item>
-                <ion-label position="floating">Nombre</ion-label>
+                <ion-label position="floating">Nombre y apellidos</ion-label>
                 <ion-input [(ngModel)]="nombre"></ion-input> 
             </ion-item>
+            <ion-item>
+                <ion-label>Elige una máquina:</ion-label>
+                <ion-select interface="popover" placeholder="Selecciona uno" [(ngModel)]="maquinaSeleccionada">
+                  <ion-select-option value="teleco">Teleco</ion-select-option>
+                  <ion-select-option value="biologia">Biología</ion-select-option>
+                  <ion-select-option value="industriales">Industriales</ion-select-option>
+                  <ion-select-option value="minas">Minas</ion-select-option>
+                </ion-select>
+              </ion-item>
             <ion-item>
                 <ion-label position="floating">Descripción del problema</ion-label>
                 <ion-textarea [(ngModel)]="descripcion"></ion-textarea>
