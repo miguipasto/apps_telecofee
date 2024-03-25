@@ -7,6 +7,8 @@ import { DataService } from 'src/app/services/data.service';
 })
 export class SupportPage implements OnInit {
 
+  maquinaSeleccionada: String = "";
+
   constructor(private dataService: DataService) { }
 
   ngOnInit() {
@@ -16,10 +18,11 @@ export class SupportPage implements OnInit {
   descripcion = '';
 
   enviar_incidencia() {
-    this.dataService.crearIncidencia(this.nombre, this.descripcion).then(() => {
+    this.dataService.crearIncidencia(this.nombre, this.descripcion, this.maquinaSeleccionada).then(() => {
       console.log('Incidencia enviada con éxito');
       this.nombre = '';
       this.descripcion = '';
+      this.maquinaSeleccionada = '';
     }).catch(error => {
       // Manejo de errores
       console.error('Error al enviar la incidencia', error);
