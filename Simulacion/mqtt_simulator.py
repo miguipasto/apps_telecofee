@@ -24,7 +24,7 @@ compras = [{'maquina': maquina, "compras": []} for maquina in maquinas]
 
 compras_ids = set()
 
-niveles_maximos = {"nivel_cafe_gr": 100, "nivel_leche_ml": 200}
+niveles_maximos = {"nivel_cafe_gr": 100, "nivel_leche_ml": 200, "nivel_agua_ml": 200}
 
 def obtener_historial_reposiciones(db):
     print("##########################################################")
@@ -82,6 +82,9 @@ def obtener_nuevo_nivel(producto, nivel_actual):
         nivel_actual['nivel_cafe_gr'] = nivel_actual.get('nivel_cafe_gr') - 5
         nivel_actual['nivel_cafe_pr'] = (nivel_actual.get('nivel_cafe_gr')*100) / niveles_maximos.get('nivel_cafe_gr')
     elif producto == 'Café americano':
+        nivel_actual['nivel_agua_ml'] = nivel_actual.get('nivel_agua_ml') - 10
+        nivel_actual['nivel_agua_pr'] = (nivel_actual.get('nivel_agua_ml')*100) / niveles_maximos.get('nivel_agua_ml')
+
         nivel_actual['nivel_cafe_gr'] = nivel_actual.get('nivel_cafe_gr') - 5
         nivel_actual['nivel_cafe_pr'] = (nivel_actual.get('nivel_cafe_gr')*100) / niveles_maximos.get('nivel_cafe_gr')
     elif producto == 'Patatillas':
