@@ -64,10 +64,11 @@ def on_message(cliente, userdata, mensaje):
         codigo_cliente = mensaje_str.split(":")[1].strip()
         if codigo_cliente == str(codigo_generado) or codigo_cliente == "3333":
             print("Compra realizada correctamente.")
-            cliente.publish(topico, "SUCCESS: Códiga realizada correctamente")
+            cliente.publish(topico, "SUCCESS: Compra realizada correctamente")
             estado_actual = ESTADO_ESPERANDO_COMPRA
         else:
             print("El código introducido es incorrecto. Volviendo a esperar una nueva compra...")
+            cliente.publish(topico, "ERROR: Código incorrecto")
             estado_actual = ESTADO_ESPERANDO_COMPRA
 
 # Creación de la instancia del cliente con soporte para WebSockets
