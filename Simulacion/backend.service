@@ -1,0 +1,12 @@
+[Unit]
+Description=Backend TeleCoffe
+After=network.target
+
+[Service]
+Type=simple
+User=lpro
+ExecStart=/usr/bin/node /home/lpro/apps_telecofee/Backend/server.js
+WorkingDirectory=/home/lpro/apps_telecofee/Backend/
+
+[Install]
+WantedBy=multi-user.target

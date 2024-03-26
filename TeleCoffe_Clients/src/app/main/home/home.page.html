@@ -64,6 +64,15 @@
           <button (click)="closeOverlay()">Cancelar</button>
         </div>
       </div>
+
+      <div class="overlay" *ngIf="isOverlayCompra">
+        <div class="add-balance-popup">
+          <h2 style="color: #70442b;"><b>Introduce el código de confirmación</b></h2>
+          <input type="text" [(ngModel)]="codigoConfirmacion" placeholder="Código" class="codigoConfirmacion">
+          <button (click)="enviarCodigo()">Confirmar</button>
+          <button (click)="closeOverlay()">Cancelar</button>
+        </div>
+      </div>
       
   </div>
 </div>
