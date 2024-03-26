@@ -55,11 +55,14 @@ def nuevo_nivel():
         
         # Genera un ID único basado en la fecha y hora actual
         fecha = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-        print(fecha)
+        fecha_campo = datetime.datetime.now()
         
         # Ruta de destino
         maquina_id = datos['maquina']  
         path_destino = f'niveles/{maquina_id}/historial_niveles'
+
+        # Añade el campo 'fecha' a los datos
+        datos['fecha'] = fecha_campo
         
         # Crea el nuevo documento en la colección destino con ID basado en la fecha
         doc_ref = db_workers.collection(path_destino).document(fecha)
