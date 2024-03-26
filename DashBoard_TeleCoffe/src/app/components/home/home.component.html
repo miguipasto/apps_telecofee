@@ -1,0 +1,26 @@
+<div class="home">
+    <div *ngFor="let maquina of maquinas" class="maquina-directo grafico-box">
+       <apx-chart [series]="chartOptions[maquina].series"
+           [chart]="chartOptions[maquina].chart"
+           [xaxis]="chartOptions[maquina].xaxis"
+           [title]="chartOptions[maquina].title"></apx-chart>
+
+    </div>    
+    <div class="grafico-circular grafico-box">
+        <apx-chart [series]="circularChartOptions.series"
+           [chart]="circularChartOptions.chart"
+           [labels]="circularChartOptions.labels"
+           [title]="circularChartOptions.title"></apx-chart>
+    </div>
+    <div class="estadisticas-container grafico-box">
+        Estadísticas
+    </div>
+    <div class="grafico-ventas grafico-box">
+        <apx-chart [series]="ventasChartOptions.series"
+                   [chart]="ventasChartOptions.chart"
+                   [xaxis]="ventasChartOptions.xaxis"
+                   [title]="ventasChartOptions.title"></apx-chart>
+    </div>
+    
+</div>
+
