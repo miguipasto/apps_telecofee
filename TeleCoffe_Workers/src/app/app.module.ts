@@ -11,6 +11,22 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 import { NgApexchartsModule } from 'ng-apexcharts';
 
+import { MqttModule, IMqttServiceOptions } from 'ngx-mqtt';
+ 
+import { HttpClient,HttpClientModule } from '@angular/common/http';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+
+// Configuración de MQTT
+export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
+  hostname: '83.35.221.176',
+  port: 4500,
+  path: '/mqtt',
+  protocol: 'ws', 
+  
+};
+
+const config: SocketIoConfig = { url: 'http://83.35.221.175:500/api', options: {} };
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -18,6 +34,8 @@ import { NgApexchartsModule } from 'ng-apexcharts';
     NgApexchartsModule,
     IonicModule.forRoot(),
     AppRoutingModule, 
+    HttpClientModule,
+    SocketIoModule.forRoot(config),
     provideFirebaseApp(() => initializeApp({
       "projectId":"lpro-workers",
       "appId":"1:945879346205:web:8eb0b852d9cd8be7c0aaf4",
@@ -29,18 +47,9 @@ import { NgApexchartsModule } from 'ng-apexcharts';
     })),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
-    /*
-    provideFirebaseApp(() => initializeApp({
-      "projectId":"lpro-e1d36",
-      "appId":"1:1016118181849:web:7b803bb96800537354e3c8",
-      "storageBucket":"lpro-e1d36.appspot.com",
-      "apiKey":"AIzaSyAg1CdQTE4M9pAhqTUpqhFwhymENynkXiw",
-      "authDomain":"lpro-e1d36.firebaseapp.com",
-      "messagingSenderId":"1016118181849"
-    }), 'lpro-e1d36') // Asigna un nombre diferente a la segunda instancia
-    */
+    MqttModule.forRoot(MQTT_SERVICE_OPTIONS)
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy},HttpClientModule,SocketIoModule],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

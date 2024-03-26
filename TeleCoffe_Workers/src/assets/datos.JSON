@@ -1,6 +1,6 @@
 {
     "datos": [
-      {"fecha": "2024-03-20", "porcentaje": 75},
+      {"fecha": "2024-03-20", "porcentaje": 4},
       {"fecha": "2024-03-21", "porcentaje": 80},
       {"fecha": "2024-03-22", "porcentaje": 85}
     ]

@@ -11,9 +11,14 @@
       <div class="contenedores-content" *ngIf="selectedCategory === 'consumos'">
         <div *ngFor="let product of product[selectedCategory]" class="producto">
           <button color="transparent" (click)="showOverlay(product.name)">
-            <div class="tanque" *ngIf="product.name !== 'Patatillas'">
+            <div class="tanque"  *ngIf="product.name !== 'Patatillas'">
+              <div class="contenido" [ngStyle]="{
+                'height': product.porcentaje+ '%',
+                'background-color': obtenerColorTanque(product.name)
+              }">
+              </div>
+              
               <h2 id="porcentaje"[ngStyle]="{'color': obtenerColorPorcentaje(product.porcentaje)}">{{product.porcentaje}}%</h2>
-              <div class="contenido" [ngStyle]="{'height': calcularPorcentaje(product.porcentaje) + '%'}"></div>
             </div>
             <div *ngIf="product.name !== 'Patatillas'" class="nombre">
               <div class="nombre">{{ product.name }}</div>
