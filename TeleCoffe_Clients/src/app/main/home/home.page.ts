@@ -13,6 +13,8 @@ export class HomePage implements OnInit {
 
   isOverlayVisibleAzucar: boolean = false;
   isOVerlayVisible: boolean = false;
+  isOverlayCompra: boolean = false;
+  codigoConfirmacion : number = 0;
   amountToAdd=0;
   productoSeleccionado: any = [];
   maquinaSeleccionada: String = "teleco"
@@ -61,6 +63,7 @@ export class HomePage implements OnInit {
   closeOverlay() {
     this.isOverlayVisibleAzucar = false;
     this.isOVerlayVisible = false;
+    this.isOverlayCompra = false;
   }
   
   addBalance() {
@@ -91,28 +94,94 @@ export class HomePage implements OnInit {
     }
   }
 
-  comprar(producto: any){
+  async comprar(producto: any){
     console.log("Comprando " + producto.name)
     const compra = {"producto": producto.name, "precio": producto.price, "fecha": new Date(), "maquina": this.maquinaSeleccionada};
-    console.log(compra)
 
-    this.dataService.crearCompra(compra)
-      .then((response: any) => {
-        if (response) {
-          console.log("Compra creada exitosamente")
-          alert("¡Compra realizada exitosamente!")
-        } else {
-          alert("No se pudo realizar la compra, revisa tu saldo")
-          console.log("No se pudo crear la compra.");
+    this.closeOverlay();
+
+    if(this.maquinaSeleccionada === 'teleco'){
+      try {
+        const procesar_compra = await this.compraMqtt();
+        if (procesar_compra) {
+          this.dataService.crearCompra(compra)
+          .then((response: any) => {
+              alert("¡Compra realizada exitosamente!");
+          })
+          .catch((error) => {
+              console.error("Error al crear la compra:", error);
+              alert("No se pudo realizar la compra, revisa tu saldo");
+          });
         }
-      })
-      .catch((error) => {
-        console.error("Error al crear la compra:", error);
-      });
+      } catch (error) {
+        console.error("Error al procesar la compra MQTT:", error);
+      }
+    } else {
+        // Si la máquina seleccionada no es 'teleco', procesa la compra directamente
+        this.dataService.crearCompra(compra)
+        .then((response: any) => {
+            alert("¡Compra realizada exitosamente!");
+        })
+        .catch((error) => {
+            console.error("Error al crear la compra:", error);
+            alert("No se pudo realizar la compra, revisa tu saldo");
+        });
+    }
+  }
 
-      
+  
+  compraMqtt() {
+    console.log("MQTT Compra");
+
+    return new Promise((resolve, reject) => {
+        // Primero, nos suscribimos al tópico de compra
+        const subscription = this.mqttService.observe('teleco/compra').subscribe({
+            next: (message: IMqttMessage) => {
+                const mensaje = message.payload.toString();
+                
+                // Manejamos los mensajes
+                if (mensaje.includes("ACK")){
+                  this.isOverlayCompra = true;
+                } else if(mensaje.includes("SUCCESS")){
+                  console.log(mensaje)
+                  alert("Código correcto... Procesando compra")
+                  subscription.unsubscribe();
+                  resolve(true);
+                } else if(mensaje.includes("ERROR")){
+                  console.log(mensaje)
+                  alert("Código incorrecto... Cancelando compra")
+                  subscription.unsubscribe();
+                  resolve(false);
+                }
+            },
+            error: (error: any) => {
+                console.error("Connection error:", error);
+                reject(error);
+            }
+        });
+
+        // Solicitamos realizar una compra
+        this.mqttService.publish('teleco/compra', 'REQUEST Compra').subscribe({
+            next: () => console.log("REQUEST Compra"),
+            error: (error: any) => {
+                console.error("Error al publicar mensaje:", error);
+                reject(error);
+            }
+        });
+    });
+  }
+
+  enviarCodigo(){
+    this.mqttService.publish('teleco/compra', `RESPONSE Código:${this.codigoConfirmacion}`).subscribe({
+      next: () => console.log(`RESPONSE Código:${this.codigoConfirmacion}`),
+      error: (error: any) => {
+          console.error("Error al publicar mensaje:", error);
+      }
+    }); 
+
     this.closeOverlay();
   }
+
 
   private subscribeToTopic(maquina : String) {
     this.isConnection = true;
@@ -128,7 +197,6 @@ export class HomePage implements OnInit {
     this.subscription = this.mqttService.observe(topic).subscribe({
       next: (message: IMqttMessage) => {
         this.receiveNews += message.payload.toString() + '\n';
-        //console.log(message.payload.toString());
         this.checkAvailableProducto(message.payload.toString());
       },
       error: (error: any) => {
@@ -157,14 +225,14 @@ export class HomePage implements OnInit {
     }
 
     // Patatillas
-    if(jsonData.niveles.patatillas >= 1){
+    if(jsonData.niveles.patatillas_u >= 1){
       this.products.aperitivos[0].available = true;
     } else {
       this.products.aperitivos[0].available = false;
     }
 
     // Leche
-    if(jsonData.nivel_leche_pr >= 10){
+    if(jsonData.niveles.nivel_leche_pr >= 10){
       this.products.bebidas[0].available = true;
     } else {
       this.products.bebidas[0].available = false;
