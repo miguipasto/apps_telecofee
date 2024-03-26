@@ -1,0 +1,15 @@
+.footer {
+    background-color: #f8f9fa; /* Gris claro */
+    color: #6c757d; /* Gris oscuro */
+    text-align: center;
+    padding: 0.7rem 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.container {
+    max-width: 1140px;
+    margin: auto;
+    padding: 0 15px;
+}

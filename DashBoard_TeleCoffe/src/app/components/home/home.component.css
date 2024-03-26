@@ -1,0 +1,47 @@
+.home {
+    height: calc(100vh - 8.7rem);
+    display: grid;
+    grid-template-rows: 1fr 1fr;  
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    margin: 1%;
+}
+
+.grafico-box {
+    border-radius: 10px;
+    border: 2px solid #70442B;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 4%;
+}
+
+/* Márgenes */
+.maquina-directo:not(:nth-child(4)),
+.grafico-circular,
+.estadisticas-container {
+    margin-right: 2%;
+}
+
+.maquina-directo{
+    margin-bottom: 2%;
+}
+
+/* Estilos normales */
+
+.maquina-directo{
+    display: block;
+}
+
+.grafico-circular{
+    display: block;
+    grid-row: 2;
+}
+
+.estadisticas-container{
+    display: block;
+    grid-row: 2;
+}
+
+.grafico-ventas{
+    display: block;
+    grid-row: 2;
+    grid-column: 3 / span 4;
+}

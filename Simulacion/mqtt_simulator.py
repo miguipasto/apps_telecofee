@@ -24,7 +24,7 @@ compras = [{'maquina': maquina, "compras": []} for maquina in maquinas]
 
 compras_ids = set()
 
-niveles_maximos = {"nivel_cafe_gr": 100, "nivel_leche_ml": 200, "nivel_agua_ml": 200}
+niveles_maximos = {"nivel_cafe_gr": 100, "nivel_leche_ml": 200, "nivel_agua_ml": 200, "patatillas_u": 10}
 
 def obtener_historial_reposiciones(db):
     print("##########################################################")
@@ -88,7 +88,8 @@ def obtener_nuevo_nivel(producto, nivel_actual):
         nivel_actual['nivel_cafe_gr'] = nivel_actual.get('nivel_cafe_gr') - 5
         nivel_actual['nivel_cafe_pr'] = (nivel_actual.get('nivel_cafe_gr')*100) / niveles_maximos.get('nivel_cafe_gr')
     elif producto == 'Patatillas':
-        nivel_actual['patatillas'] = nivel_actual.get('patatillas') - 1
+        nivel_actual['patatillas_u'] = nivel_actual.get('patatillas_u') - 1
+        nivel_actual['patatillas_pr'] = (nivel_actual.get('patatillas_u')*100) / niveles_maximos.get('patatillas_u')
 
 ### PUBLICACIÓN MQTT ###
 # Configuración
@@ -131,7 +132,7 @@ obtener_historial_reposiciones(db_workers)
 
 try:
     while True:
-        obtener_datos(db_clientes)
+        # obtener_datos(db_clientes)
 
         # Publicación MQTT
         for maquina_nivel in niveles:
