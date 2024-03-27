@@ -1,7 +1,7 @@
 @import "~@fortawesome/fontawesome-free/css/all.css";
 
 // Estilos para poder solapar header y poner texto
-.support-container{
+.support-container {
     margin-top: 35%;
     height: 100%;
     display: grid;
@@ -42,29 +42,9 @@
     margin-bottom: 0px;
 }
 
-.support-datos {
-    display: flex;
-    width: 100%;
-    justify-content: space-around;
-    text-align: center;
-    padding-left: 5%;
-    padding-right: 5%;
-
-}
-
 .support-header h2{
     color: black;
     font-size: 20px;
-}
-
-.support-balance{
-    display:block;
-    color:#70442b;
-    font-size: 15px;
-    font-weight: bold;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
 }
 
 
@@ -78,44 +58,45 @@
     overflow-y: auto; /* Habilita el desplazamiento vertical si es necesario */
     gap: 10px; /* Espacio entre cajones de compras */
 
-  }
-  
+}
+  /* Estilos para las incidencias */
 .incidencia {
-    display: grid; /* Cambio para usar flex y asegurar alineación y distribución */
-    grid-template-columns: 0.8fr 3fr;
-    justify-content: center; /* Centra el contenido horizontalmente */
-    align-items: center; /* Centra el contenido verticalmente */
-    background-color: rgba(112, 68, 43, 0.8);
-    border-radius: 10%; /* Ajuste para un poco de redondeo de bordes */
-    height: 10vh; /* Altura fija para todos los cajones */
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Añade sombra */
-    }
-.text-container{
+    border-radius: 10px;
+    padding: 10px;
+    margin: 5px 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.incidencia-enviada {
+    background-color: #a77b61;
+}
+
+.incidencia-no-enviada {
+    background-color: #70442b;
+}
+
+.text-container {
     display: flex;
-    grid-template-columns: 0.8fr 3fr 0.8fr 3fr;
-    justify-content: space-between; /* Centra el contenido horizontalmente */
-    align-items: center;
-    margin-left: 5%;
-    margin-right: 8%;
+    flex-direction: column;
     width: 100%;
-
+    background-color: transparent;
+    border: none;
 }
 
-/* Estilos para el botón de añadir saldo */
-.support-add-balance {
-    display: grid;
-    height: 25%;
+.incidencia-header {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    margin-bottom: 5px;
 }
 
-.support-add-balance button {
-    cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
-    border: none; /* Remueve el borde del botón */
-    border-radius: 5px; /* Esquinas redondeadas para el botón */
-    background-color: #70442b; /* Color de fondo del botón */
-    color: white; /* Color del texto del botón */
-    margin-left: 10%;
-    margin-right: 10%;
-    font-size: 20px;
+.maquina, .fecha {
+    font-weight: bold;
+    margin-right: 17%;
+}
+
+.descripcion {
+    color: #000000;
 }
 
 /* Añadir saldo */
@@ -142,7 +123,6 @@
     text-align: center; /* Alinea el texto al centro */
 }
   
-
 .add-balance-popup input{
     height: 5vh;
     margin-bottom: 5%;
