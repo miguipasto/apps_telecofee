@@ -142,7 +142,6 @@ export class DataService {
   
     // Comprobamos el saldo del cliente
     const datosUser: any = await this.obetenerDatosUsuario();
-    console.log(datosUser.saldo)
   
     if (datosUser.saldo < compra.precio) {
       console.log("Dinero insuficiente.")

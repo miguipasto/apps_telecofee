@@ -1,6 +1,8 @@
 import firebase_admin
 import time
 import json
+from datetime import datetime
+import time
 import paho.mqtt.client as mqtt
 from firebase_admin import credentials, firestore
 
@@ -19,7 +21,7 @@ db_workers = firestore.client(app_workers)
 
 # Definimos las variables iniciales
 maquinas = ["minas", "industriales", "teleco", "biologia"]
-niveles = [{'maquina': maquina, "niveles": []} for maquina in maquinas]
+niveles = [{'maquina': maquina, "fecha": "", "niveles": []} for maquina in maquinas]
 compras = [{'maquina': maquina, "compras": []} for maquina in maquinas]
 
 compras_ids = set()
@@ -39,6 +41,7 @@ def obtener_historial_reposiciones(db):
         for documento in documentos:
             datos_reposicion = documento.to_dict()
             nivel_maquina['niveles'] = datos_reposicion['niveles']
+            nivel_maquina['fecha'] = datos_reposicion['fecha']
             print(f"Última reposición en '{maquina}': {datos_reposicion['fecha']} - Niveles: {datos_reposicion['niveles']}")
 
 def obtener_datos(db):
@@ -57,7 +60,7 @@ def obtener_datos(db):
 
         if compra_id not in compras_ids:
             compras_ids.add(compra_id)
-            print(f"Nueva compra registrada: {compra_data}")
+            #print(f"Nueva compra registrada: {compra_data}")
 
             for maquina_compras in compras:
                 if maquina_compras['maquina'] == compra_data['maquina']:
@@ -67,7 +70,7 @@ def obtener_datos(db):
 
 def actualizar_nivel(compra_data):
     for maquina_nivel in niveles:
-        if maquina_nivel['maquina'] == compra_data['maquina']:
+        if maquina_nivel['maquina'] == compra_data['maquina'] and compra_data['fecha'] > maquina_nivel['fecha']:
             nivel_actual = maquina_nivel['niveles']
             obtener_nuevo_nivel(compra_data['producto'], nivel_actual)
             print(f"Niveles actualizados para '{compra_data['maquina']}': {nivel_actual}")
@@ -93,13 +96,18 @@ def obtener_nuevo_nivel(producto, nivel_actual):
 
 ### PUBLICACIÓN MQTT ###
 # Configuración
-direccion_broker = "localhost"
+direccion_broker = "83.35.221.176"
 puerto = 4500
 
 # Funciones de callback
 def on_connect(cliente, userdata, flags, rc, properties=None):
     if rc == 0:
         print("Conectado al broker MQTT exitosamente!\n")
+        # Nos suscribimos al topico para compras
+        for maquina in maquinas:
+            topico = f"{maquina}/compra"
+            cliente.subscribe(topico)
+            print(f"Suscrito en el tópico {topico}")
     else:
         print(f"Fallo al conectar, código: {rc}")
 
@@ -107,13 +115,21 @@ def on_disconnect(cliente, userdata, flags, rc=None, properties=None):
     print("Desconectado del broker MQTT")
 
 def on_publish(cliente, userdata, mid, rc=None, properties=None):
-    print(f"Mensaje publicado en MQTT con ID: {mid}")
+    print(f"Mensaje publicado en MQTT con ID: {mid}\n")
+
+def on_message(cliente, userdata, mensaje):
+    mensaje_str = mensaje.payload.decode()
+    #print(f"Mensaje recibido: '{mensaje_str}' en el tópico: {mensaje.topic}")~
+    if mensaje_str.startswith("SUCCESS"):
+        time.sleep(5)
+        obtener_datos(db_clientes)
 
 # Creación de la instancia del cliente
 cliente = mqtt.Client(transport="websockets", callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
 cliente.on_connect = on_connect
 cliente.on_disconnect = on_disconnect
 cliente.on_publish = on_publish
+cliente.on_message = on_message
 
 # Conexión al broker
 try:
@@ -121,24 +137,27 @@ try:
 except Exception as e:
     print(f"Fallo al conectar: {e}")
 
-
-
 ############ MAIN  ############
 # Creamos la conexión MQTT
 cliente.loop_start()
 
 # Obtenemos los niveles
 obtener_historial_reposiciones(db_workers)
+obtener_datos(db_clientes)
 
 try:
     while True:
-        # obtener_datos(db_clientes)
 
         # Publicación MQTT
         for maquina_nivel in niveles:
-            mensaje = json.dumps(maquina_nivel)
+            # Crea una copia del diccionario antes de modificarlo
+            maquina_sin_fecha = maquina_nivel.copy()
+
+            maquina_sin_fecha.pop('fecha', None)
+            
+            mensaje = json.dumps(maquina_sin_fecha)
             print(mensaje)
-            cliente.publish(f"{maquina_nivel['maquina']}/nivel", mensaje)
+            cliente.publish(f"{maquina_sin_fecha['maquina']}/nivel", mensaje)
             time.sleep(1)
 
         time.sleep(5)
