@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 
 // Compras
 router.get('/compras', async (req, res) => {
-    const { nombre_maquina } = req.query;
+    const { nombre_maquina, fecha } = req.query;
 
     try {
         const comprasSnapshot = await dbClients.collectionGroup('compras').get();
@@ -29,31 +29,52 @@ router.get('/compras', async (req, res) => {
             return res.status(404).json([]);
         }
 
-        let comprasFiltradas = [];
-        if(nombre_maquina){ // Filtro de máquina
-            comprasFiltradas = comprasSnapshot.docs
-            .map(doc => ({
-                id: doc.id,
-                parentPath: doc.ref.parent.path,
-                ...doc.data()
-            }))
-            .filter(compra => compra.maquina === nombre_maquina); 
-        } else { //Todas
-            comprasFiltradas = comprasSnapshot.docs
-            .map(doc => ({
-                id: doc.id,
-                parentPath: doc.ref.parent.path,
-                ...doc.data()
-            })) 
+        let comprasFiltradas = comprasSnapshot.docs.map(doc => ({
+            id: doc.id,
+            parentPath: doc.ref.parent.path,
+            ...doc.data()
+        }));
+
+        // Filtrado por máquina
+        if (nombre_maquina) {
+            comprasFiltradas = comprasFiltradas.filter(compra => compra.maquina === nombre_maquina);
         }
-        
+
+        // Filtrado por fecha
+        if (fecha) {
+            if (fecha.endsWith('d')) {
+                // Filtrar por rango de días
+                const dias = parseInt(fecha);
+                const fechaInicio = new Date();
+                fechaInicio.setDate(fechaInicio.getDate() - dias);
+                fechaInicio.setHours(0, 0, 0, 0);
+                
+                comprasFiltradas = comprasFiltradas.filter(compra => {
+                    const fechaCompra = new Date(compra.fecha._seconds * 1000);
+                    return fechaCompra >= fechaInicio;
+                });
+            } else if (fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                // Filtrar por fecha específica
+                const fechaInicio = new Date(fecha);
+                fechaInicio.setHours(0, 0, 0, 0);
+                const fechaFin = new Date(fechaInicio);
+                fechaFin.setDate(fechaFin.getDate() + 1);
+                
+                comprasFiltradas = comprasFiltradas.filter(compra => {
+                    const fechaCompra = new Date(compra.fecha._seconds * 1000);
+                    return fechaCompra >= fechaInicio && fechaCompra < fechaFin;
+                });
+            }
+        }
+
         res.json(comprasFiltradas);
     } catch (error) {
         console.error('Error al acceder a Firestore:', error);
         res.status(500).send('Error interno del servidor');
     }
-
 });
+
+
 
 // Niveles
 router.get('/niveles', async (req, res) => {
