@@ -5,17 +5,36 @@ const { Timestamp } = require('firebase-admin/firestore');
 
 
 router.get('/', (req, res) => {
-  res.send([
-    "http://localhost:5000/api/teleco/compras",
-    "http://localhost:5000/api/biologia/compras",
-    "http://localhost:5000/api/minas/compras",
-    "http://localhost:5000/api/industriales/compras",
-    "http://localhost:5000/api/teleco/nivel",
-    "http://localhost:5000/api/biologia/nivel",
-    "http://localhost:5000/api/minas/nivel",
-    "http://localhost:5000/api/industriales/nivel"
-]);
-});
+    res.json({
+      "API Usage": [
+        {
+          "endpoint": "/api/compras",
+          "method": "GET",
+          "description": "Obtiene las compras realizadas.",
+          "query_parameters": {
+            "nombre_maquina": "El nombre de la máquina para filtrar las compras.",
+            "fecha": "Para filtrar por fecha específica usa 'YYYY-MM-DD' o 'Xd' para los últimos X días."
+          }
+        },
+        {
+          "endpoint": "/api/niveles",
+          "method": "GET",
+          "description": "Obtiene los niveles de las máquinas.",
+          "query_parameters": {
+            "nombre_maquina": "El nombre de la máquina (opcional).",
+            "fecha": "Para filtrar por fecha específica usa 'YYYY-MM-DD' o 'Xd' para los últimos X días.",
+            "cantidad": "'last' para obtener el último registro."
+          }
+        },
+        {
+            "endpoint": "/api/incidencias",
+            "method": "GET",
+            "description": "Obtiene las incidencias.",
+        }
+      ]
+    });
+  });
+  
 
 // Compras
 router.get('/compras', async (req, res) => {
