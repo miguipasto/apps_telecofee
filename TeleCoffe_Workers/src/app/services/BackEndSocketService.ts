@@ -14,7 +14,7 @@ export class BackendSocketsService {
     console.log(`${this.apiUrl}/incidencias`)
     try { 
         const response = await this.http.get<any[]>(`${this.apiUrl}/incidencias`).toPromise();
-        const datosIncidencia: { descripcion: string; fecha: string; maquina: string, email: string; enviado: boolean}[]=[];
+        const datosIncidencia: { descripcion: string; fecha: any; maquina: string, email: string; enviado: boolean}[]=[];
   
 
         response?.forEach((data) => {
