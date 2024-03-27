@@ -9,6 +9,7 @@ import {ApexXAxis } from 'ng-apexcharts';
 import { MqttService, IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
+import { BackendSocketsService } from 'src/app/services/BackEndSocketService';
 
    
   
@@ -32,16 +33,22 @@ export class ElementosPage implements OnInit{
   
   datos: any[] = [];
   datos_fecha: String[]=[]
+  datos_precio: number[]=[]
   datos_porcentaje: number[]=[]
   datos_color: String[]=[]
+  fecha_grafica!: Date;
+
+  datosVentas: { precio: string; fecha: any; maquina: string, producto: string;}[]=[];
 
   private subscription: Subscription | undefined;
   public receiveNews = '';
   public lastLineLevels = "";
   public isConnection = false;
+  public productos: String[] = [ "Café con leche",  "Cafe americano", "Leche", "Patatillas"]
+
   
 
-  constructor(private route: ActivatedRoute, private router:Router, private http: HttpClient, private mqttService: MqttService, private dataService: DataService) { 
+  constructor(private route: ActivatedRoute, private router:Router, private http: HttpClient, private mqttService: MqttService, private dataService: DataService, private backendService: BackendSocketsService) { 
   }
 
   ngOnInit() {
@@ -51,14 +58,60 @@ export class ElementosPage implements OnInit{
     this.subscribeToTopic(this.nombre);
   }
 
-  private crearGrafica(): void{
+  private async crearGrafica(): Promise<void>{
 
     this.datos_fecha=[];
-    this.datos_porcentaje=[];
+    this.datos_precio = Array(4).fill(0);
     this.datos_color=[];
     this.datos=[];
+    this.datos_porcentaje=[];
     
     console.log("Cambios")
+    if(this.selectedCategory=="ventas"){
+
+       let ventas= await this.backendService.obtenerVentas(this.nombre,this.fecha_grafica)
+
+       console.log(ventas)
+
+    for (let i = 0; i < ventas.length; i++) {
+      const dato = ventas[i];
+      console.log(dato)
+      if(dato.producto==this.productos[0]){//café con leche
+        console.log(this.datos_precio[0])
+
+        this.datos_precio[0]+=parseFloat(dato.precio)// Agregar el precio (convertido a número)
+        this.datos_color[0]= "#ffbf75"// Generar un color aleatorio
+
+      }else if(dato.producto==this.productos[1]){//cafe americano
+
+        this.datos_precio[1]+=parseFloat(dato.precio) // Agregar el precio (convertido a número)
+        this.datos_color[1]= "#ffbf75"// Generar un color aleatorio
+
+      }else if(dato.producto==this.productos[2]){//leche
+
+        this.datos_precio[2]+=parseFloat(dato.precio) // Agregar el precio (convertido a número)
+        this.datos_color[2]= "#75cdff"// Generar un color aleatorio
+
+      }else{ //patatillas
+
+        this.datos_precio[3]+=parseFloat(dato.precio) // Agregar el precio (convertido a número)
+        this.datos_color[3]= "#b275ff"// Generar un color aleatorio
+
+      }
+     
+    }
+
+    for (let i = 0; i < this.datos_fecha.length; i++) {
+      this.datos.push({
+        x: this.productos[i],
+        y: this.datos_precio[i],
+        fillColor: this.datos_color[i]
+      
+      });
+    } 
+
+    }else{
+
     this.http.get<any>('assets/datos.JSON').subscribe(data => {
       console.log(data);
       data.datos.forEach((dato: { fecha: string; porcentaje: number; }) => {
@@ -86,6 +139,7 @@ export class ElementosPage implements OnInit{
       });
     } 
   });
+  }
 
     this.initializeChartOption();
   }
@@ -96,17 +150,40 @@ export class ElementosPage implements OnInit{
     };
   
     this.series = [{
-      name: 'Porcentaje',
-      data: this.datos , 
+      name: 'Procentaje',
+      data: this.datos
       //color: this.datos_color
     }];
   
     this.chart = {
       type: 'bar',
+      background: '#f8f1d8'
+     
     };
 
 
   }
+
+  private initializeChartOptionVentas(): void {
+    this.title = {
+      text: 'Nivel de ' + this.selectedCategory
+    };
+  
+    this.series = [{
+      name: 'Porcentaje',
+      data: this.datos
+      //color: this.datos_color
+    }];
+  
+    this.chart = {
+      type: 'bar',
+      background: '#f8f1d8'
+     
+    };
+
+
+  }
+
   
 
   showOverlay(nombre: string) {
@@ -190,6 +267,7 @@ export class ElementosPage implements OnInit{
   
 
   addBalance(nombre:string) {
+    
     let data = JSON.parse(this.lastLineLevels);
     if(this.amountToAdd!=null){
     if(nombre=='Patatillas') {
@@ -282,6 +360,14 @@ export class ElementosPage implements OnInit{
         this.isConnection = false;
         console.error(`Connection error: ${error}`);
       }
+    });
+  }
+
+  convertirFecha(fechaFirestore: { _seconds: number; _nanoseconds: number }): string {
+    const fecha = new Date(fechaFirestore._seconds * 1000);
+    return fecha.toLocaleDateString('es-ES', {
+      year: 'numeric', month: 'long', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
     });
   }
 
