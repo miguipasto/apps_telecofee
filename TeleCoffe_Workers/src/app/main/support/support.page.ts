@@ -14,7 +14,7 @@ export class SupportPage implements OnInit {
   descripcionActual: string = "";
   emailActual: string = "";
   index :  number=0;
-  datosIncidencia: { descripcion: string; fecha: string; maquina: string; email: string; enviado: boolean }[] = [];
+  datosIncidencia: { descripcion: string; fecha: any; maquina: string; email: string; enviado: boolean }[] = [];
 
   constructor(private backend: BackendSocketsService) {}
 
@@ -23,10 +23,28 @@ export class SupportPage implements OnInit {
   }
 
   async obtenerIncidencias() {
-    this.datosIncidencia = await this.backend.obtenerIncidencias();
+    let incidencias = await this.backend.obtenerIncidencias();
     // Filtrar las incidencias para excluir las que ya tienen correos electrónicos enviados
-    this.datosIncidencia = this.datosIncidencia.filter(incidencia => !incidencia.enviado);
+    incidencias = incidencias.filter(incidencia => !incidencia.enviado);
+  
+    // Convertir la fecha de timestamp de Firestore a cadena
+    this.datosIncidencia = incidencias.map(incidencia => ({
+      ...incidencia,
+      fecha: this.convertirFecha(incidencia.fecha)
+    }));
+  
+    console.log(this.datosIncidencia[0].fecha);
   }
+  
+  convertirFecha(fechaFirestore: { _seconds: number; _nanoseconds: number }): string {
+    const fecha = new Date(fechaFirestore._seconds * 1000);
+    return fecha.toLocaleDateString('es-ES', {
+      year: 'numeric', month: 'long', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+  }
+  
+  
 
   showOverlay(descripcion: string, email: string,index:number) {
     this.isOverlayVisible = true;

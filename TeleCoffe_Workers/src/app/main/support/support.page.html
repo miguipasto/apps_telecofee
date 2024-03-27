@@ -3,13 +3,15 @@
     <h2 id="nombre">Incidencias</h2>
   </div>
   <div class="support-content">
-    <div *ngFor="let incidencia of datosIncidencia" class="incidencia" >
-      <button style="background-color: transparent; border: none;" (click)="showOverlay(incidencia.descripcion, incidencia.email, index)" class="text-container">
-        <p style="color: #E9DBAB;">{{ incidencia.maquina }}</p>
-        <p style="color: #E9DBAB;">{{ incidencia.fecha }}</p>
-        <p style="color: #E9DBAB;">{{ incidencia.descripcion }}</p>
-        <p style="color: #E9DBAB;">{{ incidencia.enviado}}</p>
+    <div *ngFor="let incidencia of datosIncidencia; let i = index" [ngClass]="{'incidencia-enviada': incidencia.enviado, 'incidencia-no-enviada': !incidencia.enviado}" class="incidencia" >
+      <button class="text-container" (click)="showOverlay(incidencia.descripcion, incidencia.email, i)">
+        <div class="incidencia-header">
+          <p class="maquina">{{ incidencia.maquina }}</p>
+          <p class="fecha">{{ incidencia.fecha }}</p>
+        </div>
+        <p class="descripcion">{{ incidencia.descripcion }}</p>
       </button>
+    </div>
   </div>
   <div class="overlay" *ngIf="isOverlayVisible">
     <div class="add-balance-popup">

@@ -100,7 +100,13 @@ export class HomePage implements OnInit {
 
     this.closeOverlay();
 
-    if(this.maquinaSeleccionada === 'teleco'){
+    const datosUser: any = await this.dataService.obetenerDatosUsuario;
+  
+    if (datosUser.saldo < compra.precio) {
+      console.log("Dinero insuficiente.")
+      alert("No se pudo realizar la compra, revisa tu saldo");
+    } else {
+      console.log("Saldo suficiente")
       try {
         const procesar_compra = await this.compraMqtt();
         if (procesar_compra) {
@@ -116,16 +122,6 @@ export class HomePage implements OnInit {
       } catch (error) {
         console.error("Error al procesar la compra MQTT:", error);
       }
-    } else {
-        // Si la máquina seleccionada no es 'teleco', procesa la compra directamente
-        this.dataService.crearCompra(compra)
-        .then((response: any) => {
-            alert("¡Compra realizada exitosamente!");
-        })
-        .catch((error) => {
-            console.error("Error al crear la compra:", error);
-            alert("No se pudo realizar la compra, revisa tu saldo");
-        });
     }
   }
 
@@ -135,7 +131,7 @@ export class HomePage implements OnInit {
 
     return new Promise((resolve, reject) => {
         // Primero, nos suscribimos al tópico de compra
-        const subscription = this.mqttService.observe('teleco/compra').subscribe({
+        const subscription = this.mqttService.observe(`${this.maquinaSeleccionada}/compra`).subscribe({
             next: (message: IMqttMessage) => {
                 const mensaje = message.payload.toString();
                 
@@ -161,7 +157,7 @@ export class HomePage implements OnInit {
         });
 
         // Solicitamos realizar una compra
-        this.mqttService.publish('teleco/compra', 'REQUEST Compra').subscribe({
+        this.mqttService.publish(`${this.maquinaSeleccionada}/compra`, 'REQUEST Compra').subscribe({
             next: () => console.log("REQUEST Compra"),
             error: (error: any) => {
                 console.error("Error al publicar mensaje:", error);
@@ -172,7 +168,7 @@ export class HomePage implements OnInit {
   }
 
   enviarCodigo(){
-    this.mqttService.publish('teleco/compra', `RESPONSE Código:${this.codigoConfirmacion}`).subscribe({
+    this.mqttService.publish(`${this.maquinaSeleccionada}/compra`, `RESPONSE Código:${this.codigoConfirmacion}`).subscribe({
       next: () => console.log(`RESPONSE Código:${this.codigoConfirmacion}`),
       error: (error: any) => {
           console.error("Error al publicar mensaje:", error);
