@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { MqttService, IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
 import { ChartComponent, ApexAxisChartSeries, ApexNonAxisChartSeries, ApexDataLabels, ApexChart, ApexXAxis, ApexTitleSubtitle } from "ng-apexcharts";
+import { BackendService } from 'src/app/services/backend.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -87,80 +88,98 @@ export class HomeComponent implements OnInit {
   receiveNews = '';
   isConnection = false;
 
-  ventasDiarias: { [maquina: string]: { [fecha: string]: number } } = {
-    teleco: {
-      "2024-03-21": 10,
-      "2024-03-22": 7,
-      "2024-03-23": 8,
-      "2024-03-24": 5,
-      "2024-03-25": 9,
-    },
-    minas: {
-      "2024-03-21": 6,
-      "2024-03-22": 9,
-      "2024-03-23": 4,
-      "2024-03-24": 8,
-      "2024-03-25": 7,
-    },
-    industriales: {
-      "2024-03-21": 8,
-      "2024-03-22": 11,
-      "2024-03-23": 9,
-      "2024-03-24": 6,
-      "2024-03-25": 5,
-    },
-    biologia: {
-      "2024-03-21": 7,
-      "2024-03-22": 5,
-      "2024-03-23": 6,
-      "2024-03-24": 10,
-      "2024-03-25": 8,
-    },
-  };
+  ventasDiarias: { [maquina: string]: { [fecha: string]: number } } = { teleco: {}, minas: {}, industriales: {}, biologia: {}};
   
 
-  constructor(private mqttService: MqttService) {}
+  constructor(private mqttService: MqttService, private backendService: BackendService) {}
 
 
   ngOnInit(): void {
     this.inicializarGraficas();
-    this.inicializarGraficaDeVentas();
     this.subscribeToTopic();
+    this.obtenerCompras("","");    
   }
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();
   }
 
+  obtenerCompras(nombre_maquina: string, fecha: string) {
+    this.backendService.compras(nombre_maquina, fecha).subscribe({
+      next: (compras) => {
+        // Procesar las compras para agruparlas por máquina y fecha
+        const ventasAgrupadas = this.procesarCompras(compras);
+        this.ventasDiarias = ventasAgrupadas;
+        this.inicializarGraficaDeVentas();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+  
+  procesarCompras(compras: any[]): { [maquina: string]: { [fecha: string]: number } } {
+    const ventas: { [maquina: string]: { [fecha: string]: number } } = {};
+    compras.forEach(compra => {
+      const fecha = new Date(compra.fecha._seconds * 1000).toISOString().split('T')[0];
+      console.log(fecha)
+      const maquina = compra.maquina;
+      if (!ventas[maquina]) {
+        ventas[maquina] = {};
+      }
+      if (!ventas[maquina][fecha]) {
+        ventas[maquina][fecha] = 0;
+      }
+      ventas[maquina][fecha] += 1; 
+    });
+    return ventas;
+  }
+  
+  
   actualizarEstadoMaquina(mensaje: string) {
     try {
       const datos = JSON.parse(mensaje);
       const { maquina, niveles } = datos;
-      this.estadoMaquinas[maquina] = niveles;
   
-      const newData = [
-        niveles.patatillas_pr,
-        niveles.nivel_agua_pr,
-        niveles.nivel_leche_pr,
-        niveles.nivel_cafe_pr,
-      ];
+      // Verifica si hay cambios en los niveles antes de actualizar
+      if (!this.sonNivelesIguales(this.estadoMaquinas[maquina], niveles)) {
+        this.estadoMaquinas[maquina] = niveles;
   
-      // Encuentra la gráfica correcta basada en el nombre de la máquina y actualiza sus series
-      const chartIndex = this.maquinas.indexOf(maquina);
-      if(chartIndex !== -1 && this.charts && this.charts.toArray().length > chartIndex) {
+        const newData = [
+          niveles.patatillas_pr,
+          niveles.nivel_agua_pr,
+          niveles.nivel_leche_pr,
+          niveles.nivel_cafe_pr,
+        ];
+  
+        // Encuentra la gráfica correcta basada en el nombre de la máquina y actualiza sus series
+        const chartIndex = this.maquinas.indexOf(maquina);
+        if (chartIndex !== -1 && this.charts && this.charts.toArray().length > chartIndex) {
           const chart = this.charts.toArray()[chartIndex];
-          chart.updateSeries([
-            {
-              data: newData
-            }
-          ]);
+          chart.updateSeries([{ data: newData }]);
+        }
+
+        // Recalculamos las compras
+        this.obtenerCompras("","");
       }
-  
-      console.log(datos);
     } catch (error) {
       console.error('Error al procesar el mensaje:', error);
     }
   }
+  
+  // Función auxiliar para comparar si dos objetos de niveles son iguales
+  sonNivelesIguales(niveles1: Niveles, niveles2: Niveles): boolean {
+    if (!niveles1 || !niveles2) return false;
+  
+    return niveles1.patatillas_pr === niveles2.patatillas_pr &&
+           niveles1.nivel_agua_pr === niveles2.nivel_agua_pr &&
+           niveles1.nivel_leche_pr === niveles2.nivel_leche_pr &&
+           niveles1.nivel_cafe_pr === niveles2.nivel_cafe_pr &&
+           niveles1.nivel_agua_ml === niveles2.nivel_agua_ml &&
+           niveles1.nivel_leche_ml === niveles2.nivel_leche_ml &&
+           niveles1.nivel_cafe_gr === niveles2.nivel_cafe_gr;
+  }
+  
 
   // Gráficas
   inicializarGraficas(){
@@ -221,8 +240,6 @@ export class HomeComponent implements OnInit {
     };
 }
 
-  
-
   // Funciones MQTT
   private subscribeToTopic() {
     this.mqttService.onConnect.subscribe(() => {
@@ -239,7 +256,7 @@ export class HomeComponent implements OnInit {
       this.subscription = this.mqttService.observe(topico).subscribe({
         next: (message: IMqttMessage) => {
           this.receiveNews += message.payload.toString() + '\n';
-          console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`);
+          //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`);
           this.actualizarEstadoMaquina(message.payload.toString());
         },
         error: (error: any) => {
