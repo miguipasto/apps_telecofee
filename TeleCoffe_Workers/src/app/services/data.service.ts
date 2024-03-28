@@ -18,36 +18,36 @@ export class DataService {
       return;
     }
   
-    // Comprobamos el saldo del cliente
+    // Obtenemos datos del user
     const datosUser: any = await this.obetenerDatosUsuario();
 
-      // Obtener la fecha actual en formato ISO
-    const fechaActual = new Date().toISOString();
+    // Obtener la fecha actual en formato ISO
+    const fechaActual = new Date()
 
-      // Nombre del reponedor (puedes cambiarlo según sea necesario)
+    // Nombre del reponedor (puedes cambiarlo según sea necesario)
     const nombreReponedor = datosUser.nombre + "" + datosUser.apellidos;
     
-      // Modificar la variable niveles para agregar la fecha y el reponedor
-      data.fecha = fechaActual;
-      data.reponedor = nombreReponedor;
-      delete data.maquina;
+    // Modificar la variable niveles para agregar la fecha y el reponedor
+    data.fecha = fechaActual;
+    data.reponedor = nombreReponedor;
+    delete data.maquina;
 
-      console.log(data)
-    
+    console.log(data)
+
   
-      // Referencia a la subcolección de niveless para el usuario actual
-      const nivelessRef = collection(this.firestore, `niveles/${nombreMaquina.toLocaleLowerCase()}/historial_reposiciones`);
-  
-      try {
-        const docRef = await addDoc(nivelessRef, data);
-        console.log("niveles registrada con ID: ", docRef.id);
-        // Actualiza el contador de niveless aquí si es necesario
-        return docRef.id;
-      } catch (error) {
-        console.error("Error al crear la niveles:", error);
-        return null;
-      }
+    // Referencia a la subcolección de niveless para el usuario actual
+    const nivelessRef = collection(this.firestore, `niveles/${nombreMaquina.toLocaleLowerCase()}/historial_reposiciones`);
+
+    try {
+      const docRef = await addDoc(nivelessRef, data);
+      console.log("niveles registrada con ID: ", docRef.id);
+      // Actualiza el contador de niveless aquí si es necesario
+      return docRef.id;
+    } catch (error) {
+      console.error("Error al crear la niveles:", error);
+      return null;
     }
+  }
   
   
   async VerIncidencia() {
