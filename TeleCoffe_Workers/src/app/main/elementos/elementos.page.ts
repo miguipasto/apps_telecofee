@@ -8,6 +8,8 @@ import {ApexXAxis } from 'ng-apexcharts';
 
 import { MqttService, IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
+import { DataService } from 'src/app/services/data.service';
+import { BackendSocketsService } from 'src/app/services/BackEndSocketService';
 
    
   
@@ -19,6 +21,8 @@ import { Subscription } from 'rxjs';
 export class ElementosPage implements OnInit{
 
   isOverlayVisible: boolean = false;
+  isOverlayCompra: boolean =false;
+  codigoConfirmacion : number = 0;
   amountToAdd!: number | null;
   productoSeleccionado: string = "";
   nombre: string = ""; // Cambiado a string
@@ -29,14 +33,22 @@ export class ElementosPage implements OnInit{
   
   datos: any[] = [];
   datos_fecha: String[]=[]
+  datos_precio: number[]=[]
   datos_porcentaje: number[]=[]
   datos_color: String[]=[]
+  fecha_grafica!: Date;
+
+  datosVentas: { precio: string; fecha: any; maquina: string, producto: string;}[]=[];
 
   private subscription: Subscription | undefined;
   public receiveNews = '';
+  public lastLineLevels = "";
   public isConnection = false;
+  public productos: String[] = [ "Café con leche",  "Cafe americano", "Leche", "Patatillas"]
 
-  constructor(private route: ActivatedRoute, private router:Router, private http: HttpClient, private mqttService: MqttService) { 
+  
+
+  constructor(private route: ActivatedRoute, private router:Router, private http: HttpClient, private mqttService: MqttService, private dataService: DataService, private backendService: BackendSocketsService) { 
   }
 
   ngOnInit() {
@@ -46,14 +58,60 @@ export class ElementosPage implements OnInit{
     this.subscribeToTopic(this.nombre);
   }
 
-  private crearGrafica(): void{
+  private async crearGrafica(): Promise<void>{
 
     this.datos_fecha=[];
-    this.datos_porcentaje=[];
+    this.datos_precio = Array(4).fill(0);
     this.datos_color=[];
     this.datos=[];
+    this.datos_porcentaje=[];
     
     console.log("Cambios")
+    if(this.selectedCategory=="ventas"){
+
+       let ventas= await this.backendService.obtenerVentas(this.nombre,this.fecha_grafica)
+
+       console.log(ventas)
+
+    for (let i = 0; i < ventas.length; i++) {
+      const dato = ventas[i];
+      console.log(dato)
+      if(dato.producto==this.productos[0]){//café con leche
+        console.log(this.datos_precio[0])
+
+        this.datos_precio[0]+=parseFloat(dato.precio)// Agregar el precio (convertido a número)
+        this.datos_color[0]= "#ffbf75"// Generar un color aleatorio
+
+      }else if(dato.producto==this.productos[1]){//cafe americano
+
+        this.datos_precio[1]+=parseFloat(dato.precio) // Agregar el precio (convertido a número)
+        this.datos_color[1]= "#ffbf75"// Generar un color aleatorio
+
+      }else if(dato.producto==this.productos[2]){//leche
+
+        this.datos_precio[2]+=parseFloat(dato.precio) // Agregar el precio (convertido a número)
+        this.datos_color[2]= "#75cdff"// Generar un color aleatorio
+
+      }else{ //patatillas
+
+        this.datos_precio[3]+=parseFloat(dato.precio) // Agregar el precio (convertido a número)
+        this.datos_color[3]= "#b275ff"// Generar un color aleatorio
+
+      }
+     
+    }
+
+    for (let i = 0; i < this.datos_fecha.length; i++) {
+      this.datos.push({
+        x: this.productos[i],
+        y: this.datos_precio[i],
+        fillColor: this.datos_color[i]
+      
+      });
+    } 
+
+    }else{
+
     this.http.get<any>('assets/datos.JSON').subscribe(data => {
       console.log(data);
       data.datos.forEach((dato: { fecha: string; porcentaje: number; }) => {
@@ -81,6 +139,7 @@ export class ElementosPage implements OnInit{
       });
     } 
   });
+  }
 
     this.initializeChartOption();
   }
@@ -91,17 +150,40 @@ export class ElementosPage implements OnInit{
     };
   
     this.series = [{
-      name: 'Porcentaje',
-      data: this.datos , 
+      name: 'Procentaje',
+      data: this.datos
       //color: this.datos_color
     }];
   
     this.chart = {
       type: 'bar',
+      background: '#f8f1d8'
+     
     };
 
 
   }
+
+  private initializeChartOptionVentas(): void {
+    this.title = {
+      text: 'Nivel de ' + this.selectedCategory
+    };
+  
+    this.series = [{
+      name: 'Porcentaje',
+      data: this.datos
+      //color: this.datos_color
+    }];
+  
+    this.chart = {
+      type: 'bar',
+      background: '#f8f1d8'
+     
+    };
+
+
+  }
+
   
 
   showOverlay(nombre: string) {
@@ -111,6 +193,7 @@ export class ElementosPage implements OnInit{
 
   closeOverlay() {
     this.isOverlayVisible = false;
+    this.isOverlayCompra = false;
     this.amountToAdd = null; 
   }
 
@@ -184,21 +267,34 @@ export class ElementosPage implements OnInit{
   
 
   addBalance(nombre:string) {
-    var indice:number=0;
+    
+    let data = JSON.parse(this.lastLineLevels);
+    if(this.amountToAdd!=null){
     if(nombre=='Patatillas') {
-      indice=3;
-      console.log(this.product["consumos"][indice].porcentaje);
-      this.product["consumos"][indice].porcentaje = (this.product["consumos"][indice].porcentaje)+(this.amountToAdd);
+      this.product["consumos"][3].porcentaje += (this.amountToAdd);
+    }else if(nombre=='Café'){
+      this.product["consumos"][1].porcentaje += Math.floor((this.amountToAdd*100)/100);
+        data.niveles.nivel_cafe_pr += Math.floor((this.amountToAdd*100)/100);
+        data.niveles.nivel_cafe_gr += this.amountToAdd;
     }else{
-       if(nombre=='Agua') indice=0;
-      if(nombre=='Café') indice=1;
-      if(nombre=='Leche') indice=2;
-      if(this.amountToAdd!=null) this.product["consumos"][indice].porcentaje = Math.floor((this.amountToAdd*100)/3);
+      if(nombre=='Agua'){
+        this.product["consumos"][0].porcentaje += Math.floor((this.amountToAdd*100)/200);
+        data.niveles.nivel_agua_pr += Math.floor((this.amountToAdd*100)/200)
+        data.niveles.nivel_agua_ml += this.amountToAdd;
+      } 
+      if(nombre=='Leche'){
+          this.product["consumos"][2].porcentaje += Math.floor((this.amountToAdd*100)/200);
+          data.niveles.nivel_leche_pr += Math.floor((this.amountToAdd*100)/200)
+          data.niveles.nivel_leche_ml += this.amountToAdd;
+      } 
+    
     }
 
+    this.dataService.actualizarNiveles(data,this.nombre)   
     alert("Producto actualizado") 
     console.log("Actualizando producto:", this.amountToAdd);
     this.closeOverlay();
+  }
   }
 
   validateAmount(event: Event) {
@@ -207,16 +303,24 @@ export class ElementosPage implements OnInit{
 
       if (isNaN(value) || value < 0) {
         this.amountToAdd = 0;
-      }else if (value > 5) {
-        this.amountToAdd = 4;
+      }else if (value > 10) {
+        this.amountToAdd = 10;
       } else {
         this.amountToAdd = Math.floor(value);
+      }
+    }else if(this.productoSeleccionado=="cafe"){
+      if (isNaN(value) || value < 0) {
+        this.amountToAdd = 0;
+      }else if (value > 100) {
+        this.amountToAdd = 100;
+      } else {
+        this.amountToAdd = value;
       }
     }else{
       if (isNaN(value) || value < 0) {
         this.amountToAdd = 0;
-      }else if (value > 3) {
-        this.amountToAdd = 3;
+      }else if (value > 200) {
+        this.amountToAdd = 200;
       } else {
         this.amountToAdd = value;
       }
@@ -240,6 +344,7 @@ export class ElementosPage implements OnInit{
     this.subscription = this.mqttService.observe(topic).subscribe({
       next: (message: IMqttMessage) => {
         this.receiveNews += message.payload.toString() + '\n';
+        this.lastLineLevels = message.payload.toString();
         console.log(message.payload.toString());// Convertir el mensaje recibido a un objeto JavaScript
         let data = JSON.parse(message.payload.toString());
         
@@ -248,13 +353,21 @@ export class ElementosPage implements OnInit{
         this.product["consumos"][0].porcentaje = data.niveles.nivel_agua_pr;
         this.product["consumos"][1].porcentaje = data.niveles.nivel_cafe_pr;
         this.product["consumos"][2].porcentaje = data.niveles.nivel_leche_pr;
-        this.product["consumos"][3].porcentaje = data.niveles.patatillas;
+        this.product["consumos"][3].porcentaje = data.niveles.patatillas_u;
 
       },
       error: (error: any) => {
         this.isConnection = false;
         console.error(`Connection error: ${error}`);
       }
+    });
+  }
+
+  convertirFecha(fechaFirestore: { _seconds: number; _nanoseconds: number }): string {
+    const fecha = new Date(fechaFirestore._seconds * 1000);
+    return fecha.toLocaleDateString('es-ES', {
+      year: 'numeric', month: 'long', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
     });
   }
 
