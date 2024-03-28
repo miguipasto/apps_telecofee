@@ -38,7 +38,35 @@ export class BackendSocketsService {
       throw error; // Re-lanzar el error para que el componente pueda manejarlo
     }
   }
+
+  async obtenerVentas(maquina:string,fecha:Date) {
+    console.log(`${this.apiUrl}/compras?nombre_maquina=${maquina.toLocaleLowerCase()}`)
+    try { 
+        const response = await this.http.get<any[]>(`${this.apiUrl}/compras?nombre_maquina=${maquina.toLocaleLowerCase()}${fecha}`).toPromise(); 
+        const datosVentas: { precio: string; fecha: any; maquina: string, producto: string;}[]=[];
+      
+        response?.forEach((data) => {
+          const datos= {
+            precio: data.precio,
+            fecha: data.create_at,
+            maquina: data.maquina,
+            producto: data.producto
+          }
+
+          datosVentas.push(datos)
+          
+
+        })
+        //console.log(datosVentas)
+        return  datosVentas;
+     
+    } catch (error) {
+      console.error("Error al obtener las incidencias: ", error);
+      throw error; // Re-lanzar el error para que el componente pueda manejarlo
+    }
+  }
 }
+
 
 function data(descripcion: string[], create_at: Date, maquina: string, email: string): void {
   throw new Error('Function not implemented.');

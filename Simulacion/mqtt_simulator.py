@@ -28,21 +28,24 @@ compras_ids = set()
 
 niveles_maximos = {"nivel_cafe_gr": 100, "nivel_leche_ml": 200, "nivel_agua_ml": 200, "patatillas_u": 10}
 
-def obtener_historial_reposiciones(db):
+def obtener_historial_reposiciones(db, nombre_maquina):
     print("##########################################################")
     print("Actualizando niveles desde el historial de reposiciones...")
     print("##########################################################\n")
 
     for nivel_maquina in niveles:
-        maquina = nivel_maquina['maquina']
-        path = f'niveles/{maquina}/historial_reposiciones'
-        documentos = db.collection(path).order_by('fecha', direction=firestore.Query.DESCENDING).limit(1).get()
-        
-        for documento in documentos:
-            datos_reposicion = documento.to_dict()
-            nivel_maquina['niveles'] = datos_reposicion['niveles']
-            nivel_maquina['fecha'] = datos_reposicion['fecha']
-            print(f"Última reposición en '{maquina}': {datos_reposicion['fecha']} - Niveles: {datos_reposicion['niveles']}")
+        if (nivel_maquina['maquina'] == nombre_maquina):
+            maquina = nivel_maquina['maquina']
+            path = f'niveles/{maquina}/historial_reposiciones'
+            documentos = db.collection(path).order_by('fecha', direction=firestore.Query.DESCENDING).limit(1).get()
+            
+            for documento in documentos:
+                datos_reposicion = documento.to_dict()
+                nivel_maquina['niveles'] = datos_reposicion['niveles']
+                nivel_maquina['fecha'] = datos_reposicion['fecha']
+                print(f"Última reposición en '{maquina}': {datos_reposicion['fecha']} - Niveles: {datos_reposicion['niveles']}")
+
+            break
 
 def obtener_datos(db):
     print("\nConsultando nuevas compras...")
@@ -96,7 +99,7 @@ def obtener_nuevo_nivel(producto, nivel_actual):
 
 ### PUBLICACIÓN MQTT ###
 # Configuración
-direccion_broker = "83.35.221.176"
+direccion_broker = "localhost"
 puerto = 4500
 
 # Funciones de callback
@@ -108,6 +111,8 @@ def on_connect(cliente, userdata, flags, rc, properties=None):
             topico = f"{maquina}/compra"
             cliente.subscribe(topico)
             print(f"Suscrito en el tópico {topico}")
+        # Nos suscribismos al topico para las reposiciones
+        cliente.subscribe('reposicion')
     else:
         print(f"Fallo al conectar, código: {rc}")
 
@@ -123,6 +128,10 @@ def on_message(cliente, userdata, mensaje):
     if mensaje_str.startswith("SUCCESS"):
         time.sleep(5)
         obtener_datos(db_clientes)
+    if mensaje.topic == "reposicion":
+        print("### NUEVA REPOSICION ###")
+        time.sleep(2)
+        obtener_historial_reposiciones(db_workers,mensaje_str)
 
 # Creación de la instancia del cliente
 cliente = mqtt.Client(transport="websockets", callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
@@ -142,7 +151,8 @@ except Exception as e:
 cliente.loop_start()
 
 # Obtenemos los niveles
-obtener_historial_reposiciones(db_workers)
+for maquina in maquinas:
+    obtener_historial_reposiciones(db_workers, maquina)
 obtener_datos(db_clientes)
 
 try:
