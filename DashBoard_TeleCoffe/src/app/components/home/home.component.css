@@ -28,6 +28,8 @@
 
 .maquina-directo{
     display: block;
+    width: auto;
+    height: auto;
 }
 
 .grafico-circular{
@@ -44,4 +46,8 @@
     display: block;
     grid-row: 2;
     grid-column: 3 / span 4;
+}
+
+.line-chart-line {
+    stroke-width: 5px !important; /* Ajusta el 3px al grosor deseado */
 }
