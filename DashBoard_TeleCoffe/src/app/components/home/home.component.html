@@ -1,25 +1,51 @@
 <div class="home">
-    <div *ngFor="let maquina of maquinas" class="maquina-directo grafico-box">
-       <apx-chart [series]="chartOptions[maquina].series"
-           [chart]="chartOptions[maquina].chart"
-           [xaxis]="chartOptions[maquina].xaxis"
-           [title]="chartOptions[maquina].title"></apx-chart>
-
+    <div *ngFor="let maquina of maquinas" class="maquina-directo grafico-box" #maquinasNivelStyle>
+        <div  *ngIf="mostrarGraficasNivel">
+            <ngx-charts-bar-vertical 
+            [view]="graficasNiveles[maquina].viewSize"
+            [results]="graficasNiveles[maquina].data"
+            [xAxisLabel]="graficasNiveles[maquina].xAxisLabel"
+            [yAxisLabel]="graficasNiveles[maquina].yAxisLabel"
+            [legend]="graficasNiveles[maquina].legend"
+            [showXAxisLabel]="graficasNiveles[maquina].showXAxisLabel"
+            [showYAxisLabel]="graficasNiveles[maquina].showYAxisLabel"
+            [xAxis]="graficasNiveles[maquina].xAxis"
+            [yAxis]="graficasNiveles[maquina].yAxis"
+            [gradient]="graficasNiveles[maquina].gradient"
+            [showGridLines]="graficasNiveles[maquina].showGridLines"
+            [yScaleMax]="graficasNiveles[maquina].yScaleMax">
+            </ngx-charts-bar-vertical>
+        </div>
+        
     </div>    
-    <div class="grafico-circular grafico-box">
-        <apx-chart [series]="circularChartOptions.series"
-           [chart]="circularChartOptions.chart"
-           [labels]="circularChartOptions.labels"
-           [title]="circularChartOptions.title"></apx-chart>
+    <div class="grafico-circular grafico-box" #masVendido>
+        <div *ngIf="mostrarGraficaCircular">
+            <ngx-charts-pie-grid
+            [view]="graficaCircular.viewSize"
+            [results]="graficaCircular.data">
+        </ngx-charts-pie-grid>
+        </div>
+        
     </div>
     <div class="estadisticas-container grafico-box">
         Estadísticas
     </div>
-    <div class="grafico-ventas grafico-box">
-        <apx-chart [series]="ventasChartOptions.series"
-                   [chart]="ventasChartOptions.chart"
-                   [xaxis]="ventasChartOptions.xaxis"
-                   [title]="ventasChartOptions.title"></apx-chart>
+    <div class="grafico-ventas grafico-box" #ventasStyle>
+        <div *ngIf="mostrarGraficaVentas">
+            <ngx-charts-line-chart
+            [view]="graficaVentas.viewSize"
+            [results]="graficaVentas.data"
+            [gradient]="graficaVentas.gradient"
+            [xAxis]="graficaVentas.xAxis"
+            [yAxis]="graficaVentas.yAxis"
+            [legend]="graficaVentas.legend"
+            [showXAxisLabel]="graficaVentas.showXAxisLabel"
+            [showYAxisLabel]="graficaVentas.showYAxisLabel"
+            [xAxisLabel]="graficaVentas.xAxisLabel"
+            [yAxisLabel]="graficaVentas.yAxisLabel">
+            </ngx-charts-line-chart>
+        </div>
+        
     </div>
     
 </div>

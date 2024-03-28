@@ -1,7 +1,10 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgApexchartsModule } from 'ng-apexcharts';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MqttModule, IMqttServiceOptions } from 'ngx-mqtt';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';  // added
+
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -28,10 +31,12 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgApexchartsModule,
+    HttpClientModule,
+    NgxChartsModule,
+    BrowserAnimationsModule,
     MqttModule.forRoot(MQTT_SERVICE_OPTIONS),
   ],
-  providers: [],
+  providers: [HttpClientModule],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
