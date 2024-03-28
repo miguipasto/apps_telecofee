@@ -108,6 +108,8 @@ def on_connect(cliente, userdata, flags, rc, properties=None):
             topico = f"{maquina}/compra"
             cliente.subscribe(topico)
             print(f"Suscrito en el tópico {topico}")
+        # Nos suscribismos al topico para las reposiciones
+        cliente.subscribe('reposicion')
     else:
         print(f"Fallo al conectar, código: {rc}")
 
@@ -123,6 +125,10 @@ def on_message(cliente, userdata, mensaje):
     if mensaje_str.startswith("SUCCESS"):
         time.sleep(5)
         obtener_datos(db_clientes)
+    if mensaje.topic == "reposicion":
+        print("### NUEVA REPOSICION ###")
+        time.sleep(2)
+        obtener_historial_reposiciones(db_workers)
 
 # Creación de la instancia del cliente
 cliente = mqtt.Client(transport="websockets", callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
