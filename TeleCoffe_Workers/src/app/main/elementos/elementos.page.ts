@@ -270,31 +270,47 @@ export class ElementosPage implements OnInit{
     
     let data = JSON.parse(this.lastLineLevels);
     if(this.amountToAdd!=null){
-    if(nombre=='Patatillas') {
-      this.product["consumos"][3].porcentaje += (this.amountToAdd);
-    }else if(nombre=='Café'){
-      this.product["consumos"][1].porcentaje += Math.floor((this.amountToAdd*100)/100);
-        data.niveles.nivel_cafe_pr += Math.floor((this.amountToAdd*100)/100);
-        data.niveles.nivel_cafe_gr += this.amountToAdd;
-    }else{
-      if(nombre=='Agua'){
-        this.product["consumos"][0].porcentaje += Math.floor((this.amountToAdd*100)/200);
-        data.niveles.nivel_agua_pr += Math.floor((this.amountToAdd*100)/200)
-        data.niveles.nivel_agua_ml += this.amountToAdd;
-      } 
-      if(nombre=='Leche'){
-          this.product["consumos"][2].porcentaje += Math.floor((this.amountToAdd*100)/200);
-          data.niveles.nivel_leche_pr += Math.floor((this.amountToAdd*100)/200)
-          data.niveles.nivel_leche_ml += this.amountToAdd;
-      } 
-    
-    }
+      if(nombre=='Patatillas') {
+        this.product["consumos"][3].porcentaje += (this.amountToAdd);
+        data.niveles.patatillas_pr += Math.floor((this.amountToAdd*100)/10);
+        data.niveles.patatillas_u += this.amountToAdd;
+      } else if(nombre=='Café') {
+        this.product["consumos"][1].porcentaje += Math.floor((this.amountToAdd*100)/100);
+          data.niveles.nivel_cafe_pr += Math.floor((this.amountToAdd*100)/100);
+          data.niveles.nivel_cafe_gr += this.amountToAdd;
+      } else {
+        if(nombre=='Agua'){
+          this.product["consumos"][0].porcentaje += Math.floor((this.amountToAdd*100)/200);
+          data.niveles.nivel_agua_pr += Math.floor((this.amountToAdd*100)/200)
+          data.niveles.nivel_agua_ml += this.amountToAdd;
+        } 
+        if(nombre=='Leche'){
+            this.product["consumos"][2].porcentaje += Math.floor((this.amountToAdd*100)/200);
+            data.niveles.nivel_leche_pr += Math.floor((this.amountToAdd*100)/200)
+            data.niveles.nivel_leche_ml += this.amountToAdd;
+        } 
+        
+      
+      }
+      console.log("El producto actualizado", data)
+      // Actualizamos en Firebase
+      this.dataService.actualizarNiveles(data,this.nombre)   
+      // Avisamos por MQTT
+      this.nuevaReposicon(data['maquina']);
 
-    this.dataService.actualizarNiveles(data,this.nombre)   
-    alert("Producto actualizado") 
-    console.log("Actualizando producto:", this.amountToAdd);
-    this.closeOverlay();
+      alert("Producto actualizado") 
+      console.log("Actualizando producto:", this.amountToAdd);
+      this.closeOverlay();
+    }
   }
+
+  nuevaReposicon(maquina : String){
+    this.mqttService.publish(`reposicion`, `${maquina}`).subscribe({
+      next: () => console.log(`Nueva repisicion ${maquina}`),
+      error: (error: any) => {
+          console.error("Error al publicar mensaje:", error);
+      }
+    }); 
   }
 
   validateAmount(event: Event) {
