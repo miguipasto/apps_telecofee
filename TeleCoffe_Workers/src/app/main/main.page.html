@@ -15,7 +15,11 @@
         <a href="/main/main/home" class="tab-button" [class.active]="currentPageClass === 'home'">
           <i class="fas fa-home"></i>
         </a>
-      
+
+        <a href="/main/main/statistics" class="tab-button" [class.active]="currentPageClass === 'statistics'">
+          <i class="fa-solid fa-chart-line"></i>
+        </a>
+
         <a href="/main/main/map" class="tab-button" [class.active]="currentPageClass === 'wallet'">
           <i class="fa-solid fa-location-dot"></i>
         </a>
@@ -27,6 +31,7 @@
         <a href="/main/main/profile" class="tab-button" [class.active]="currentPageClass === 'profile'">
           <i class="fa-solid fa-user"></i>
         </a>
+        
       </div>
     </ion-tab-bar>
   </ion-tabs>
