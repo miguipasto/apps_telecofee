@@ -30,17 +30,15 @@
     display: block;
     width: auto;
     height: auto;
+    text-align: center;
 }
 
 .grafico-circular{
     display: block;
     grid-row: 2;
+    text-align: center;
 }
 
-.estadisticas-container{
-    display: block;
-    grid-row: 2;
-}
 
 .grafico-ventas{
     display: block;
@@ -50,4 +48,37 @@
 
 .line-chart-line {
     stroke-width: 5px !important; /* Ajusta el 3px al grosor deseado */
+}
+
+.estadisticas-container{
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-row: 2;
+    gap: 1%;
+}
+
+h1, h2, p {
+    margin: 0;
+}
+
+.estadistica-1, .estadistica-2, .estadistica-3{
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.texto-porcentaje{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+p{
+    color:rgb(116, 116, 116);
+}
+
+i{
+    font-size: 40px;
 }
