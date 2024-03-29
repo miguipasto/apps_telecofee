@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { TrabajadoresComponent } from './components/trabajadores/trabajadores.component';
 
 // Configuración de MQTT
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
@@ -26,7 +27,8 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
     AppComponent,
     HomeComponent,
     NavbarComponent,
-    FooterComponent
+    FooterComponent,
+    TrabajadoresComponent
   ],
   imports: [
     BrowserModule,

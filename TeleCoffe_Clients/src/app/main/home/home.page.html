@@ -28,15 +28,18 @@
     <div class="products-content">
       <div class="products-container">
         <div *ngFor="let product of products[selectedCategory]" class="producto">
+          <div *ngIf="!product.available" class="producto-overlay">
+            <p>No disponible</p>
+            <i class="fa-solid fa-ban"></i>
+          </div>
           <div class="foto-producto">
             <button (click)="showOverlay(product)">
-              <ion-img [src]="product.img" class="producto-foto"></ion-img>  
+              <img [src]="product.img" class="producto-foto"/>
             </button>
-            <div *ngIf="!product.available" class="producto-overlay">No disponible</div>
           </div>
           <div class="texto-producto">
               <p>{{ product.name }}</p>
-              <p>{{ product.price }}€</p>
+              <p style="color:#70442b">{{ product.price }}€</p>
           </div>
         </div>
 

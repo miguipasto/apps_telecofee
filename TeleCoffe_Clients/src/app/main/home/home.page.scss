@@ -1,3 +1,4 @@
+@import "~@fortawesome/fontawesome-free/css/all.css";
 // Estilos para poder solapar header y poner texto
 .home-container{
     margin-top: 35%;
@@ -94,17 +95,19 @@
 
 .producto {
     background-color: #f8f1d7;
-    display: flex;
-    flex-direction: column; 
+    display: grid;
+    grid-template-rows: 1.5fr 1fr;
     align-items: center; 
     justify-content: center;
     border-radius: 10px;
 }
 
 .foto-producto {
-    width: 100%;
-    display: flex;
+    display: block;
     justify-content: center;
+    height: 100%;
+    max-width: 180px;
+    overflow: hidden;
 }
 
 button {
@@ -112,10 +115,9 @@ button {
 }
 
 .producto-foto {
-    max-width: 100%;
-    max-height: 19vh;
     border-radius: 10px;
 }
+
 
 .texto-producto {
     text-align: center;
@@ -123,6 +125,33 @@ button {
     display: flex;
     flex-direction: column;
     width: 100%; 
+}
+
+.producto-overlay {
+    border-radius: 10px;
+    width: 46%;
+    height: 35%;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente negro */
+    color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.producto-overlay p{
+    color: white; /* Color del ícono */
+    position: absolute;
+    font-size: 25px;
+    margin-top: 200px;
+}
+
+
+.producto-overlay i{
+    color: white; /* Color del ícono */
+    opacity: 0.75; /* Hacer el ícono un poco transparente */
+    position: absolute;
+    font-size: 160px;
+    margin-top: 5%;
 }
 /* Añadir azucar */
 .overlay {
@@ -186,18 +215,7 @@ button {
 }
 
 
-.producto-overlay {
-    border-radius: 10px;
-    width: 46%;
-    height: 33%;
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente negro */
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-}
+
 
 .codigoConfirmacion{
     width: 10vh;
