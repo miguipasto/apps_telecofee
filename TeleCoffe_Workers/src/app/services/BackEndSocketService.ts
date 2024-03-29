@@ -39,35 +39,40 @@ export class BackendSocketsService {
     }
   }
 
-  async obtenerVentas(maquina:string,fecha:Date) {
-    console.log(`${this.apiUrl}/compras?nombre_maquina=${maquina.toLocaleLowerCase()}`)
-    try { 
-        const response = await this.http.get<any[]>(`${this.apiUrl}/compras?nombre_maquina=${maquina.toLocaleLowerCase()}${fecha}`).toPromise(); 
-        const datosVentas: { precio: string; fecha: any; maquina: string, producto: string;}[]=[];
-      
-        response?.forEach((data) => {
-          const datos= {
-            precio: data.precio,
-            fecha: data.create_at,
-            maquina: data.maquina,
-            producto: data.producto
-          }
+  compras(nombre_maquina: string, fecha: string): Observable<any> {
+    let queryParams = '';
 
-          datosVentas.push(datos)
-          
-
-        })
-        //console.log(datosVentas)
-        return  datosVentas;
-     
-    } catch (error) {
-      console.error("Error al obtener las incidencias: ", error);
-      throw error; // Re-lanzar el error para que el componente pueda manejarlo
+    if (nombre_maquina.length > 0) {
+      queryParams += `nombre_maquina=${encodeURIComponent(nombre_maquina)}`;
     }
+
+    if (fecha.length > 0) {
+      if (queryParams.length > 0) queryParams += '&';
+      queryParams += `fecha=${encodeURIComponent(fecha)}`;
+    }
+
+    const url = `${this.apiUrl}/compras${queryParams.length > 0 ? '?' + queryParams : ''}`;
+    return this.http.get<any>(url);
   }
-}
 
+  ObtenerDatos(nombre_maquina: string, fecha: string): Observable<any>{
+    let queryParams = '';
 
-function data(descripcion: string[], create_at: Date, maquina: string, email: string): void {
-  throw new Error('Function not implemented.');
+    if (nombre_maquina.length > 0) {
+      queryParams += `nombre_maquina=${encodeURIComponent(nombre_maquina)}`;
+    }
+
+    if (fecha.length > 0) {
+      if (queryParams.length > 0) queryParams += '&';
+      queryParams += `fecha=${encodeURIComponent(fecha)}`;
+    }
+
+    queryParams += '&';
+    queryParams += `cantidad=${encodeURIComponent("last")}`;
+
+    const url = `${this.apiUrl}/niveles${queryParams.length > 0 ? '?' + queryParams : ''}`;
+    console.log(url)
+    return  this.http.get<any>(url);
+  }
+
 }

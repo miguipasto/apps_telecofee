@@ -1,0 +1,62 @@
+.grafico-box {
+    border-radius: 10px;
+    border: 2px solid #70442B;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 4%;
+}
+
+.grafico-ventas {
+    display: block;
+    grid-row: 2;
+    grid-column: 3 / span 4;
+    position: absolute;
+    top: 64%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85vw; /* Ajusta el ancho según sea necesario */
+    height: 60vh; /* Ajusta la altura según sea necesario */
+}
+
+.home-container{
+    margin-top: 20%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 0.5fr 4fr;
+    row-gap: 5%;
+}
+
+/* Header especial para cada pantalla */
+.home-header{
+    display: grid;
+    justify-content: center;
+    text-align: center;
+}
+
+
+/* Contenido */
+.home-content{
+    display: grid;
+    grid-template-rows: 0.2fr 8fr;
+}
+
+.titles-container{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+.titles-container h4{
+    color: #70442b;
+    font-weight: bold;
+    font-size: 23px;
+    margin: 0;
+}
+
+.linea-decorativa {
+    display: grid;
+    height: 5px;
+    width: 100%;
+    border-radius: 20px;
+    background-color: #70442b;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+}

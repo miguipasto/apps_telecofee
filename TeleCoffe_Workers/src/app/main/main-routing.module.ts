@@ -31,6 +31,10 @@ const routes: Routes = [
       {
         path: 'map',
         loadChildren: () => import('./map/map.module').then( m => m.MapPageModule)
+      },
+      {
+        path: 'statistics',
+        loadChildren: () => import('./statistics/statistics.module').then( m => m.StatisticsPageModule)
       }
         
     ]
@@ -39,6 +43,10 @@ const routes: Routes = [
     path: '',
     redirectTo: 'main/home',
     pathMatch: 'full'
+  },
+  {
+    path: 'statistics',
+    loadChildren: () => import('./statistics/statistics.module').then( m => m.StatisticsPageModule)
   }
 ];
 

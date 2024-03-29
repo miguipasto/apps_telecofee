@@ -1,0 +1,25 @@
+<div class="home-container">
+  <div class="home-header">
+  </div>
+  <div class="home-content">
+    <div class="titles-container">
+      <h4>Estadísticas Ventas Totales</h4>
+      <hr class="linea-decorativa">
+    </div>
+
+    <div class="grafico-ventas grafico-box" #ventaStyle>
+          <ngx-charts-line-chart
+          [view]="graficaVentas.viewSize"
+          [results]="graficaVentas.data"
+          [gradient]="graficaVentas.gradient"
+          [xAxis]="graficaVentas.xAxis"
+          [yAxis]="graficaVentas.yAxis"
+          [legend]="graficaVentas.legend"
+          [showXAxisLabel]="graficaVentas.showXAxisLabel"
+          [showYAxisLabel]="graficaVentas.showYAxisLabel"
+          [xAxisLabel]="graficaVentas.xAxisLabel"
+          [yAxisLabel]="graficaVentas.yAxisLabel">
+          </ngx-charts-line-chart>
+      </div>
+</div>
+</div>

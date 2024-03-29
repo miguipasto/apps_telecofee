@@ -1,6 +1,7 @@
 <div class="home">
     <div *ngFor="let maquina of maquinas" class="maquina-directo grafico-box" #maquinasNivelStyle>
-        <div  *ngIf="mostrarGraficasNivel">
+        <h3>Nivel en directo de la {{nombresFormales[maquina]}}</h3>
+        <div *ngIf="mostrarGraficasNivel">
             <ngx-charts-bar-vertical 
             [view]="graficasNiveles[maquina].viewSize"
             [results]="graficasNiveles[maquina].data"
@@ -19,6 +20,7 @@
         
     </div>    
     <div class="grafico-circular grafico-box" #masVendido>
+        <h3>Productos más vendidos</h3>
         <div *ngIf="mostrarGraficaCircular">
             <ngx-charts-pie-grid
             [view]="graficaCircular.viewSize"
@@ -27,8 +29,33 @@
         </div>
         
     </div>
-    <div class="estadisticas-container grafico-box">
-        Estadísticas
+    <div class="estadisticas-container">
+        <div class="estadistica-1 grafico-box">
+            <h2>Ventas diarias</h2>
+            <div class="texto-porcentaje">
+                <i *ngIf="cambioPorcentual >= 0; else downIcon" style="color: green" class="fa-solid fa-caret-up"></i>
+                <ng-template #downIcon>
+                    <i style="color: red" class="fa-solid fa-caret-down"></i>
+                </ng-template>
+                <h1>{{ cambioPorcentual }}%</h1>
+            </div>
+            <p>{{ ventasHoy }} hoy respecto a {{ ventasAyer }} de ayer</p>
+        </div>
+        <div class="estadistica-2 grafico-box">
+            <h2>Ventas Semanales</h2>
+            <div class="texto-porcentaje">
+                <i *ngIf="cambioPorcentualSemanal >= 0; else downIcon" style="color: green" class="fa-solid fa-caret-up"></i>
+                <ng-template #downIcon>
+                    <i style="color: red" class="fa-solid fa-caret-down"></i>
+                </ng-template>
+                <h1>{{ cambioPorcentualSemanal }}%</h1>
+            </div>
+            <p>{{ ventasSemanaActual }} esta semana respecto<br/>a {{ ventasSemanaAnterior }} de la semana anterior</p>
+        </div>
+        <div class="estadistica-3 grafico-box">
+            e3
+        </div>
+        
     </div>
     <div class="grafico-ventas grafico-box" #ventasStyle>
         <div *ngIf="mostrarGraficaVentas">

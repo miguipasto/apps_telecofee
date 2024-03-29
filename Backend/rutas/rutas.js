@@ -99,22 +99,20 @@ router.get('/compras', async (req, res) => {
 router.get('/niveles', async (req, res) => {
     try {
         const { nombre_maquina, fecha, cantidad } = req.query;
-        let nivelesRef;
-        let snapshot;
         let niveles = [];
+        const maquinas = nombre_maquina ? [nombre_maquina] : ["minas", "teleco", "biologia", "industriales"];
+        let allNiveles = [];
 
-        if (nombre_maquina) {
-            nivelesRef = dbWorkers.collection(`niveles/${nombre_maquina}/historial_niveles`);
-
-            // Filtrar por rango de días
-            if (fecha && fecha.endsWith('d')) {
+        for (const maquina of maquinas) {
+            let nivelesRef = dbWorkers.collection(`niveles/${maquina}/historial_niveles`);
+            
+              // Filtrar por rango de días
+              if (fecha && fecha.endsWith('d')) {
                 const dias = parseInt(fecha);
                 const fechaInicio = new Date();
                 fechaInicio.setDate(fechaInicio.getDate() - dias);
                 nivelesRef = nivelesRef.where('fecha', '>=', Timestamp.fromDate(fechaInicio));
-            }
-            // Filtrar por fecha específica
-            else if (fecha && fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            } else if (fecha && fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
                 const fechaInicio = new Date(fecha);
                 const fechaFin = new Date(fechaInicio);
                 fechaFin.setDate(fechaFin.getDate() + 1);
@@ -122,67 +120,42 @@ router.get('/niveles', async (req, res) => {
                                        .where('fecha', '<', Timestamp.fromDate(fechaFin));
             }
 
-            snapshot = await nivelesRef.get();
+            let snapshot = await nivelesRef.orderBy('fecha', 'asc').get();
 
             if (!snapshot.empty) {
-                niveles = snapshot.docs.map(doc => ({
+                let nivelesMaquina = snapshot.docs.map(doc => ({
+                    maquina: maquina,
                     id: doc.id,
                     ...doc.data()
                 }));
+                allNiveles = allNiveles.concat(nivelesMaquina);
             }
+        }
 
-            // Filtrar por cantidad
-            if (cantidad === 'last') {
-                niveles = [niveles[niveles.length - 1]]; 
-            }
-
-        } else {
-            const maquinas = ["minas", "teleco", "biologia", "industriales"];
-            let allNiveles = [];
-
-            for (const maquina of maquinas) {
-                let nivelesRef = dbWorkers.collection(`niveles/${maquina}/historial_niveles`);
-                
-                // Filtrar por rango de días
-            if (fecha && fecha.endsWith('d')) {
-                const dias = parseInt(fecha);
-                const fechaInicio = new Date();
-                fechaInicio.setDate(fechaInicio.getDate() - dias);
-                nivelesRef = nivelesRef.where('fecha', '>=', Timestamp.fromDate(fechaInicio));
-            }
-            // Filtrar por fecha específica
-            else if (fecha && fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
-                const fechaInicio = new Date(fecha);
-                const fechaFin = new Date(fechaInicio);
-                fechaFin.setDate(fechaFin.getDate() + 1);
-                nivelesRef = nivelesRef.where('fecha', '>=', Timestamp.fromDate(fechaInicio))
-                                       .where('fecha', '<', Timestamp.fromDate(fechaFin));
-            }
-
-                let snapshot = await nivelesRef.get();
-
-                if (!snapshot.empty) {
-                    let nivelesMaquina = snapshot.docs.map(doc => ({
-                        maquina: maquina,
-                        id: doc.id,
-                        ...doc.data()
-                    }));
-                    allNiveles = allNiveles.concat(nivelesMaquina);
+        if (cantidad === 'last' && fecha) {
+            // Agrupar por día y luego seleccionar el último registro de cada día
+            let nivelesAgrupadosPorDia = {};
+            allNiveles.forEach(nivel => {
+                const fecha = nivel.fecha.toDate().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+                if (!nivelesAgrupadosPorDia[fecha]) {
+                    nivelesAgrupadosPorDia[fecha] = [];
                 }
-            }
+                nivelesAgrupadosPorDia[fecha].push(nivel);
+            });
 
-            if (cantidad === 'last') {
-                let lastNiveles = [];
-                maquinas.forEach(maquina => {
-                    let nivelesMaquina = allNiveles.filter(nivel => nivel.maquina === maquina);
-                    if (nivelesMaquina.length > 0) {
-                        lastNiveles.push(nivelesMaquina[nivelesMaquina.length - 1]);
-                    }
-                });
-                niveles = lastNiveles;
-            } else {
-                niveles = allNiveles;
-            }
+            niveles = Object.values(nivelesAgrupadosPorDia).map(nivelesPorDia => nivelesPorDia[nivelesPorDia.length - 1]);
+        } else if (cantidad === 'last' && !fecha) {
+            // Filtrar para obtener el último nivel de cada máquina
+            let lastNiveles = [];
+            maquinas.forEach(maquina => {
+                let nivelesMaquina = allNiveles.filter(nivel => nivel.maquina === maquina);
+                if (nivelesMaquina.length > 0) {
+                    lastNiveles.push(nivelesMaquina[nivelesMaquina.length - 1]);
+                }
+            });
+            niveles = lastNiveles;
+        } else {
+            niveles = allNiveles;
         }
 
         if (niveles.length === 0) {
@@ -207,6 +180,7 @@ router.get('/niveles', async (req, res) => {
         });
     }
 });
+
 
 // Incidencias
 router.get('/incidencias', async (req, res) => {
