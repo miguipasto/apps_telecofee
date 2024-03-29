@@ -47,7 +47,7 @@
             <h2>Leche</h2>
             <hr class="linea-decorativa">
           </div>
-          <div class="title-box" (click)="selectCategory('patatas')" [ngClass]="{'active': selectedCategory === 'patatas'}">
+          <div class="title-box" (click)="selectCategory('patatillas')" [ngClass]="{'active': selectedCategory === 'patatillas'}">
             <h2>Patatas</h2>
             <hr class="linea-decorativa">
           </div>
@@ -57,10 +57,26 @@
           </div>
         </div>
         
-        <div class="grafica">
-          <apx-chart [series]="series" [chart]="chart" [title]="title"></apx-chart>
-        </div>
-        
+        <div class="maquina-directo grafico-box">
+          <div  *ngIf="this.selectedCategory !=='consumos'">
+              <ngx-charts-bar-vertical 
+              [view]="graficasNiveles[this.selectedCategory].viewSize"
+              [results]="graficasNiveles[this.selectedCategory].data"
+              [xAxisLabel]="graficasNiveles[this.selectedCategory].xAxisLabel"
+              [yAxisLabel]="graficasNiveles[this.selectedCategory].yAxisLabel"
+              [legend]="graficasNiveles[this.selectedCategory].legend"
+              [showXAxisLabel]="graficasNiveles[this.selectedCategory].showXAxisLabel"
+              [showYAxisLabel]="graficasNiveles[this.selectedCategory].showYAxisLabel"
+              [xAxis]="graficasNiveles[this.selectedCategory].xAxis"
+              [yAxis]="graficasNiveles[this.selectedCategory].yAxis"
+              [gradient]="graficasNiveles[this.selectedCategory].gradient"
+              [showGridLines]="graficasNiveles[this.selectedCategory].showGridLines"
+              [yScaleMax]="graficasNiveles[this.selectedCategory].yScaleMax">
+              </ngx-charts-bar-vertical>
+          </div>
+          
+      </div>    
+                  
       </div>
     </div>
 
@@ -70,7 +86,7 @@
         <hr class="linea-decorativa">
       </div>
       <div class="title-box" (click)="selectCategory('agua')" [ngClass]="{'active': selectedCategory !== 'consumos'}">
-        <h2>Estadísticas</h2>{{this.selectedCategory}}
+        <h2>Estadísticas</h2>
         <hr class="linea-decorativa">
       </div>
     </div>

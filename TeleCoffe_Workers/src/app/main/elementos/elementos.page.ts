@@ -1,24 +1,72 @@
 //import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 
 import * as apex from "ng-apexcharts";
 import { HttpClient} from '@angular/common/http';
-import {ApexXAxis } from 'ng-apexcharts';
 
 import { MqttService, IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { BackendSocketsService } from 'src/app/services/BackEndSocketService';
 
-   
-  
+
+interface GraficaDataBarras {
+  name: string;
+  value: number;
+}
+
+interface Niveles {
+  patatillas_pr: number;
+  patatillas_u: number;
+  nivel_agua_pr: number;
+  nivel_leche_pr: number;
+  nivel_cafe_pr: number;
+  nivel_agua_ml: number;
+  nivel_leche_ml: number;
+  nivel_cafe_gr: number;
+}
+
+interface EstadoMaquina {
+  [maquina: string]: Niveles;
+}
+
+interface GraficaNiveles {
+  [nombreMaquina: string]: {
+    data: GraficaDataBarras[];
+    viewSize: [number,number];
+    xAxisLabel: string;
+    yAxisLabel: string;
+    showXAxisLabel: boolean;
+    showYAxisLabel: boolean;
+    xAxis: boolean;
+    yAxis: boolean;
+    yScaleMax: number;
+    gradient: boolean;
+    legend: boolean;
+    showGridLines: boolean;
+  };
+}
+ 
 @Component({
   selector: 'app-elementos',
   templateUrl: './elementos.page.html',
   styleUrls: ['./elementos.page.scss'],
 })
-export class ElementosPage implements OnInit{
+export class ElementosPage implements OnInit, AfterViewInit{
+
+  productos = ["agua",  "cafe", "leche", "patatillas"]
+  nombresFormales: { [key: string]: string } = {
+    agua: "Escuela de Ingienería de Telecomunicación",
+    cafe: "Escuela de Ingeniería de Minas y Energía",
+    leche: "Escuela de Ingienería Industrial",
+    patatillas: "Facultad de Biología"
+  };
+  estadoMaquinas: EstadoMaquina = {};
+
+  graficasNiveles: GraficaNiveles = {};
+  viewSizeNivel: [number, number] = [0, 0];
+  mostrarGraficasNivel: boolean = false;
 
   isOverlayVisible: boolean = false;
   isOverlayCompra: boolean =false;
@@ -27,164 +75,157 @@ export class ElementosPage implements OnInit{
   productoSeleccionado: string = "";
   nombre: string = ""; // Cambiado a string
 
-  series!: apex.ApexAxisChartSeries;
-  chart!: apex.ApexChart;
-  title!: apex.ApexTitleSubtitle;
-  
-  datos: any[] = [];
-  datos_fecha: String[]=[]
-  datos_precio: number[]=[]
-  datos_porcentaje: number[]=[]
-  datos_color: String[]=[]
-  fecha_grafica!: Date;
-
-  datosVentas: { precio: string; fecha: any; maquina: string, producto: string;}[]=[];
 
   private subscription: Subscription | undefined;
   public receiveNews = '';
   public lastLineLevels = "";
   public isConnection = false;
-  public productos: String[] = [ "Café con leche",  "Cafe americano", "Leche", "Patatillas"]
+  //public productos: String[] = [ "Café con leche",  "Cafe americano", "Leche", "Patatillas"]
 
-  
 
   constructor(private route: ActivatedRoute, private router:Router, private http: HttpClient, private mqttService: MqttService, private dataService: DataService, private backendService: BackendSocketsService) { 
   }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.nombre = params.get('nombre') || ''; // Obtener el valor del parámetro 'nombre' y asignarlo a nombre
+      const nombre = params.get('nombre');
+      if (nombre) {
+        this.nombre = nombre;
+        this.subscribeToTopic(this.nombre);
+        this.inicializarGraficasNiveles();
+      }
     });
-    this.subscribeToTopic(this.nombre);
+   
+   
   }
 
-  private async crearGrafica(): Promise<void>{
+  ngAfterViewInit() {
+    this.adjustGraphSize();
+  }
 
-    this.datos_fecha=[];
-    this.datos_precio = Array(4).fill(0);
-    this.datos_color=[];
-    this.datos=[];
-    this.datos_porcentaje=[];
-    
-    console.log("Cambios")
-    if(this.selectedCategory=="ventas"){
+  ngOnDestroy() {
+    this.subscription?.unsubscribe();
+  }
 
-       let ventas= await this.backendService.obtenerVentas(this.nombre,this.fecha_grafica)
+ adjustGraphSize() {
+    const width = window.innerWidth - 50; // Ancho de la pantalla menos el espacio de margen
+    const height = 300; // Altura deseada
 
-       console.log(ventas)
+    // No es necesario calcular las coordenadas x e y ya que el contenedor está centrado en CSS
 
-    for (let i = 0; i < ventas.length; i++) {
-      const dato = ventas[i];
-      console.log(dato)
-      if(dato.producto==this.productos[0]){//café con leche
-        console.log(this.datos_precio[0])
+    // Establece la vista con el ancho y la altura calculados
+    this.viewSizeNivel = [width, height];
+    this.inicializarGraficasNiveles();
+}
 
-        this.datos_precio[0]+=parseFloat(dato.precio)// Agregar el precio (convertido a número)
-        this.datos_color[0]= "#ffbf75"// Generar un color aleatorio
 
-      }else if(dato.producto==this.productos[1]){//cafe americano
+  inicializarGraficasNiveles() {
+    this.productos.forEach(producto => {
+      const nombreFormal = this.nombresFormales[producto];  
+      this.graficasNiveles[producto] = {
+        data: [],
+        viewSize: this.viewSizeNivel,
+        xAxisLabel: nombreFormal,
+        yAxisLabel: 'Porcentaje',
+        showXAxisLabel: true,
+        showYAxisLabel: true,
+        xAxis: true,
+        yAxis: true,
+        yScaleMax: 100,
+        gradient: false,
+        legend: false,
+        showGridLines: false,
+      };
+    });
+  }
 
-        this.datos_precio[1]+=parseFloat(dato.precio) // Agregar el precio (convertido a número)
-        this.datos_color[1]= "#ffbf75"// Generar un color aleatorio
 
-      }else if(dato.producto==this.productos[2]){//leche
-
-        this.datos_precio[2]+=parseFloat(dato.precio) // Agregar el precio (convertido a número)
-        this.datos_color[2]= "#75cdff"// Generar un color aleatorio
-
-      }else{ //patatillas
-
-        this.datos_precio[3]+=parseFloat(dato.precio) // Agregar el precio (convertido a número)
-        this.datos_color[3]= "#b275ff"// Generar un color aleatorio
-
+  obtenerCompras(nombre_maquina: string, fecha: string) {
+    this.backendService.compras(nombre_maquina, fecha).subscribe({
+      next: (compras) => {
+        // Procesar las compras para agruparlas por máquina y fecha
+        this.procesarCompras(compras);
+      },
+      error: (error) => {
+        console.error(error);
       }
-     
-    }
-
-    for (let i = 0; i < this.datos_fecha.length; i++) {
-      this.datos.push({
-        x: this.productos[i],
-        y: this.datos_precio[i],
-        fillColor: this.datos_color[i]
+    });
+  }
+  
+  procesarCompras(compras: any[]){
+    const ventas: { [maquina: string]: { [fecha: string]: number } } = {};
+    const ventasPorProducto: { [producto: string]: number } = {};
+    
+    compras.forEach(compra => {
+      const fecha = new Date(compra.fecha._seconds * 1000).toISOString().split('T')[0];
+      const maquina = compra.maquina;
+      const producto = compra.producto;
       
-      });
-    } 
+      if (!ventas[maquina]) {
+        ventas[maquina] = {};
+      }
+      if (!ventas[maquina][fecha]) {
+        ventas[maquina][fecha] = 0;
+      }
+  
+      ventas[maquina][fecha] += 1;
+  
+      // Conteo de ventas por producto
+      if (!ventasPorProducto[producto]) {
+        ventasPorProducto[producto] = 0;
+      }
+      ventasPorProducto[producto] += 1;
+    });
+  
+  }
 
-    }else{
+  procesarDatos(datos: any[]){
+    
+    datos.forEach(data => {
+      const fecha = new Date(data.fecha._seconds * 1000).toISOString().split('T')[0];
+      const nivel_agua = data.niveles.nivel_agua_pr;
+      const nivel_cafe = data.niveles.nivel_cafe_pr;
+      const nivel_leche = data.niveles.nivel_leche_pr;
+      const nivel_patatillas = data.niveles.patatillas_u;
 
-    this.http.get<any>('assets/datos.JSON').subscribe(data => {
-      console.log(data);
-      data.datos.forEach((dato: { fecha: string; porcentaje: number; }) => {
-        this.datos_fecha.push(dato.fecha);
-        this.datos_porcentaje.push(dato.porcentaje);
-        if(dato.porcentaje<10){
-          this.datos_color.push('#ff0000')
+      console.log(nivel_patatillas)
 
-        }else{
-          console.log(this.selectedCategory)
-          if(this.selectedCategory=="agua") this.datos_color.push("#A3CCFD");
-          else if(this.selectedCategory=="cafe") this.datos_color.push('#70442b');
-          else if(this.selectedCategory=="leche") this.datos_color.push("#E9DBAB");
-          else this.datos_color.push("#ff0000");
+    // Actualizar los datos de las gráficas correspondientes
+    this.graficasNiveles['agua'].data.push({ name: fecha, value: nivel_agua });
+    this.graficasNiveles['cafe'].data.push({ name: fecha, value: nivel_cafe });
+    this.graficasNiveles['leche'].data.push({ name: fecha, value: nivel_leche });
+    this.graficasNiveles['patatillas'].data.push({ name: fecha, value: nivel_patatillas });
 
+    });
+    
+  }
+
+  actualizarEstadoMaquina() {
+    try {
+
+      this.backendService.ObtenerDatos(this.nombre.toLocaleLowerCase(), "2024-03-25").subscribe({
+        next: (response) => {
+          if (response.success) {
+            const data = response.data;
+            console.log("Datos:", data);
+            // Procesar los datos aquí
+            this.procesarDatos(data);
+          } else {
+            console.error("Error en la respuesta:", response.message);
+          }
+        },
+        error: (error) => {
+          console.error(error);
         }
       });
-
-    for (let i = 0; i < this.datos_fecha.length; i++) {
-      this.datos.push({
-        x: this.datos_fecha[i],
-        y: this.datos_porcentaje[i],
-        fillColor: this.datos_color[i]
-      
-      });
-    } 
-  });
-  }
-
-    this.initializeChartOption();
-  }
-  
-  private initializeChartOption(): void {
-    this.title = {
-      text: 'Nivel de ' + this.selectedCategory
-    };
-  
-    this.series = [{
-      name: 'Procentaje',
-      data: this.datos
-      //color: this.datos_color
-    }];
-  
-    this.chart = {
-      type: 'bar',
-      background: '#f8f1d8'
      
-    };
+    } catch (error) {
+      console.error('Error al procesar el mensaje:', error);
+    }
+    
 
-
+   
   }
-
-  private initializeChartOptionVentas(): void {
-    this.title = {
-      text: 'Nivel de ' + this.selectedCategory
-    };
-  
-    this.series = [{
-      name: 'Porcentaje',
-      data: this.datos
-      //color: this.datos_color
-    }];
-  
-    this.chart = {
-      type: 'bar',
-      background: '#f8f1d8'
-     
-    };
-
-
-  }
-
-  
 
   showOverlay(nombre: string) {
     this.isOverlayVisible = true;
@@ -222,7 +263,7 @@ export class ElementosPage implements OnInit{
 
      // Llama a la función de inicialización del gráfico si la categoría seleccionada es diferente de 'consumos'
   if (this.selectedCategory !== 'consumos') {
-    this.crearGrafica();
+    //this.crearGrafica();
   }
   }
 
@@ -355,7 +396,7 @@ export class ElementosPage implements OnInit{
       console.log('Desuscripto del tópico anterior.');
     }
 
-    console.log(topic)
+    
     // Intentamos suscribirnos al tópico
     this.subscription = this.mqttService.observe(topic).subscribe({
       next: (message: IMqttMessage) => {
@@ -370,6 +411,10 @@ export class ElementosPage implements OnInit{
         this.product["consumos"][1].porcentaje = data.niveles.nivel_cafe_pr;
         this.product["consumos"][2].porcentaje = data.niveles.nivel_leche_pr;
         this.product["consumos"][3].porcentaje = data.niveles.patatillas_u;
+
+        console.log("Actualizado")
+
+        this.actualizarEstadoMaquina()
 
       },
       error: (error: any) => {
@@ -390,5 +435,4 @@ export class ElementosPage implements OnInit{
 
 
 }
-
 

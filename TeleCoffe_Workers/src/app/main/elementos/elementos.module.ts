@@ -9,6 +9,8 @@ import { ElementosPageRoutingModule } from './elementos-routing.module';
 import { ElementosPage } from './elementos.page';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { HttpClientModule} from '@angular/common/http';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+
 
 @NgModule({
   imports: [
@@ -16,6 +18,7 @@ import { HttpClientModule} from '@angular/common/http';
     FormsModule,
     NgApexchartsModule,
     HttpClientModule,
+    NgxChartsModule,
     IonicModule,
     ElementosPageRoutingModule
   ],

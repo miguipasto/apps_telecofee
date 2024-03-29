@@ -135,7 +135,7 @@ button {
 /* Graficas */
 .graficas-content{
     display: grid;
-    grid-template-rows: 2fr 5fr;
+    grid-template-rows: 0.5fr 4.5fr;
 }
 
 .selector-productos{
@@ -234,3 +234,19 @@ button {
     width: 30vw;
     font-weight: bold;
 }
+.grafico-box {
+    border-radius: 10px;
+    border: 2px solid #70442B;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 4%;
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    height: 40vh; /* Altura de la pantalla */
+}
+
+.maquina-directo {
+    margin: 2%;
+    margin-top: 4%;
+}
+

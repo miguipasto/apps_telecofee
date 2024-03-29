@@ -16,6 +16,10 @@ import { MqttModule, IMqttServiceOptions } from 'ngx-mqtt';
 import { HttpClient,HttpClientModule } from '@angular/common/http';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';  // added
+
+
 // Configuración de MQTT
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: '83.35.221.176',
@@ -35,6 +39,8 @@ const config: SocketIoConfig = { url: 'http://83.35.221.175:500/api', options: {
     IonicModule.forRoot(),
     AppRoutingModule, 
     HttpClientModule,
+    NgxChartsModule,
+    BrowserAnimationsModule,
     SocketIoModule.forRoot(config),
     provideFirebaseApp(() => initializeApp({
       "projectId":"lpro-workers",
