@@ -74,18 +74,20 @@
               [yScaleMax]="graficasNiveles[this.selectedCategory].yScaleMax"
               (select)="onDataPointSelected($event)">
               </ngx-charts-bar-vertical>
+              
+              <div class="selector-fecha" *ngIf="this.selectedCategory ==='ventas'">
+                <label for="fecha"></label>
+                <select id="fecha" [(ngModel)]="selectedDate" (change)="updateChart()">
+                  <option *ngFor="let fecha of fechasDisponibles">{{ fecha }}</option>
+                </select>
+              </div>
           </div> 
+
+          
+        </div>  
       </div>  
-      <div class="selector-fecha">
-        <div  *ngIf="this.selectedCategory ==='ventas'">
-            <label for="fecha"></label>
-            <select id="fecha" [(ngModel)]="selectedDate" (change)="updateChart()">
-            <option *ngFor="let fecha of fechasDisponibles">{{ fecha }}</option>
-        </select>
-        </div>
-      </div>  
-                  
-      </div>
+      
+          
     </div>
 
     <div class="categoria-content">
