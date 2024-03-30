@@ -97,19 +97,19 @@ export class HomeComponent implements OnInit{
   viewSizeNivel: [number, number] = [0, 0];
   mostrarGraficasNivel: boolean = false;
 
-  graficaVentas: GraficaLineas = {
-    data: [],
-    viewSize: [0,0],
-    xAxisLabel: 'Fecha',
-    yAxisLabel: 'Número de ventas',
-    showXAxisLabel: true,
-    showYAxisLabel: true,
-    xAxis: true,
-    yAxis: true,
-    gradient: false,
-    legend: true
-  }
-  mostrarGraficaVentas: boolean = false;
+    graficaVentas: GraficaLineas = {
+      data: [],
+      viewSize: [0,0],
+      xAxisLabel: 'Fecha',
+      yAxisLabel: 'Número de ventas',
+      showXAxisLabel: true,
+      showYAxisLabel: true,
+      xAxis: true,
+      yAxis: true,
+      gradient: false,
+      legend: true
+    }
+    mostrarGraficaVentas: boolean = false;
 
   graficaCircular: GraficaCircular = {
     data: [],
