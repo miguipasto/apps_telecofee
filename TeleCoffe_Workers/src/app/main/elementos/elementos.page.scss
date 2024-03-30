@@ -135,7 +135,7 @@ button {
 /* Graficas */
 .graficas-content{
     display: grid;
-    grid-template-rows: 2fr 5fr;
+    grid-template-rows: 0.5fr 4.5fr;
 }
 
 .selector-productos{
@@ -246,6 +246,7 @@ button {
 }
 
 .maquina-directo {
-    margin-bottom: 2%;
+    margin: 2%;
+    margin-top: 4%;
 }
 

@@ -117,6 +117,15 @@ export class HomeComponent implements OnInit{
   }
   mostrarGraficaCircular: boolean = false;
 
+  //Estadisiticas
+  ventasHoy: number = 0;
+  ventasAyer: number = 0;
+  cambioPorcentual: any = 0;
+
+  ventasSemanaActual: number = 0;
+  ventasSemanaAnterior: number = 0;
+  cambioPorcentualSemanal: any = 0;
+
   constructor(private mqttService: MqttService, private backendService: BackendService) {}
 
   ngOnInit(): void {
@@ -134,19 +143,18 @@ export class HomeComponent implements OnInit{
 
   adjustGraphSize() {
     const width = this.maquinasNivelStyle.nativeElement.offsetWidth - 50;
-    const height = this.maquinasNivelStyle.nativeElement.offsetHeight - 50;
+    const height = this.maquinasNivelStyle.nativeElement.offsetHeight - 150;
     this.viewSizeNivel = [width, height];
     this.inicializarGraficasNiveles();
     this.mostrarGraficasNivel = true;
 
     const widthVentas = this.ventasStyle.nativeElement.offsetWidth - 60;
-    const heightVentas = this.ventasStyle.nativeElement.offsetHeight - 80;
-    this.graficaVentas.viewSize = [widthVentas,heightVentas];
+    const heighInferior = this.ventasStyle.nativeElement.offsetHeight - 95;
+    this.graficaVentas.viewSize = [widthVentas,heighInferior];
     this.mostrarGraficaVentas = true;    
 
-    const widthCircular = this.masVendido.nativeElement.offsetWidth - 20;
-    const heightCircular = this.masVendido.nativeElement.offsetHeight - 30;
-    this.graficaCircular.viewSize = [widthCircular,heightCircular];
+    const widthCircular = this.masVendido.nativeElement.offsetWidth - 15;
+    this.graficaCircular.viewSize = [widthCircular,heighInferior];
     this.mostrarGraficaCircular = true;  
 
     
@@ -159,8 +167,8 @@ export class HomeComponent implements OnInit{
         data: [],
         viewSize: this.viewSizeNivel,
         xAxisLabel: nombreFormal,
-        yAxisLabel: 'Porcentaje',
-        showXAxisLabel: true,
+        yAxisLabel: 'Porcentaje (%)',
+        showXAxisLabel: false,
         showYAxisLabel: true,
         xAxis: true,
         yAxis: true,
@@ -175,7 +183,6 @@ export class HomeComponent implements OnInit{
   obtenerCompras(nombre_maquina: string, fecha: string) {
     this.backendService.compras(nombre_maquina, fecha).subscribe({
       next: (compras) => {
-        // Procesar las compras para agruparlas por máquina y fecha
         this.procesarCompras(compras);
       },
       error: (error) => {
@@ -212,10 +219,78 @@ export class HomeComponent implements OnInit{
     // Actualizar los datos de la gráfica de ventas y la gráfica circular
     this.ventasDiarias = ventas;
     this.actualizarGraficaVentas();
-    this.actualizarGraficaCircular(ventasPorProducto); // Aquí actualizamos la gráfica circular
+    this.actualizarGraficaCircular(ventasPorProducto); 
+    this.mostrarCambioPorcentualVentas();
+    this.mostrarCambioPorcentualVentasSemanales();
+  }
+
+  // Función para calcular las ventas totales para un día específico
+  calcularVentasTotalesDia(fecha: string): number {
+    let totalVentasDia = 0;
+    for (const maquina of this.maquinas) {
+      if (this.ventasDiarias[maquina][fecha]) {
+        totalVentasDia += this.ventasDiarias[maquina][fecha];
+      }
+    }
+    return totalVentasDia;
+  }
+
+  // Función para calcular y mostrar la estadística de cambio porcentual en ventas
+  mostrarCambioPorcentualVentas() {
+    const hoy = new Date().toISOString().split('T')[0];
+    const ayer = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+    this.ventasHoy = this.calcularVentasTotalesDia(hoy);
+    this.ventasAyer = this.calcularVentasTotalesDia(ayer);
+
+    if (this.ventasAyer === 0) {
+      console.log("No hay datos de ventas para el día anterior.");
+    } else {
+      this.cambioPorcentual = (((this.ventasHoy - this.ventasAyer) / this.ventasAyer) * 100).toFixed(2);
+      console.log(`${this.cambioPorcentual}% de ventas respecto a ayer (${this.ventasAyer})`);
+    }
+  }
+
+  calcularVentasTotalesSemana(semana: number, año: number): number {
+    let totalVentasSemana = 0;
+    // Obtener la fecha de inicio y fin de la semana dada
+    for (let i = 0; i < 7; i++) {
+      const fecha = new Date(año, 0, (semana - 1) * 7 + i);
+      const fechaISO = fecha.toISOString().split('T')[0];
+      totalVentasSemana += this.calcularVentasTotalesDia(fechaISO);
+    }
+    return totalVentasSemana;
+  }
+
+  obtenerNumeroSemana(fecha: Date): number {
+    const primerDiaAnio = new Date(fecha.getFullYear(), 0, 1);
+    const dias = Math.floor((fecha.getTime() - primerDiaAnio.getTime()) / (24 * 60 * 60 * 1000)) + ((primerDiaAnio.getDay() + 6) % 7);
+    return Math.ceil(dias / 7);
+  }
+
+  mostrarCambioPorcentualVentasSemanales() {
+    const hoy = new Date();
+    const numeroSemanaActual = this.obtenerNumeroSemana(hoy);
+    const añoActual = hoy.getFullYear();
+    this.ventasSemanaActual = this.calcularVentasTotalesSemana(numeroSemanaActual, añoActual);
+  
+    let numeroSemanaAnterior = numeroSemanaActual - 1;
+    let añoSemanaAnterior = añoActual;
+    // Si estamos en la primera semana del año, la semana anterior sería la última semana del año anterior
+    if (numeroSemanaActual === 1) {
+      numeroSemanaAnterior = 52; // Puede necesitar ajuste si el último año tuvo 53 semanas
+      añoSemanaAnterior = añoActual - 1;
+    }
+  
+    this.ventasSemanaAnterior = this.calcularVentasTotalesSemana(numeroSemanaAnterior, añoSemanaAnterior);
+  
+    if (this.ventasSemanaAnterior === 0) {
+      console.log("No hay datos de ventas para la semana anterior.");
+    } else {
+      this.cambioPorcentualSemanal = (((this.ventasSemanaActual - this.ventasSemanaAnterior) / this.ventasSemanaAnterior) * 100).toFixed(2);
+    }
   }
   
-
   actualizarGraficaVentas() {
     // Recolectar todas las fechas de todas las máquinas
     let todasLasFechas: Set<string> = new Set();
@@ -254,8 +329,6 @@ export class HomeComponent implements OnInit{
     // Actualizamos los datos del gráfico circular
     this.graficaCircular.data = datosGrafica;
   }
-  
-    
   
 
   actualizarEstadoMaquina(mensaje: string) {
