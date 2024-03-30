@@ -19,7 +19,7 @@ export class HomePage implements OnInit {
   }
 
   products: any[] = [
-    { name: 'Teleco', img: '../../assets/maquina.png'},
+    { name: 'Telecomunicación', img: '../../assets/maquina.png'},
     { name: 'Industriales', img: '../../assets/maquina.png'},
     { name: 'Minas', img: '../../assets/maquina.png'},
     { name: 'Biología', img: '../../assets/maquina.png'},

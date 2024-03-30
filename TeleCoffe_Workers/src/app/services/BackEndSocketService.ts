@@ -55,23 +55,39 @@ export class BackendSocketsService {
     return this.http.get<any>(url);
   }
 
-  ObtenerDatos(nombre_maquina: string, fecha: string): Observable<any>{
+  ventas(nombre_maquina: string, fecha:string): Observable<any> {
+    let queryParams = '';
+
+    if (fecha.length > 0) {
+      queryParams += `fecha=${encodeURIComponent(fecha)}`;
+    }
+
+    if (nombre_maquina.length > 0) {
+      if (queryParams.length > 0) queryParams += '&';
+      queryParams += `nombre_maquina=${encodeURIComponent(nombre_maquina)}`;
+    }
+
+    const url = `${this.apiUrl}/compras${queryParams.length > 0 ? '?' + queryParams : ''}`;
+    console.log(url)
+    return this.http.get<any>(url);
+  }
+
+
+  ObtenerDatos(nombre_maquina: string): Observable<any>{
     let queryParams = '';
 
     if (nombre_maquina.length > 0) {
       queryParams += `nombre_maquina=${encodeURIComponent(nombre_maquina)}`;
     }
 
-    if (fecha.length > 0) {
-      if (queryParams.length > 0) queryParams += '&';
-      queryParams += `fecha=${encodeURIComponent(fecha)}`;
-    }
+    queryParams += '&';
+    queryParams += `fecha=${encodeURIComponent("all")}`;
+  
 
     queryParams += '&';
     queryParams += `cantidad=${encodeURIComponent("last")}`;
 
     const url = `${this.apiUrl}/niveles${queryParams.length > 0 ? '?' + queryParams : ''}`;
-    console.log(url)
     return  this.http.get<any>(url);
   }
 
