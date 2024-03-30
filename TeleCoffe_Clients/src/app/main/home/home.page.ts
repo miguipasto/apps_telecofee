@@ -100,8 +100,7 @@ export class HomePage implements OnInit {
 
     this.closeOverlay();
 
-    const datosUser: any = await this.dataService.obetenerDatosUsuario;
-  
+    const datosUser: any = await this.dataService.obetenerDatosUsuario();
     if (datosUser.saldo < compra.precio) {
       console.log("Dinero insuficiente.")
       alert("No se pudo realizar la compra, revisa tu saldo");
