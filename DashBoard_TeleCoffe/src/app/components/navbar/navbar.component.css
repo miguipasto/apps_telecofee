@@ -1,5 +1,5 @@
 .navbar {
-    background-color: #E9DBAB; /* Azul */
+    background-color: #E9DBAB;
     color: #70442B;
     display: flex;
     justify-content: space-between;
@@ -25,6 +25,7 @@
 
 .nav-links li {
     margin-left: 1rem;
+    position: relative; 
 }
 
 .nav-links li a {
@@ -34,5 +35,43 @@
 }
 
 .nav-links li a:hover {
-    color: #0056b3; /* Azul más oscuro */
+    color: #0056b3; 
 }
+
+/* Estilos para el menú desplegable */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #E9DBAB;
+    min-width: 160px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 5px;
+    border: 1px solid #70442B;
+}
+
+.dropdown-content li a {
+    color: #70442B;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content li a:hover {
+    background-color: #F0E6D2;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.nav-links, .dropdown-content {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.nav-links li, .dropdown-content li {
+    list-style: none; 
+}
+
+

@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class BackendService {
-  private apiUrl = 'http://83.35.221.176:5000/api'; // Reemplaza con la URL de tu servidor API
+  private apiUrl = 'http://83.35.235.160:5000/api'; // Reemplaza con la URL de tu servidor API
 
   constructor(private http: HttpClient) { }
 
@@ -31,28 +31,25 @@ export class BackendService {
     return this.http.get<any>(url);
   }
 
-  // gestionarServicios(accion : string): Observable<any> {
-  //   const endpoint = '/gestionar-servicios'; 
-  //   const requestData = {"accion" : accion}; 
+  niveles(nombre_maquina: string, fecha: string, cantidad: string): Observable<any> {
+    let queryParams = '';
 
-  //   return this.http.post(`${this.apiUrl}${endpoint}`, requestData);
-  // }
+    if (nombre_maquina.length > 0) {
+      queryParams += `nombre_maquina=${encodeURIComponent(nombre_maquina)}`;
+    }
 
-  // recuperarLogs(): Observable<any> {
-  //   const endpoint = '/logs-data';
+    if (fecha.length > 0) {
+      if (queryParams.length > 0) queryParams += '&';
+      queryParams += `fecha=${encodeURIComponent(fecha)}`;
+    }
 
-  //   return this.http.post(`${this.apiUrl}${endpoint}`,null);
-  // }
+    if (cantidad.length > 0) {
+      if (queryParams.length > 0) queryParams += '&';
+      queryParams += `cantidad=${encodeURIComponent(cantidad)}`;
+    }
 
-  // getLogsFileName(): Observable<any> {
-  //   const endpoint = '/logs-file-name'; 
+    const url = `${this.apiUrl}/niveles${queryParams.length > 0 ? '?' + queryParams : ''}`;
+    return this.http.get<any>(url);
+  }
 
-  //   return this.http.get(`${this.apiUrl}${endpoint}`);
-  // }
-
-  // getLogsFileNameContent(id:any): Observable<any> {
-  //   const endpoint = `/logs-file-name-data/${id}`; // Reemplaza con la ruta deseada en tu backend
-
-  //   return this.http.get(`${this.apiUrl}${endpoint}`);
-  // }
 }
