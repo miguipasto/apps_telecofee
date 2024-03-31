@@ -255,16 +255,10 @@ export class ElementosPage implements OnInit, AfterViewInit{
   }
 
   sonNivelesIguales(niveles1: any, niveles2: any): boolean {
-    console.log("En la funcion 1", niveles1);
-    console.log("En la funcion 2",niveles2);
-
-    if (!niveles1 || !niveles2) return false;
-  
-    return niveles1[0].porcentaje === niveles2[0].porcentaje &&
-           niveles1[1].porcentaje === niveles2[1].porcentaje &&
-           niveles1[2].porcentaje === niveles2[2].porcentaje &&
-           niveles1[3].porcentaje === niveles2[3].porcentaje;
+    console.log(niveles1, niveles2)
+    return JSON.stringify(niveles1) === JSON.stringify(niveles2);
   }
+
 
   actualizarEstadoMaquina() {
     try {
@@ -488,26 +482,26 @@ export class ElementosPage implements OnInit, AfterViewInit{
     }
 
     
-    // Intentamos suscribirnos al tópico
     this.subscription = this.mqttService.observe(topic).subscribe({
       next: (message: IMqttMessage) => {
         this.receiveNews += message.payload.toString() + '\n';
         this.lastLineLevels = message.payload.toString();
-        console.log(message.payload.toString());// Convertir el mensaje recibido a un objeto JavaScript
+        console.log(message.payload.toString());
         let data = JSON.parse(message.payload.toString());
         
-        let anteriores = this.product["consumos"];
-
+        // Hacer una copia profunda de this.product["consumos"] antes de modificarlo
+        let anteriores = JSON.parse(JSON.stringify(this.product["consumos"]));
+    
         // Actualizar los porcentajes en this.product["consumo"][0]
         this.product["consumos"][0].porcentaje = data.niveles.nivel_agua_pr;
         this.product["consumos"][1].porcentaje = data.niveles.nivel_cafe_pr;
         this.product["consumos"][2].porcentaje = data.niveles.nivel_leche_pr;
         this.product["consumos"][3].porcentaje = data.niveles.patatillas_u;
-
+    
         console.log("Actualizado")
-
+    
         this.actualizarUltimaFecha(message.payload.toString());
-
+    
         //Comprobamos si los valores que vienen son iguales a los que había
         if (!this.sonNivelesIguales(this.product["consumos"], anteriores)) {
           console.log("Nuevos valores")
@@ -515,13 +509,14 @@ export class ElementosPage implements OnInit, AfterViewInit{
         } else{
           console.log("No ha cambiado nada")
         }
-
+    
       },
       error: (error: any) => {
         this.isConnection = false;
         console.error(`Connection error: ${error}`);
       }
     });
+    
   }
 
   onDataPointSelected(event: any) {
