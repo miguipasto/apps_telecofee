@@ -1,10 +1,18 @@
 <nav class="navbar">
-    <div class="navbar-brand">
-      TeleCoffe
-    </div>
-    <ul class="nav-links">
-      <li><a routerLink="/home">Home</a></li>
-      <li><a routerLink="/trabajadores">Trabajadores</a></li>
-    </ul>
-  </nav>
-  
+  <div class="navbar-brand">
+    TeleCoffe
+  </div>
+  <ul class="nav-links">
+    <li class="dropdown">
+      <a href="#">Máquinas</a>
+      <ul class="dropdown-content">
+        <li><a routerLink="/home/teleco">Teleco</a></li>
+        <li><a routerLink="/home/biologia">Biología</a></li>
+        <li><a routerLink="/home/minas">Minas</a></li>
+        <li><a routerLink="/home/industriales">Industriales</a></li>
+      </ul>
+    </li>
+    <li><a routerLink="/trabajadores">Trabajadores</a></li>
+    <li><a routerLink="/home">Home</a></li>
+  </ul>
+</nav>

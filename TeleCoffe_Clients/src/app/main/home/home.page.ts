@@ -14,7 +14,7 @@ export class HomePage implements OnInit {
   isOverlayVisibleAzucar: boolean = false;
   isOVerlayVisible: boolean = false;
   isOverlayCompra: boolean = false;
-  codigoConfirmacion : number = 0;
+  codigoConfirmacion: number | null =null;
   amountToAdd=0;
   productoSeleccionado: any = [];
   maquinaSeleccionada: String = "teleco"
@@ -98,10 +98,10 @@ export class HomePage implements OnInit {
     console.log("Comprando " + producto.name)
     const compra = {"producto": producto.name, "precio": producto.price, "fecha": new Date(), "maquina": this.maquinaSeleccionada};
 
+    this.amountToAdd=0;
     this.closeOverlay();
 
-    const datosUser: any = await this.dataService.obetenerDatosUsuario;
-  
+    const datosUser: any = await this.dataService.obetenerDatosUsuario();
     if (datosUser.saldo < compra.precio) {
       console.log("Dinero insuficiente.")
       alert("No se pudo realizar la compra, revisa tu saldo");
@@ -174,7 +174,7 @@ export class HomePage implements OnInit {
           console.error("Error al publicar mensaje:", error);
       }
     }); 
-
+    this.codigoConfirmacion=null;
     this.closeOverlay();
   }
 

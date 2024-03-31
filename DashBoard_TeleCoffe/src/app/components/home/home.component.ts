@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angula
 import { MqttService, IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
 import { BackendService } from 'src/app/services/backend.service';
-import { LegendPosition } from '@swimlane/ngx-charts';
+import { Router } from '@angular/router';
 
 
 interface Niveles {
@@ -86,6 +86,7 @@ export class HomeComponent implements OnInit{
   };
   estadoMaquinas: EstadoMaquina = {};
   ventasDiarias: { [maquina: string]: { [fecha: string]: number } } = { teleco: {}, minas: {}, industriales: {}, biologia: {}};
+  gananciasDiarias : { [maquina: string]: { [fecha: string]: number } } = { teleco: {}, minas: {}, industriales: {}, biologia: {}};
 
   // Variables MQTT
   subscription: Subscription | undefined;
@@ -107,7 +108,7 @@ export class HomeComponent implements OnInit{
     xAxis: true,
     yAxis: true,
     gradient: false,
-    legend: true
+    legend: false
   }
   mostrarGraficaVentas: boolean = false;
 
@@ -121,16 +122,23 @@ export class HomeComponent implements OnInit{
   ventasHoy: number = 0;
   ventasAyer: number = 0;
   cambioPorcentual: any = 0;
+  gananciasHoy: number = 0;
+  gananciasAyer: number = 0;
+  cambioPorcentualGanancias: any = 0;
 
   ventasSemanaActual: number = 0;
   ventasSemanaAnterior: number = 0;
   cambioPorcentualSemanal: any = 0;
+  gananciasSemanaActual: number = 0;
+  gananciasSemanaAnterior: number = 0;
+  cambioPorcentualGananciasSemanal: any = 0;
 
-  constructor(private mqttService: MqttService, private backendService: BackendService) {}
+  gananciasTotales: any = 0;
+
+  constructor(private mqttService: MqttService, private backendService: BackendService, private router: Router) {}
 
   ngOnInit(): void {
     this.subscribeToTopic();
-    this.inicializarGraficasNiveles();
   }
 
   ngOnDestroy() {
@@ -143,17 +151,17 @@ export class HomeComponent implements OnInit{
 
   adjustGraphSize() {
     const width = this.maquinasNivelStyle.nativeElement.offsetWidth - 50;
-    const height = this.maquinasNivelStyle.nativeElement.offsetHeight - 150;
+    const height = this.maquinasNivelStyle.nativeElement.offsetHeight - 100;
     this.viewSizeNivel = [width, height];
     this.inicializarGraficasNiveles();
     this.mostrarGraficasNivel = true;
 
     const widthVentas = this.ventasStyle.nativeElement.offsetWidth - 60;
-    const heighInferior = this.ventasStyle.nativeElement.offsetHeight - 95;
+    const heighInferior = this.ventasStyle.nativeElement.offsetHeight - 80;
     this.graficaVentas.viewSize = [widthVentas,heighInferior];
     this.mostrarGraficaVentas = true;    
 
-    const widthCircular = this.masVendido.nativeElement.offsetWidth - 15;
+    const widthCircular = this.masVendido.nativeElement.offsetWidth - 20;
     this.graficaCircular.viewSize = [widthCircular,heighInferior];
     this.mostrarGraficaCircular = true;  
 
@@ -193,6 +201,7 @@ export class HomeComponent implements OnInit{
   
   procesarCompras(compras: any[]){
     const ventas: { [maquina: string]: { [fecha: string]: number } } = {};
+    const ganancias: { [maquina: string]: { [fecha: string]: number } } = {};
     const ventasPorProducto: { [producto: string]: number } = {};
     
     compras.forEach(compra => {
@@ -202,12 +211,17 @@ export class HomeComponent implements OnInit{
       
       if (!ventas[maquina]) {
         ventas[maquina] = {};
+        ganancias[maquina] = {};
       }
       if (!ventas[maquina][fecha]) {
         ventas[maquina][fecha] = 0;
+        ganancias[maquina][fecha] = 0;
       }
   
       ventas[maquina][fecha] += 1;
+      ganancias[maquina][fecha] += parseFloat(compra.precio);
+
+      this.gananciasTotales += parseFloat(compra.precio);
   
       // Conteo de ventas por producto
       if (!ventasPorProducto[producto]) {
@@ -218,6 +232,7 @@ export class HomeComponent implements OnInit{
   
     // Actualizar los datos de la gráfica de ventas y la gráfica circular
     this.ventasDiarias = ventas;
+    this.gananciasDiarias = ganancias;
     this.actualizarGraficaVentas();
     this.actualizarGraficaCircular(ventasPorProducto); 
     this.mostrarCambioPorcentualVentas();
@@ -235,6 +250,16 @@ export class HomeComponent implements OnInit{
     return totalVentasDia;
   }
 
+  calcularGananciasTotalesDia(fecha: string): number {
+    let totalGananciasDia = 0;
+    for (const maquina of this.maquinas) {
+      if (this.gananciasDiarias[maquina][fecha]) {
+        totalGananciasDia += this.gananciasDiarias[maquina][fecha];
+      }
+    }
+    return totalGananciasDia;
+  }
+
   // Función para calcular y mostrar la estadística de cambio porcentual en ventas
   mostrarCambioPorcentualVentas() {
     const hoy = new Date().toISOString().split('T')[0];
@@ -242,24 +267,41 @@ export class HomeComponent implements OnInit{
 
     this.ventasHoy = this.calcularVentasTotalesDia(hoy);
     this.ventasAyer = this.calcularVentasTotalesDia(ayer);
+    this.gananciasHoy = this.calcularGananciasTotalesDia(hoy);
+    this.gananciasAyer = this.calcularGananciasTotalesDia(ayer);
 
-    if (this.ventasAyer === 0) {
-      console.log("No hay datos de ventas para el día anterior.");
-    } else {
-      this.cambioPorcentual = (((this.ventasHoy - this.ventasAyer) / this.ventasAyer) * 100).toFixed(2);
-      console.log(`${this.cambioPorcentual}% de ventas respecto a ayer (${this.ventasAyer})`);
-    }
+    // if (this.ventasAyer === 0 || this.gananciasAyer === 0) {
+    //   console.log("No hay datos de ventas para el día anterior.");
+    // } else if  (this.ventasHoy === 0 || this.gananciasHoy === 0) {
+    //   this.cambioPorcentual = 0;
+    //   this.cambioPorcentualGanancias = 0;
+    // } else {
+    //   this.cambioPorcentual = (((this.ventasHoy - this.ventasAyer) / this.ventasAyer) * 100).toFixed(2);
+    //   this.cambioPorcentualGanancias = (this.gananciasHoy - this.gananciasAyer).toFixed(2);
+    // }
+
+    this.cambioPorcentual = (((this.ventasHoy - this.ventasAyer) / this.ventasAyer) * 100).toFixed(2);
+    this.cambioPorcentualGanancias = (this.gananciasHoy - this.gananciasAyer).toFixed(2);
   }
 
   calcularVentasTotalesSemana(semana: number, año: number): number {
     let totalVentasSemana = 0;
-    // Obtener la fecha de inicio y fin de la semana dada
     for (let i = 0; i < 7; i++) {
       const fecha = new Date(año, 0, (semana - 1) * 7 + i);
       const fechaISO = fecha.toISOString().split('T')[0];
       totalVentasSemana += this.calcularVentasTotalesDia(fechaISO);
     }
     return totalVentasSemana;
+  }
+
+  calcularGananciasTotalesSemana(semana: number, año: number): number {
+    let totalGanaciasSemana = 0;
+    for (let i = 0; i < 7; i++) {
+      const fecha = new Date(año, 0, (semana - 1) * 7 + i);
+      const fechaISO = fecha.toISOString().split('T')[0];
+      totalGanaciasSemana += this.calcularGananciasTotalesDia(fechaISO);
+    }
+    return totalGanaciasSemana;
   }
 
   obtenerNumeroSemana(fecha: Date): number {
@@ -272,23 +314,32 @@ export class HomeComponent implements OnInit{
     const hoy = new Date();
     const numeroSemanaActual = this.obtenerNumeroSemana(hoy);
     const añoActual = hoy.getFullYear();
-    this.ventasSemanaActual = this.calcularVentasTotalesSemana(numeroSemanaActual, añoActual);
-  
+    
     let numeroSemanaAnterior = numeroSemanaActual - 1;
     let añoSemanaAnterior = añoActual;
-    // Si estamos en la primera semana del año, la semana anterior sería la última semana del año anterior
     if (numeroSemanaActual === 1) {
-      numeroSemanaAnterior = 52; // Puede necesitar ajuste si el último año tuvo 53 semanas
+      numeroSemanaAnterior = 52; 
       añoSemanaAnterior = añoActual - 1;
     }
   
     this.ventasSemanaAnterior = this.calcularVentasTotalesSemana(numeroSemanaAnterior, añoSemanaAnterior);
+    this.ventasSemanaActual = this.calcularVentasTotalesSemana(numeroSemanaActual, añoActual);
+
+    this.gananciasSemanaAnterior = this.calcularGananciasTotalesSemana(numeroSemanaAnterior, añoSemanaAnterior);
+    this.gananciasSemanaActual = this.calcularGananciasTotalesSemana(numeroSemanaActual, añoActual);
   
-    if (this.ventasSemanaAnterior === 0) {
-      console.log("No hay datos de ventas para la semana anterior.");
-    } else {
-      this.cambioPorcentualSemanal = (((this.ventasSemanaActual - this.ventasSemanaAnterior) / this.ventasSemanaAnterior) * 100).toFixed(2);
-    }
+    // if (this.ventasSemanaAnterior === 0 || this.gananciasSemanaAnterior === 0) {
+    //   console.log("No hay datos de ventas para la semana anterior.");
+    // } else if  (this.ventasSemanaActual === 0 || this.gananciasSemanaActual === 0) {
+    //   this.cambioPorcentualSemanal = 0;
+    //   this.cambioPorcentualGananciasSemanal = 0;
+    // } else {
+    //   this.cambioPorcentualSemanal = (((this.ventasSemanaActual - this.ventasSemanaAnterior) / this.ventasSemanaAnterior) * 100).toFixed(2);
+    //   this.cambioPorcentualGananciasSemanal = (this.gananciasSemanaActual - this.gananciasSemanaAnterior).toFixed(2);
+    // }
+
+    this.cambioPorcentualSemanal = (((this.ventasSemanaActual - this.ventasSemanaAnterior) / this.ventasSemanaAnterior) * 100).toFixed(2);
+    this.cambioPorcentualGananciasSemanal = (this.gananciasSemanaActual - this.gananciasSemanaAnterior).toFixed(2);
   }
   
   actualizarGraficaVentas() {
@@ -347,7 +398,6 @@ export class HomeComponent implements OnInit{
           { name: "Café", value: niveles.nivel_cafe_pr },
         ];
         
-        // Asumiendo que quieres actualizar una gráfica de barras como la del ejemplo:
         this.graficasNiveles[maquina].data = newData;
         
         // Recalculamos las compras
@@ -395,5 +445,9 @@ export class HomeComponent implements OnInit{
       });
     }
   }
+
+  redirigir_maquinasEstadisiticas(nombnre_maquina: string){
+    this.router.navigate(['/home', nombnre_maquina]);
+}
 
 }

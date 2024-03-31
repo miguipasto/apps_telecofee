@@ -1,8 +1,6 @@
 //import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-
-import * as apex from "ng-apexcharts";
 import { HttpClient} from '@angular/common/http';
 
 import { MqttService, IMqttMessage } from 'ngx-mqtt';
@@ -39,6 +37,7 @@ interface GraficaNiveles {
     yAxisLabel: string;
     showXAxisLabel: boolean;
     showYAxisLabel: boolean;
+    showLabels: boolean;
     xAxis: boolean;
     yAxis: boolean;
     yScaleMax: number;
@@ -54,13 +53,30 @@ interface GraficaNiveles {
   styleUrls: ['./elementos.page.scss'],
 })
 export class ElementosPage implements OnInit, AfterViewInit{
+  selectedDate: string = '';
 
-  productos = ["agua",  "cafe", "leche", "patatillas"]
+  productos = ["agua",  "cafe", "leche", "patatillas","ventas"]
   nombresFormales: { [key: string]: string } = {
-    agua: "Escuela de Ingienería de Telecomunicación",
-    cafe: "Escuela de Ingeniería de Minas y Energía",
-    leche: "Escuela de Ingienería Industrial",
-    patatillas: "Facultad de Biología"
+    agua: "Nivel de Agua",
+    cafe: "Nivel de Café",
+    leche: "Nivel de leche",
+    patatillas: "Nivel de patatillas"
+  };
+
+  ventas = ["Patatillas",  "Café con leche", "Café americano", "Leche"]
+  costesProductos: { [key: string]: number } = {
+    "Patatillas": 0.85,
+    "Café con leche": 1.35,
+    "Café americano": 1.15,
+    "Leche": 0.50
+};
+
+
+  nombresMaquinas: { [key: string]: string } = {
+    Telecomunicación: "teleco",
+    Minas: "minas",
+    Industriales: "industriales",
+    Biología: "biologia"
   };
   estadoMaquinas: EstadoMaquina = {};
 
@@ -80,10 +96,9 @@ export class ElementosPage implements OnInit, AfterViewInit{
   public receiveNews = '';
   public lastLineLevels = "";
   public isConnection = false;
-  //public productos: String[] = [ "Café con leche",  "Cafe americano", "Leche", "Patatillas"]
 
 
-  constructor(private route: ActivatedRoute, private router:Router, private http: HttpClient, private mqttService: MqttService, private dataService: DataService, private backendService: BackendSocketsService) { 
+  constructor(private route: ActivatedRoute, private router:Router, private mqttService: MqttService, private dataService: DataService, private backendService: BackendSocketsService) { 
   }
 
   ngOnInit() {
@@ -91,16 +106,19 @@ export class ElementosPage implements OnInit, AfterViewInit{
       const nombre = params.get('nombre');
       if (nombre) {
         this.nombre = nombre;
-        this.subscribeToTopic(this.nombre);
+        this.subscribeToTopic(this.nombresMaquinas[this.nombre]);
         this.inicializarGraficasNiveles();
+        this.initializeDates();
+        this.initializeSelectedDate();
+        this.updateChart();
       }
     });
-   
    
   }
 
   ngAfterViewInit() {
     this.adjustGraphSize();
+    this.actualizarEstadoMaquina()
   }
 
   ngOnDestroy() {
@@ -109,7 +127,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
 
  adjustGraphSize() {
     const width = window.innerWidth - 50; // Ancho de la pantalla menos el espacio de margen
-    const height = 300; // Altura deseada
+    const height = 370; // Altura deseada
 
     // No es necesario calcular las coordenadas x e y ya que el contenedor está centrado en CSS
 
@@ -126,9 +144,10 @@ export class ElementosPage implements OnInit, AfterViewInit{
         data: [],
         viewSize: this.viewSizeNivel,
         xAxisLabel: nombreFormal,
-        yAxisLabel: 'Porcentaje',
+        yAxisLabel: 'Porcentaje (%)',
         showXAxisLabel: true,
         showYAxisLabel: true,
+        showLabels:true,
         xAxis: true,
         yAxis: true,
         yScaleMax: 100,
@@ -139,45 +158,46 @@ export class ElementosPage implements OnInit, AfterViewInit{
     });
   }
 
-
-  obtenerCompras(nombre_maquina: string, fecha: string) {
-    this.backendService.compras(nombre_maquina, fecha).subscribe({
-      next: (compras) => {
-        // Procesar las compras para agruparlas por máquina y fecha
-        this.procesarCompras(compras);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-  
-  procesarCompras(compras: any[]){
-    const ventas: { [maquina: string]: { [fecha: string]: number } } = {};
+  procesarVentas(compras: any[]) {
+    console.log("procesar ventas:", compras);
     const ventasPorProducto: { [producto: string]: number } = {};
-    
-    compras.forEach(compra => {
-      const fecha = new Date(compra.fecha._seconds * 1000).toISOString().split('T')[0];
-      const maquina = compra.maquina;
-      const producto = compra.producto;
-      
-      if (!ventas[maquina]) {
-        ventas[maquina] = {};
-      }
-      if (!ventas[maquina][fecha]) {
-        ventas[maquina][fecha] = 0;
-      }
-  
-      ventas[maquina][fecha] += 1;
-  
-      // Conteo de ventas por producto
-      if (!ventasPorProducto[producto]) {
+
+     // Reinicializar el array de datos antes de procesar las ventas
+     this.graficasNiveles["ventas"].data = [];
+
+    // Inicializar las ventas por producto a 0
+    Object.keys(this.costesProductos).forEach(producto => {
         ventasPorProducto[producto] = 0;
-      }
-      ventasPorProducto[producto] += 1;
     });
-  
-  }
+
+    // Conteo de ventas por producto y cálculo del coste total
+    let costeMaximo = 0;
+    compras.forEach(compra => {
+        const producto = compra.producto;
+        ventasPorProducto[producto] += 1; // Incrementar el contador de ventas por producto
+    });
+
+    // Construir los datos de la gráfica, incluyendo productos sin ventas
+    Object.keys(this.costesProductos).forEach(producto => {
+        const cantidadVentas = ventasPorProducto[producto] || 0; // Si no hay ventas, establece cantidad a 0
+        const costeIndividual = this.costesProductos[producto];
+        const costeTotal = cantidadVentas * costeIndividual;
+
+        // Actualiza el coste máximo si el coste total actual es mayor
+        if (costeTotal > costeMaximo) {
+            costeMaximo = costeTotal;
+        }
+
+        // Actualizar los datos de las gráficas correspondientes
+        this.graficasNiveles["ventas"].data.push({ name: producto, value: costeTotal });
+    });
+
+    // Actualiza las propiedades de la gráfica una vez procesadas todas las ventas
+    this.graficasNiveles["ventas"].yAxisLabel = "Ganancias (€)";
+    this.graficasNiveles["ventas"].yScaleMax = costeMaximo;
+}
+
+
 
   procesarDatos(datos: any[]){
     
@@ -186,9 +206,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
       const nivel_agua = data.niveles.nivel_agua_pr;
       const nivel_cafe = data.niveles.nivel_cafe_pr;
       const nivel_leche = data.niveles.nivel_leche_pr;
-      const nivel_patatillas = data.niveles.patatillas_u;
-
-      console.log(nivel_patatillas)
+      const nivel_patatillas = data.niveles.patatillas_pr;
 
     // Actualizar los datos de las gráficas correspondientes
     this.graficasNiveles['agua'].data.push({ name: fecha, value: nivel_agua });
@@ -200,10 +218,52 @@ export class ElementosPage implements OnInit, AfterViewInit{
     
   }
 
+  actualizarUltimaFecha(message: any) {
+    let data = JSON.parse(message);
+    const fecha = new Date().toISOString().split('T')[0];
+    const nivel_agua = data.niveles.nivel_agua_pr;
+    const nivel_cafe = data.niveles.nivel_cafe_pr;
+    const nivel_leche = data.niveles.nivel_leche_pr;
+    const nivel_patatillas = data.niveles.patatillas_pr;
+  
+    // Encuentra el índice del último elemento en el arreglo de datos para cada tipo de producto
+    const indiceUltimaFecha = this.graficasNiveles['agua'].data.findIndex(dato => dato.name === fecha);
+  
+    // Si se encuentra la fecha en el arreglo de datos, actualiza su valor; de lo contrario, no hagas nada
+    if (indiceUltimaFecha !== -1) {
+      this.graficasNiveles['agua'].data[indiceUltimaFecha].value = nivel_agua;
+      this.graficasNiveles['cafe'].data[indiceUltimaFecha].value = nivel_cafe;
+      this.graficasNiveles['leche'].data[indiceUltimaFecha].value = nivel_leche;
+      this.graficasNiveles['patatillas'].data[indiceUltimaFecha].value = nivel_patatillas;
+    }
+  }
+
+
+  actualizarVentas() {
+      this.backendService.ventas(this.nombresMaquinas[this.nombre], this.selectedDate).subscribe({
+        next: (ventas) => {
+          // Procesar las ventas para agruparlas por máquina y fecha
+          console.log(ventas)
+          this.procesarVentas(ventas);
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+
+   
+  }
+
+  sonNivelesIguales(niveles1: any, niveles2: any): boolean {
+    console.log(niveles1, niveles2)
+    return JSON.stringify(niveles1) === JSON.stringify(niveles2);
+  }
+
+
   actualizarEstadoMaquina() {
     try {
 
-      this.backendService.ObtenerDatos(this.nombre.toLocaleLowerCase(), "2024-03-25").subscribe({
+      this.backendService.ObtenerDatos(this.nombresMaquinas[this.nombre]).subscribe({
         next: (response) => {
           if (response.success) {
             const data = response.data;
@@ -312,30 +372,56 @@ export class ElementosPage implements OnInit, AfterViewInit{
     let data = JSON.parse(this.lastLineLevels);
     if(this.amountToAdd!=null){
       if(nombre=='Patatillas') {
-        this.product["consumos"][3].porcentaje += (this.amountToAdd);
-        data.niveles.patatillas_pr += Math.floor((this.amountToAdd*100)/10);
-        data.niveles.patatillas_u += this.amountToAdd;
+        if(data.niveles.patatillas_u + this.amountToAdd >10){
+          this.product["consumos"][3].porcentaje=10;
+          data.niveles.patatillas_pr =100
+          data.niveles.patatillas_u =10
+        }else{
+           this.product["consumos"][3].porcentaje += (this.amountToAdd);
+            data.niveles.patatillas_pr += Math.floor((this.amountToAdd*100)/10);
+            data.niveles.patatillas_u += this.amountToAdd;
+        }
       } else if(nombre=='Café') {
-        this.product["consumos"][1].porcentaje += Math.floor((this.amountToAdd*100)/100);
-          data.niveles.nivel_cafe_pr += Math.floor((this.amountToAdd*100)/100);
-          data.niveles.nivel_cafe_gr += this.amountToAdd;
+
+          if(data.niveles.nivel_cafe_gr + this.amountToAdd >100){
+            this.product["consumos"][1].porcentaje=100;
+            data.niveles.nivel_cafe_gr =100
+            data.niveles.nivel_cafe_pr =100
+          }else{
+            this.product["consumos"][1].porcentaje += Math.floor((this.amountToAdd*100)/100);
+            data.niveles.nivel_cafe_pr += Math.floor((this.amountToAdd*100)/100);
+            data.niveles.nivel_cafe_gr += this.amountToAdd;
+          }
+       
       } else {
         if(nombre=='Agua'){
-          this.product["consumos"][0].porcentaje += Math.floor((this.amountToAdd*100)/200);
+          if(data.niveles.nivel_agua_ml+ this.amountToAdd >200){
+            this.product["consumos"][0].porcentaje=100;
+            data.niveles.nivel_agua_ml =200
+            data.niveles.nivel_agua_pr =100
+          }else{
+            this.product["consumos"][0].porcentaje += Math.floor((this.amountToAdd*100)/200);
           data.niveles.nivel_agua_pr += Math.floor((this.amountToAdd*100)/200)
           data.niveles.nivel_agua_ml += this.amountToAdd;
+          }
         } 
         if(nombre=='Leche'){
+          if(data.niveles.nivel_leche_ml+ this.amountToAdd >200){
+            this.product["consumos"][2].porcentaje=100;
+            data.niveles.nivel_leche_ml =200
+            data.niveles.nivel_leche_pr =100
+          }else{
             this.product["consumos"][2].porcentaje += Math.floor((this.amountToAdd*100)/200);
             data.niveles.nivel_leche_pr += Math.floor((this.amountToAdd*100)/200)
             data.niveles.nivel_leche_ml += this.amountToAdd;
+          }
         } 
         
       
       }
       console.log("El producto actualizado", data)
       // Actualizamos en Firebase
-      this.dataService.actualizarNiveles(data,this.nombre)   
+      this.dataService.actualizarNiveles(data,this.nombresMaquinas[this.nombre])   
       // Avisamos por MQTT
       this.nuevaReposicon(data['maquina']);
 
@@ -357,8 +443,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
   validateAmount(event: Event) {
     var value = +(<HTMLInputElement>event.target).value;
     if(this.productoSeleccionado=="Patatillas"){
-
-      if (isNaN(value) || value < 0) {
+     if (isNaN(value) || value < 0 ) {
         this.amountToAdd = 0;
       }else if (value > 10) {
         this.amountToAdd = 10;
@@ -387,7 +472,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
 
   subscribeToTopic(maquina : String) {
     this.isConnection = true;
-    const nombre=this.nombre.toLocaleLowerCase();
+    const nombre=this.nombresMaquinas[this.nombre];
     const topic = `${nombre}/nivel`;
 
     // Primero, verifica si ya hay una suscripción y desuscríbete
@@ -397,42 +482,77 @@ export class ElementosPage implements OnInit, AfterViewInit{
     }
 
     
-    // Intentamos suscribirnos al tópico
     this.subscription = this.mqttService.observe(topic).subscribe({
       next: (message: IMqttMessage) => {
         this.receiveNews += message.payload.toString() + '\n';
         this.lastLineLevels = message.payload.toString();
-        console.log(message.payload.toString());// Convertir el mensaje recibido a un objeto JavaScript
+        console.log(message.payload.toString());
         let data = JSON.parse(message.payload.toString());
         
+        // Hacer una copia profunda de this.product["consumos"] antes de modificarlo
+        let anteriores = JSON.parse(JSON.stringify(this.product["consumos"]));
     
         // Actualizar los porcentajes en this.product["consumo"][0]
         this.product["consumos"][0].porcentaje = data.niveles.nivel_agua_pr;
         this.product["consumos"][1].porcentaje = data.niveles.nivel_cafe_pr;
         this.product["consumos"][2].porcentaje = data.niveles.nivel_leche_pr;
         this.product["consumos"][3].porcentaje = data.niveles.patatillas_u;
-
+    
         console.log("Actualizado")
-
-        this.actualizarEstadoMaquina()
-
+    
+        this.actualizarUltimaFecha(message.payload.toString());
+    
+        //Comprobamos si los valores que vienen son iguales a los que había
+        if (!this.sonNivelesIguales(this.product["consumos"], anteriores)) {
+          console.log("Nuevos valores")
+          this.actualizarVentas();
+        } else{
+          console.log("No ha cambiado nada")
+        }
+    
       },
       error: (error: any) => {
         this.isConnection = false;
         console.error(`Connection error: ${error}`);
       }
     });
+    
   }
 
-  convertirFecha(fechaFirestore: { _seconds: number; _nanoseconds: number }): string {
-    const fecha = new Date(fechaFirestore._seconds * 1000);
-    return fecha.toLocaleDateString('es-ES', {
-      year: 'numeric', month: 'long', day: 'numeric',
-      hour: '2-digit', minute: '2-digit', second: '2-digit'
-    });
-  }
+  onDataPointSelected(event: any) {
+        // Aquí puedes acceder a la información de la barra seleccionada a través del objeto event
+        console.log('Barra seleccionada:', event);
+        alert("Valor: "+ event.value);
 
+        // Puedes realizar acciones adicionales aquí, como mostrar detalles en un modal o actualizar otra parte de tu interfaz de usuario.
+    }
 
+    fechasDisponibles: string[] = [];
+
+    initializeDates() {
+      const startDate = new Date('2024-03-25');
+      const today = new Date();
+      const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1); // Se suma 1 para incluir la fecha actual
+    
+      // Generar el rango de fechas
+      const currentDate = new Date(startDate);
+      while (currentDate <= endDate) {
+        this.fechasDisponibles.push(currentDate.toISOString().split('T')[0]);
+        currentDate.setDate(currentDate.getDate() + 1); // Avanzar al siguiente día
+      }
+    }
+
+    initializeSelectedDate() {
+      const today = new Date();
+      this.selectedDate = today.toISOString().split('T')[0];
+    }
+    
+    updateChart() {
+      // Lógica para actualizar la gráfica con la fecha seleccionada
+      // Aquí deberías llamar a tu servicio para obtener los datos según la fecha seleccionada y luego actualizar la gráfica
+      console.log(this.selectedDate);
+      this.actualizarVentas();
+    }
 
 }
 
