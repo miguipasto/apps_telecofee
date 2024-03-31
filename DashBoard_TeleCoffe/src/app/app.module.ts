@@ -12,10 +12,11 @@ import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { TrabajadoresComponent } from './components/trabajadores/trabajadores.component';
+import { MaquinasEstadisticasComponent } from './components/maquinas-estadisticas/maquinas-estadisticas.component';
 
 // Configuración de MQTT
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
-  hostname: '83.35.221.176',
+  hostname: '83.35.235.160',
   port: 4500,
   path: '/mqtt',
   protocol: 'ws', 
@@ -28,7 +29,8 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
     HomeComponent,
     NavbarComponent,
     FooterComponent,
-    TrabajadoresComponent
+    TrabajadoresComponent,
+    MaquinasEstadisticasComponent
   ],
   imports: [
     BrowserModule,

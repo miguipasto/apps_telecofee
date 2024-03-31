@@ -68,14 +68,14 @@
   
 .compra {
     display: grid; /* Cambio para usar flex y asegurar alineación y distribución */
-    grid-template-columns: 0.8fr 3fr;
+    grid-template-columns: 0.7fr 3fr;
     justify-content: center; /* Centra el contenido horizontalmente */
     align-items: center; /* Centra el contenido verticalmente */
     background-color: rgb(255, 255, 255);
-    border-radius: 10%; /* Ajuste para un poco de redondeo de bordes */
+    border-radius: 10px; /* Ajuste para un poco de redondeo de bordes */
     height: 10vh; /* Altura fija para todos los cajones */
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Añade sombra */
-    }
+    border: 1px solid rgba(0, 0, 0, 0.274);
+}
 
 .icono-container{
     display: block;

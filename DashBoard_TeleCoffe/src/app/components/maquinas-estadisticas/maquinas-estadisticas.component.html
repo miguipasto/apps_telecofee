@@ -1,24 +1,45 @@
-<div class="home">
-    <div *ngFor="let maquina of maquinas" class="maquina-directo grafico-box" (click)="redirigir_maquinasEstadisiticas(maquina)" #maquinasNivelStyle>
-        <h3>Nivel en directo de la {{nombresFormales[maquina]}}</h3>
-        <div *ngIf="mostrarGraficasNivel">
+<div class="maquinasEstadisiticas">
+    <div class="nivelMaquina grafico-box" #maquinaNivelDirectoStyle>
+        <h3>Nivel en directo de la {{nombresFormales[nombreMaquina]}}</h3>
+        <div *ngIf="mostrarGraficaNivelDirecto">
             <ngx-charts-bar-vertical 
-            [view]="graficasNiveles[maquina].viewSize"
-            [results]="graficasNiveles[maquina].data"
-            [xAxisLabel]="graficasNiveles[maquina].xAxisLabel"
-            [yAxisLabel]="graficasNiveles[maquina].yAxisLabel"
-            [legend]="graficasNiveles[maquina].legend"
-            [showXAxisLabel]="graficasNiveles[maquina].showXAxisLabel"
-            [showYAxisLabel]="graficasNiveles[maquina].showYAxisLabel"
-            [xAxis]="graficasNiveles[maquina].xAxis"
-            [yAxis]="graficasNiveles[maquina].yAxis"
-            [gradient]="graficasNiveles[maquina].gradient"
-            [showGridLines]="graficasNiveles[maquina].showGridLines"
-            [yScaleMax]="graficasNiveles[maquina].yScaleMax">
+            [view]="graficaNivelDirecto.viewSize"
+            [results]="graficaNivelDirecto.data"
+            [xAxisLabel]="graficaNivelDirecto.xAxisLabel"
+            [yAxisLabel]="graficaNivelDirecto.yAxisLabel"
+            [legend]="graficaNivelDirecto.legend"
+            [showXAxisLabel]="graficaNivelDirecto.showXAxisLabel"
+            [showYAxisLabel]="graficaNivelDirecto.showYAxisLabel"
+            [xAxis]="graficaNivelDirecto.xAxis"
+            [yAxis]="graficaNivelDirecto.yAxis"
+            [gradient]="graficaNivelDirecto.gradient"
+            [showGridLines]="graficaNivelDirecto.showGridLines"
+            [yScaleMax]="graficaNivelDirecto.yScaleMax">
             </ngx-charts-bar-vertical>
         </div>
-        
-    </div>    
+    </div>
+
+    <div *ngFor="let producto of productos; let i = index" class="producto grafico-box" [ngClass]="'producto-' + i" #productosHistorialStyle>
+        <h3>Nivel {{ producto }}</h3>
+        <div *ngIf="mostrarGraficasHistorialProductos">
+            <ngx-charts-bar-vertical 
+            [view]="graficasHistorialProducto[producto].viewSize"
+            [results]="graficasHistorialProducto[producto].data"
+            [xAxisLabel]="graficasHistorialProducto[producto].xAxisLabel"
+            [yAxisLabel]="graficasHistorialProducto[producto].yAxisLabel"
+            [legend]="graficasHistorialProducto[producto].legend"
+            [showXAxisLabel]="graficasHistorialProducto[producto].showXAxisLabel"
+            [showYAxisLabel]="graficasHistorialProducto[producto].showYAxisLabel"
+            [xAxis]="graficasHistorialProducto[producto].xAxis"
+            [yAxis]="graficasHistorialProducto[producto].yAxis"
+            [gradient]="graficasHistorialProducto[producto].gradient"
+            [showGridLines]="graficasHistorialProducto[producto].showGridLines"
+            [yScaleMax]="graficasHistorialProducto[producto].yScaleMax">
+            </ngx-charts-bar-vertical>
+        </div>
+    </div>
+    
+    
     <div class="grafico-circular grafico-box" #masVendido>
         <h3>Productos más vendidos</h3>
         <div *ngIf="mostrarGraficaCircular">
@@ -27,8 +48,8 @@
             [results]="graficaCircular.data">
         </ngx-charts-pie-grid>
         </div>
-        
     </div>
+
     <div class="estadisticas-container">
         <div class="estadistica-1 grafico-box">
             <div class="titulo">
@@ -85,23 +106,6 @@
         </div>
         
     </div>
-    <div class="grafico-ventas grafico-box" #ventasStyle>
-        <div *ngIf="mostrarGraficaVentas">
-            <ngx-charts-line-chart
-            [view]="graficaVentas.viewSize"
-            [results]="graficaVentas.data"
-            [gradient]="graficaVentas.gradient"
-            [xAxis]="graficaVentas.xAxis"
-            [yAxis]="graficaVentas.yAxis"
-            [legend]="graficaVentas.legend"
-            [showXAxisLabel]="graficaVentas.showXAxisLabel"
-            [showYAxisLabel]="graficaVentas.showYAxisLabel"
-            [xAxisLabel]="graficaVentas.xAxisLabel"
-            [yAxisLabel]="graficaVentas.yAxisLabel">
-            </ngx-charts-line-chart>
-        </div>
-        
-    </div>
-    
-</div>
 
+
+</div>

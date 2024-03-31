@@ -116,7 +116,8 @@ export class MapPage implements OnInit, AfterViewInit {
     }
   
 
-    alert("Se ha creado una ruta para repooner:\n" + this.reponer)
+    alert("Se ha creado una ruta para reponer:\n" + this.reponer.join(''));
+
 }
   
 

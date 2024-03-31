@@ -22,14 +22,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; 
 
 // Configuración de MQTT
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
-  hostname: '83.35.221.176',
+  hostname: '83.35.235.160',
   port: 4500,
   path: '/mqtt',
   protocol: 'ws', 
   
 };
 
-const config: SocketIoConfig = { url: 'http://83.35.221.175:500/api', options: {} };
 
 @NgModule({
   declarations: [AppComponent],
@@ -41,7 +40,6 @@ const config: SocketIoConfig = { url: 'http://83.35.221.175:500/api', options: {
     HttpClientModule,
     NgxChartsModule,
     BrowserAnimationsModule,
-    SocketIoModule.forRoot(config),
     provideFirebaseApp(() => initializeApp({
       "projectId":"lpro-workers",
       "appId":"1:945879346205:web:8eb0b852d9cd8be7c0aaf4",
