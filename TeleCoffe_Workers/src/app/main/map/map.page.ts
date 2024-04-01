@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 })
 export class MapPage implements OnInit, AfterViewInit {
   reponer: string[] = [];
+  mapIsVisible: boolean = false ;
 
 
   constructor(private mqttService: MqttService) { }
@@ -60,6 +61,7 @@ export class MapPage implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.subscribeToTopics();
+    //this.mapIsVisible=false;
   }
 
   ngAfterViewInit(){
@@ -111,7 +113,7 @@ export class MapPage implements OnInit, AfterViewInit {
       L.Routing.control({
         waypoints: waypoints,
         routeWhileDragging: true,
-        show: false
+        show: true
       }).addTo(map);
     }
   
@@ -182,6 +184,7 @@ subscribeToTopics() {
 
          // Verificar si se han recibido las cuatro respuestas
          if (respuestasRecibidas === 4) {
+            this.mapIsVisible=true;
            // Llamar a la función para configurar la ruta
            this.configurarRuta();
          }

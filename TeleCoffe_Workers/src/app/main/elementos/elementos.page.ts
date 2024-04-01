@@ -532,25 +532,31 @@ export class ElementosPage implements OnInit, AfterViewInit{
     initializeDates() {
       const startDate = new Date('2024-03-25');
       const today = new Date();
-      const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1); // Se suma 1 para incluir la fecha actual
-    
+      const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // Se suma 1 para incluir la fecha actual
+
       // Generar el rango de fechas
       const currentDate = new Date(startDate);
       while (currentDate <= endDate) {
+        console.log(currentDate)
+        console.log(currentDate.toISOString().split('T')[0])
         this.fechasDisponibles.push(currentDate.toISOString().split('T')[0]);
         currentDate.setDate(currentDate.getDate() + 1); // Avanzar al siguiente día
+
       }
     }
 
     initializeSelectedDate() {
       const today = new Date();
+      //console.log(today)
       this.selectedDate = today.toISOString().split('T')[0];
+      this.fechasDisponibles.push(this.selectedDate);
     }
     
     updateChart() {
       // Lógica para actualizar la gráfica con la fecha seleccionada
       // Aquí deberías llamar a tu servicio para obtener los datos según la fecha seleccionada y luego actualizar la gráfica
-      console.log(this.selectedDate);
+      //console.log("Fecha seleccionada: "+this.selectedDate);
+     // console.log("Fechas disponibles: "+this.fechasDisponibles);
       this.actualizarVentas();
     }
 

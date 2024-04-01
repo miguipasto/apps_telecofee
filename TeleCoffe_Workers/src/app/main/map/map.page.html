@@ -7,5 +7,13 @@
       <hr class="linea-decorativa">
     </div>
 
-   <div id="map"></div>
+    
+      <div id="map"></div>
+
+   
+   <div *ngIf="this.mapIsVisible===false" > 
+      <h2>
+        Calculando  la mejor ruta...
+      </h2>
+  </div>
 </div>
