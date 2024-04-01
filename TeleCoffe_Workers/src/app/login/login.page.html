@@ -1,26 +1,31 @@
-<ion-content class="log-in">
-  <div class="ellipse-7"></div>
-  <div class="rectangulo">
-    <form [formGroup]="formLogIn" (ngSubmit)="onSubmit()">
-      <div class="botón" style="position: absolute; left: 50%; transform: translate(-50%,-50%);">
-        <ion-button class="text-1" expand="block" color="#5C5353" type="submit">Log In</ion-button>
+<div class="log-in">
+  <div class="header">
+    <div class="logo-container">
+      <div class="logo-box">
+          <ion-img src="../../assets/icon/v5_133.png" class="logo"></ion-img>
       </div>
-      <ion-button color="transparent" (click)="redirigir_forgot()"  style="width: 80vw; padding-top: 10%" class="text-2">Olvidaste tu contraseña?</ion-button>
-      <p class="text-3" style="width: 98%; position: absolute; top: 10%; left: 50%; transform: translate(-50%,-50%);">Bienvenido a TeleCoffee</p>
-      <p class="text-3" style="width: 90%; position: absolute; top: 15%; left: 50%; transform: translate(-50%,-50%);">para trabajadores</p>
-      <div class="mail">
-        <input formControlName="email" type="email" placeholder="E-Mail" style="position: absolute; top: 35%; left: 50%; transform: translate(-50%,-50%); border: none; outline: none; background: transparent; width: 200px;" required>
-        <div class="line-1" style="position: absolute; top: 38%; left: 50%; transform: translate(-50%,-50%);"></div>
-      </div>
-      <div class="password">
-        <input formControlName="password" type="password" placeholder="Password" style="position: absolute; top: 55%; left: 50%; transform: translate(-50%,-50%); border: none; outline: none; background: transparent; width: 200px;" required>
-        <div class="line-1" style="position: absolute; top: 58%; left: 50%; transform: translate(-50%,-50%);">
-        </div>
-      </div>
-    </form>
+    </div>
   </div>
-  <div class="icono">
-    <div class="ellipse-5"></div>
-    <ion-img src="../../assets/icon/v5_133.png" id="img_8"></ion-img>
+  <div class="log-in-container">
+    <div class="log-in-form">
+      <h2>Bienvenido a TeleCoffe</h2>
+      <form [formGroup]="formLogIn" (ngSubmit)="onSubmit()">
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input formControlName="email" type="email"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input formControlName="password" type="password"></ion-input>
+        </ion-item>
+      </form>
+    </div>
+    <div class="log-in-button">
+      <button type="submit" (click)="onSubmit()">Login</button>
+    </div>
+    <div class="forgot-password">
+      <button (click)="redirigir_forgot()">Olvidaste tu contraseña?</button>
+    </div>
   </div>
-</ion-content>
+</div>
+

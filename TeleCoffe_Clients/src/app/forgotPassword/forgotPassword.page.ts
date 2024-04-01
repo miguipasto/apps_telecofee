@@ -55,6 +55,10 @@ export class ForgotPasswordPage implements OnInit {
     this.formForgotPassword.reset();
   }
 
+  redirigir_maquinas() {
+    this.router.navigate(['login']);
+    this.formForgotPassword.reset();
+  }
 
   
 }
