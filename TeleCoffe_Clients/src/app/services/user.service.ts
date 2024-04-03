@@ -39,9 +39,11 @@ export class UserService {
   updatePassword(user: any, newPassword: string) {
     return updatePassword(user, newPassword).then(() => {
       console.log('Contraseña actualizada correctamente');
+      alert('Contraseña actualizada correctamente');
     }).catch((error) => {
       console.error(error);
-      console.log('Contraseña no actualizada');
+      console.log('Contraseña no válida');
+      alert('Contraseña no válida');
     });
   }
   
@@ -52,8 +54,10 @@ export class UserService {
     if (user != null) {
       return deleteUser(user).then(() => {
         console.log('Usuario eliminado exitosamente');
+        //alert('Usuario eliminado exitosamente');
       }).catch((error) => {
         console.error('Usuario no eliminado', error);
+        //alert('Usuario no eliminado');
       });
     }
   }
@@ -67,6 +71,7 @@ export class UserService {
         this.updatePassword(user, newPassword);
       }).catch((error) => {
         console.error("Contraseña incorrecta", error);
+        alert("Contraseña incorrecta");
       });
     }
   }

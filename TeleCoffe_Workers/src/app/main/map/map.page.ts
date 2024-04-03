@@ -68,7 +68,7 @@ export class MapPage implements OnInit, AfterViewInit {
         
   }
 
-  configurarRuta(){
+  async configurarRuta(){
 
     console.log("Configurando ruta...")
     const map= new Map('map').setView([42.16926,-8.68377], 15.4);
@@ -81,10 +81,11 @@ export class MapPage implements OnInit, AfterViewInit {
     marker([42.16785,-8.68943]).addTo(map).bindPopup("<b>Industriales</b><br>").openPopup();
     marker([42.16719,-8.68528]).addTo(map).bindPopup("<b>Biología</b><br>").openPopup();
     marker([42.16979,-8.68809]).addTo(map).bindPopup("<b>Teleco</b><br>").openPopup();
+
+    let waypoints: any[] = [];
+
+    waypoints= await this.addCurrentLocationMarker(map,waypoints)
  
-
-    const waypoints = [];
-
     // Verificar si la máquina teleco tiene algún producto con valor 1
     if (Object.values(this.nivelesActualizar["Telecomunicación"]).includes(1)) {
       console.log("Teleco tiene que reponerse")
@@ -197,8 +198,24 @@ subscribeToTopics() {
   });
   
 }
+async addCurrentLocationMarker(map: any, waypoints: any[]): Promise<any[]> {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
 
+      L.marker([lat, lon])
+        .addTo(map)
+        .bindPopup('¡Estás aquí!')
+        .openPopup();
 
+      waypoints.push(L.latLng(lat, lon));
 
-
+      resolve(waypoints); // Resolver la promesa con los waypoints actualizados
+    }, (error) => {
+      console.error('Error obteniendo la ubicación: ', error);
+      resolve(waypoints); // Resolver la promesa con los waypoints existentes si hay un error
+    });
+  });
+}
 }

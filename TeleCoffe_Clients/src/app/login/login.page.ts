@@ -28,7 +28,7 @@ export class LoginPage implements OnInit {
 
   onSubmit(): void {
     if (this.formLogIn.invalid) {
-      alert('Please fill in all fields');
+      alert('Por favor rellene todos los campos');
       this.formLogIn.reset();
       return;
     }
@@ -40,7 +40,7 @@ export class LoginPage implements OnInit {
       })
       .catch(error => {
         console.error(error);
-        alert('Invalid email or password. Please try again.');
+        alert('Contraseña o correo inválido. Por favor vuelva a intentarlo.');
         this.formLogIn.reset();
       });
   }

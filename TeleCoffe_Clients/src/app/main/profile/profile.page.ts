@@ -39,11 +39,11 @@ export class ProfilePage implements OnInit {
   
       if (this.formPassword.invalid) {
         const currentPasswordErrors = this.formPassword?.get('currentPassword')?.errors;
-        let errorMessage = 'Please fill in all fields or fix errors.';
+        let errorMessage = 'Por favor rellene todos los campos o corrija errores.';
         if (currentPasswordErrors) {
           errorMessage = Object.keys(currentPasswordErrors)[0] === 'required'
-            ? 'Current password is required.'
-            : 'There are errors in current password.';
+            ? 'Contraseña actual es obligatoria.'
+            : 'Hay errores en la contraseña actual.';
         }
         alert(errorMessage);
         this.formPassword.reset();
@@ -60,11 +60,13 @@ export class ProfilePage implements OnInit {
       await this.authService.deleteAccount().then(async () => {
         await this.dataService.borrarUsuario().then(() => {
           console.log('Cuenta eliminada');
+          alert('Cuenta eliminada con éxito');
           this.route.navigate(['login']);
         })
         
       }).catch(error => {
         console.error('Error al eliminar la cuenta', error);
+        alert('Error al eliminar la cuenta');
       });
     }else{
       const np=this.formPassword.value.currentPassword

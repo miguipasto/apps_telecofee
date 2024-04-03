@@ -28,7 +28,7 @@ export class SignUpPage implements OnInit{
 
   onSubmit() {
     if (this.formReg.invalid) {
-      alert('Porfavor rellene todos los campos');
+      alert('Por favor rellene todos los campos');
       this.formReg.reset();
       return;
     }
@@ -50,7 +50,7 @@ export class SignUpPage implements OnInit{
       .catch(error => {
         console.log(error);
         // Si hay un error en el inicio de sesión, muestra un mensaje de error
-        alert('Correo o contraseña inválida. Contraseña debe de tener al menos 6 caracteres. Porfavor vuelva a intentarlo.');
+        alert('Correo o contraseña inválida. Contraseña debe de tener al menos 6 caracteres. Por favor vuelva a intentarlo.');
       });
 
       
