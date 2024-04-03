@@ -60,10 +60,11 @@ def obtener_datos(db):
     for doc in compras_snapshot:
         compra_data = doc.to_dict()
         compra_id = doc.id
+        print(compra_id)
 
         if compra_id not in compras_ids:
             compras_ids.add(compra_id)
-            #print(f"Nueva compra registrada: {compra_data}")
+            print(f"Nueva compra registrada: {compra_data}")
 
             for maquina_compras in compras:
                 if maquina_compras['maquina'] == compra_data['maquina']:
