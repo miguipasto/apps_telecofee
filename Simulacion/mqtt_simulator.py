@@ -40,6 +40,7 @@ maquinas_estado = {maquina: {"estado": ESTADO_ESPERANDO_COMPRA, "codigo": None} 
 MENSAJE_COMPRA_REQUEST = "REQUEST Compra"
 MENSAJE_CODIGO_RESPONSE_PREFIX = "RESPONSE Código:"
 MENSAJE_ACK_CODIGO = "ACK: Introduce el código"
+MENSAJE_NACK_CODIGO = "NACK: Hay otra compra en curso"
 MENSAJE_SUCCESS_COMPRA = "SUCCESS: Compra realizada correctamente"
 MENSAJE_ERROR_CODIGO = "ERROR: Código incorrecto"
 CODIGO_MASTER = "3333"
@@ -170,6 +171,11 @@ def gestionar_compra(mensaje_str, topico):
     if estado_actual == ESTADO_ESPERANDO_COMPRA and mensaje_str == MENSAJE_COMPRA_REQUEST:
         # Preparación para recibir el código de la compra
         preparar_compra(maquina, topico)
+
+    elif estado_actual == ESTADO_ESPERANDO_CODIGO and mensaje_str == MENSAJE_COMPRA_REQUEST:
+        # Indicamos que ya hay otra compra en curso
+        print(MENSAJE_NACK_CODIGO)
+        cliente.publish(topico,MENSAJE_NACK_CODIGO)
 
     elif estado_actual == ESTADO_ESPERANDO_CODIGO and mensaje_str.startswith(MENSAJE_CODIGO_RESPONSE_PREFIX):
         # Verificación del código de la compra
