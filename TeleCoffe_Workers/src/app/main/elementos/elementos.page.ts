@@ -126,7 +126,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
   }
 
  adjustGraphSize() {
-    const width = window.innerWidth - 50; // Ancho de la pantalla menos el espacio de margen
+    const width =330; // Ancho de la pantalla menos el espacio de margen
     const height = 370; // Altura deseada
 
     // No es necesario calcular las coordenadas x e y ya que el contenedor está centrado en CSS
@@ -200,7 +200,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
 
 
   procesarDatos(datos: any[]){
-    
+    const ultimos10Dias = this.obtenerUltimos10Dias();
     datos.forEach(data => {
       const fecha = new Date(data.fecha._seconds * 1000).toISOString().split('T')[0];
       const nivel_agua = data.niveles.nivel_agua_pr;
@@ -208,12 +208,15 @@ export class ElementosPage implements OnInit, AfterViewInit{
       const nivel_leche = data.niveles.nivel_leche_pr;
       const nivel_patatillas = data.niveles.patatillas_pr;
 
-    // Actualizar los datos de las gráficas correspondientes
-    this.graficasNiveles['agua'].data.push({ name: fecha, value: nivel_agua });
-    this.graficasNiveles['cafe'].data.push({ name: fecha, value: nivel_cafe });
-    this.graficasNiveles['leche'].data.push({ name: fecha, value: nivel_leche });
-    this.graficasNiveles['patatillas'].data.push({ name: fecha, value: nivel_patatillas });
+      if(ultimos10Dias.includes(fecha)){
+        // Actualizar los datos de las gráficas correspondientes
+        this.graficasNiveles['agua'].data.push({ name: fecha, value: nivel_agua });
+        this.graficasNiveles['cafe'].data.push({ name: fecha, value: nivel_cafe });
+        this.graficasNiveles['leche'].data.push({ name: fecha, value: nivel_leche });
+        this.graficasNiveles['patatillas'].data.push({ name: fecha, value: nivel_patatillas });
 
+      }
+    
     });
     
   }
@@ -242,8 +245,6 @@ export class ElementosPage implements OnInit, AfterViewInit{
   actualizarVentas() {
       this.backendService.ventas(this.nombresMaquinas[this.nombre], this.selectedDate).subscribe({
         next: (ventas) => {
-          // Procesar las ventas para agruparlas por máquina y fecha
-          console.log(ventas)
           this.procesarVentas(ventas);
         },
         error: (error) => {
@@ -255,7 +256,6 @@ export class ElementosPage implements OnInit, AfterViewInit{
   }
 
   sonNivelesIguales(niveles1: any, niveles2: any): boolean {
-    console.log(niveles1, niveles2)
     return JSON.stringify(niveles1) === JSON.stringify(niveles2);
   }
 
@@ -267,7 +267,6 @@ export class ElementosPage implements OnInit, AfterViewInit{
         next: (response) => {
           if (response.success) {
             const data = response.data;
-            console.log("Datos:", data);
             // Procesar los datos aquí
             this.procesarDatos(data);
           } else {
@@ -419,7 +418,6 @@ export class ElementosPage implements OnInit, AfterViewInit{
         
       
       }
-      console.log("El producto actualizado", data)
       // Actualizamos en Firebase
       this.dataService.actualizarNiveles(data,this.nombresMaquinas[this.nombre])   
       // Avisamos por MQTT
@@ -486,7 +484,6 @@ export class ElementosPage implements OnInit, AfterViewInit{
       next: (message: IMqttMessage) => {
         this.receiveNews += message.payload.toString() + '\n';
         this.lastLineLevels = message.payload.toString();
-        console.log(message.payload.toString());
         let data = JSON.parse(message.payload.toString());
         
         // Hacer una copia profunda de this.product["consumos"] antes de modificarlo
@@ -521,7 +518,6 @@ export class ElementosPage implements OnInit, AfterViewInit{
 
   onDataPointSelected(event: any) {
         // Aquí puedes acceder a la información de la barra seleccionada a través del objeto event
-        console.log('Barra seleccionada:', event);
         alert("Valor: "+ event.value);
 
         // Puedes realizar acciones adicionales aquí, como mostrar detalles en un modal o actualizar otra parte de tu interfaz de usuario.
@@ -532,26 +528,36 @@ export class ElementosPage implements OnInit, AfterViewInit{
     initializeDates() {
       const startDate = new Date('2024-03-25');
       const today = new Date();
-      const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1); // Se suma 1 para incluir la fecha actual
-    
+      const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // Se suma 1 para incluir la fecha actual
+
       // Generar el rango de fechas
       const currentDate = new Date(startDate);
       while (currentDate <= endDate) {
         this.fechasDisponibles.push(currentDate.toISOString().split('T')[0]);
         currentDate.setDate(currentDate.getDate() + 1); // Avanzar al siguiente día
+
       }
     }
 
     initializeSelectedDate() {
       const today = new Date();
       this.selectedDate = today.toISOString().split('T')[0];
+      this.fechasDisponibles.push(this.selectedDate);
     }
     
     updateChart() {
-      // Lógica para actualizar la gráfica con la fecha seleccionada
-      // Aquí deberías llamar a tu servicio para obtener los datos según la fecha seleccionada y luego actualizar la gráfica
-      console.log(this.selectedDate);
       this.actualizarVentas();
+    }
+
+    obtenerUltimos10Dias(): string[] {
+      const ultimos10Dias: string[] = [];
+      const fechaActual = new Date();
+      for (let i = 0; i < 10; i++) {
+        const fecha = new Date(fechaActual);
+        fecha.setDate(fecha.getDate() - i);
+        ultimos10Dias.push(fecha.toISOString().split('T')[0]);
+      }
+      return ultimos10Dias;
     }
 
 }

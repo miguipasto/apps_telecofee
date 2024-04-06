@@ -20,12 +20,15 @@ export class SupportPage implements OnInit {
   enviar_incidencia() {
     this.dataService.crearIncidencia(this.nombre, this.descripcion, this.maquinaSeleccionada).then(() => {
       console.log('Incidencia enviada con éxito');
+      alert('Incidencia enviada con éxito');
       this.nombre = '';
       this.descripcion = '';
       this.maquinaSeleccionada = '';
     }).catch(error => {
       // Manejo de errores
       console.error('Error al enviar la incidencia', error);
+      alert('Error al enviar la incidencia');      alert('E');
+
     });
   }
 

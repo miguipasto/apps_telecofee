@@ -61,6 +61,7 @@ export class StatisticsPage implements OnInit, AfterViewInit{
   }
 
   ngOnInit() {
+
     this.obtenerCompras("","");
   }
 
@@ -77,6 +78,7 @@ export class StatisticsPage implements OnInit, AfterViewInit{
 
 
   obtenerCompras(nombre_maquina: string, fecha: string) {
+    console.log("Actualizando")
     this.backendService.compras(nombre_maquina, fecha).subscribe({
       next: (compras) => {
         // Procesar las compras para agruparlas por máquina y fecha

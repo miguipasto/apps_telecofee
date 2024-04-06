@@ -44,12 +44,18 @@ export class ForgotPasswordPage implements OnInit {
       });
   }
   
-  
+
 
   redirigir_home_signup() {
     this.router.navigate(['signup']);
     this.formForgotPassword.reset();
   }
+
+  redirigir_maquinas() {
+    this.router.navigate(['login']);
+    this.formForgotPassword.reset();
+  }
+  
 
   resetForm() {
     this.formForgotPassword.reset();

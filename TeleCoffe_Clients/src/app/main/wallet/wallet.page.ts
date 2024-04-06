@@ -38,6 +38,10 @@ export class WalletPage implements OnInit {
   }
 
   async addBalance() {
+
+    if (isNaN(this.amountToAdd) || this.amountToAdd < 0) {
+      this.amountToAdd = 0;
+    }
     console.log("Añadiendo saldo:", this.amountToAdd);
     
     this.wallet = this.amountToAdd + this.wallet;
@@ -45,5 +49,6 @@ export class WalletPage implements OnInit {
 
     this.closeOverlay();
   }
+
 
 }
