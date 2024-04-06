@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { MqttService, IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
+import { AlertController } from '@ionic/angular';
 
 
 @Component({
@@ -23,7 +24,7 @@ export class HomePage implements OnInit {
   public receiveNews = '';
   public isConnection = false;
 
-  constructor(private dataService: DataService, private mqttService: MqttService) { }
+  constructor(private dataService: DataService, private mqttService: MqttService, public alertController: AlertController) { }
 
   ngOnInit() {
     this.subscribeToTopic(this.maquinaSeleccionada);
@@ -104,7 +105,8 @@ export class HomePage implements OnInit {
     const datosUser: any = await this.dataService.obetenerDatosUsuario();
     if (datosUser.saldo < compra.precio) {
       console.log("Dinero insuficiente.")
-      alert("No se pudo realizar la compra, revisa tu saldo");
+      //alert("No se pudo realizar la compra, revisa tu saldo");
+      this.presentAlert("Error en la compra","No se ha podido hacer la solicitud de compra, revise su saldo.")
     } else {
       console.log("Saldo suficiente")
       try {
@@ -112,11 +114,13 @@ export class HomePage implements OnInit {
         if (procesar_compra) {
           this.dataService.crearCompra(compra)
           .then((response: any) => {
-              alert("¡Compra realizada exitosamente!");
+              //alert("¡Compra realizada exitosamente!");
+              this.presentAlert("¡Compra realizada exitosamente!","Recoja su producto")
           })
           .catch((error) => {
               console.error("Error al crear la compra:", error);
-              alert("No se pudo realizar la compra, revisa tu saldo");
+              //alert("No se pudo realizar la compra, revisa tu saldo");
+              this.presentAlert("Error realizando la compra","Error al realizar la compra, disculpe las molestias e inténtelo de nuevo")
           });
         }
       } catch (error) {
@@ -136,16 +140,21 @@ export class HomePage implements OnInit {
                 const mensaje = message.payload.toString();
                 
                 // Manejamos los mensajes
-                if (mensaje.includes("ACK")){
+                if (mensaje.includes("NACK")){
+                  //alert("Otra compra en curso, inténtelo más tarde")
+                  this.presentAlert("Compra denegada","Otra compra está en curso, inténtelo más tarde.")
+                }else if (mensaje.includes("ACK")){
                   this.isOverlayCompra = true;
                 } else if(mensaje.includes("SUCCESS")){
                   console.log(mensaje)
-                  alert("Código correcto... Procesando compra")
+                  //alert("Código correcto... Procesando compra")
+                  this.presentAlert("Código correcto!","Espere mientres se procesa su compra\n ¡Gracias!")
                   subscription.unsubscribe();
                   resolve(true);
                 } else if(mensaje.includes("ERROR")){
                   console.log(mensaje)
-                  alert("Código incorrecto... Cancelando compra")
+                  //alert("Código incorrecto... Cancelando compra")
+                  this.presentAlert("Código incorrecto","El código introducido es incorrecto, inténtelo de nuevo.")
                   subscription.unsubscribe();
                   resolve(false);
                 }
@@ -165,6 +174,16 @@ export class HomePage implements OnInit {
             }
         });
     });
+  }
+
+  async presentAlert(header: string, mensaje: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: mensaje,
+      buttons: ['OK'],
+    });
+  
+    await alert.present();
   }
 
   enviarCodigo(){

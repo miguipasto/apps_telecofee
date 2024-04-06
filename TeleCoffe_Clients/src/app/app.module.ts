@@ -14,10 +14,10 @@ import { MqttModule, IMqttServiceOptions } from 'ngx-mqtt';
 
 // Configuración de MQTT
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
-  hostname: '83.35.235.160',
-  port: 4500,
+  hostname: 'telecoffe-server.duckdns.org',
+  port: 443,
   path: '/mqtt',
-  protocol: 'ws', 
+  protocol: 'wss', 
   
 };
 

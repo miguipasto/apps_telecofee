@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { DataService } from '../services/data.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-signup',
@@ -14,7 +15,7 @@ export class SignUpPage implements OnInit{
   formReg!: FormGroup
  
 
-  constructor(private router: Router, private userService: UserService, private formBuilder: FormBuilder, private dataService: DataService) {
+  constructor(private router: Router, private userService: UserService, private formBuilder: FormBuilder, private dataService: DataService,  public alertController: AlertController) {
 
   }
  
@@ -28,7 +29,8 @@ export class SignUpPage implements OnInit{
 
   onSubmit() {
     if (this.formReg.invalid) {
-      alert('Por favor rellene todos los campos');
+      //alert('Por favor rellene todos los campos');
+      this.presentAlert("Error","Por favor, rellena todos los campos")
       this.formReg.reset();
       return;
     }
@@ -50,10 +52,21 @@ export class SignUpPage implements OnInit{
       .catch(error => {
         console.log(error);
         // Si hay un error en el inicio de sesión, muestra un mensaje de error
-        alert('Correo o contraseña inválida. Contraseña debe de tener al menos 6 caracteres. Por favor vuelva a intentarlo.');
+        //alert('Correo o contraseña inválida. Contraseña debe de tener al menos 6 caracteres. Por favor vuelva a intentarlo.');
+        this.presentAlert("Error","Email o contraseña inválidos. Por favor, inténtelo de nuevo.\n La contraseña debe tener 6 caracteres")
       });
 
       
+  }
+
+  async presentAlert(header: string, mensaje: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: mensaje,
+      buttons: ['OK'],
+    });
+  
+    await alert.present();
   }
 
   redirigir_home_login() {

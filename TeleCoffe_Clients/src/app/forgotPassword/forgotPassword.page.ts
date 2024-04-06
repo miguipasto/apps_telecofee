@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-forgotPassword',
@@ -12,7 +13,7 @@ export class ForgotPasswordPage implements OnInit {
   formForgotPassword!: FormGroup;
   
 
-  constructor(private router: Router,private userService:UserService,public formBuilder: FormBuilder){
+  constructor(private router: Router,private userService:UserService, public formBuilder: FormBuilder,  public alertController: AlertController){
     
   }
   ngOnInit(): void {
@@ -25,7 +26,8 @@ export class ForgotPasswordPage implements OnInit {
 
   onSubmit() {
     if (this.formForgotPassword.invalid) {
-      alert('Please fill in all fields');
+      //alert('Please fill in all fields');
+      this.presentAlert("Error","Por favor, rellena todos los campos")
       this.formForgotPassword.reset();
       return;
     }
@@ -39,11 +41,21 @@ export class ForgotPasswordPage implements OnInit {
       .catch(error => {
         console.log(error);
         // Si hay un error en el inicio de sesión, muestra un mensaje de error
-        alert('Invalid email or password. Please try again.');
+        //alert('Invalid email or password. Please try again.');
+        this.presentAlert("Error","Email o contraseña inválidos. Por favor, inténtelo de nuevo.")
         this.formForgotPassword.reset();
       });
   }
   
+  async presentAlert(header: string, mensaje: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: mensaje,
+      buttons: ['OK'],
+    });
+  
+    await alert.present();
+  }
   
 
   redirigir_home_signup() {

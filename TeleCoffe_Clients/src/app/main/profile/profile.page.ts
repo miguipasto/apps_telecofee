@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } 
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { DataService } from 'src/app/services/data.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-profile',
@@ -19,7 +20,8 @@ export class ProfilePage implements OnInit {
     public authService: UserService,
     public route: Router,
     private formBuilder: FormBuilder,
-    private dataService: DataService) { }
+    private dataService: DataService,
+    public alertController: AlertController) { }
 
   async ngOnInit() {  
     this.formPassword = new FormGroup({
@@ -34,8 +36,8 @@ export class ProfilePage implements OnInit {
   showOverlay(cadena: string) {
     if (cadena.includes('contraseña')) {
 
-      console.log("Nueva " + this.formPassword.value.newPassword);
-      console.log("Actual " + this.formPassword.value.currentPassword);
+      //console.log("Nueva " + this.formPassword.value.newPassword);
+      //console.log("Actual " + this.formPassword.value.currentPassword);
   
       if (this.formPassword.invalid) {
         const currentPasswordErrors = this.formPassword?.get('currentPassword')?.errors;
@@ -45,13 +47,24 @@ export class ProfilePage implements OnInit {
             ? 'Contraseña actual es obligatoria.'
             : 'Hay errores en la contraseña actual.';
         }
-        alert(errorMessage);
+        //alert(errorMessage);
+        this.presentAlert("Error",errorMessage)
         this.formPassword.reset();
         return;
       }
     }
     this.isOverlayVisible = true;
     this.cadena = cadena;
+  }
+
+  async presentAlert(header: string, mensaje: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: mensaje,
+      buttons: ['OK'],
+    });
+  
+    await alert.present();
   }
   
   
@@ -60,13 +73,15 @@ export class ProfilePage implements OnInit {
       await this.authService.deleteAccount().then(async () => {
         await this.dataService.borrarUsuario().then(() => {
           console.log('Cuenta eliminada');
-          alert('Cuenta eliminada con éxito');
+          //alert('Cuenta eliminada con éxito');
+          this.presentAlert("Cuenta eliminada correctamente","Gracias.")
           this.route.navigate(['login']);
         })
         
       }).catch(error => {
         console.error('Error al eliminar la cuenta', error);
-        alert('Error al eliminar la cuenta');
+        //alert('Error al eliminar la cuenta');
+        this.presentAlert("Error","No hemos podido eliminar su cuenta.")
       });
     }else{
       const np=this.formPassword.value.currentPassword
