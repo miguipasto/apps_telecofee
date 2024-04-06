@@ -4,6 +4,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MqttModule, IMqttServiceOptions } from 'ngx-mqtt';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';  // added
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -38,6 +39,7 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
     HttpClientModule,
     NgxChartsModule,
     BrowserAnimationsModule,
+    ReactiveFormsModule,
     MqttModule.forRoot(MQTT_SERVICE_OPTIONS),
   ],
   providers: [HttpClientModule],

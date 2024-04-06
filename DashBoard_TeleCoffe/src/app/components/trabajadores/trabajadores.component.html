@@ -1,1 +1,51 @@
-<p>trabajadores works!</p>
+<div class="trabajadores">
+    <div class="creacion-users grafico-box">
+        <h1>Alta usuarios</h1>
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()" id="formularioCreacionUsuarios">
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" formControlName="nombre" required>
+                <div *ngIf="userForm.get('nombre')?.touched && userForm.get('nombre')?.errors?.['required']" class="error">
+                    El nombre es requerido.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="apellidos">Apellidos:</label>
+                <input type="text" formControlName="apellidos" required>
+                <div *ngIf="userForm.get('apellidos')?.touched && userForm.get('apellidos')?.errors?.['required']" class="error">
+                    Los apellidos son requeridos.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" formControlName="email" required>
+                <div *ngIf="userForm.get('email')?.touched && userForm.get('email')?.errors" class="error">
+                    <div *ngIf="userForm.get('email')?.errors?.['required']">El email es requerido.</div>
+                    <div *ngIf="userForm.get('email')?.errors?.['email']">Ingrese un email válido.</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <div class="password-group">
+                    <input [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-control">
+                    <button type="button" (click)="generateRandomPassword()">Generar</button>
+                </div>
+                <div *ngIf="userForm.get('password')?.touched && userForm.get('password')?.errors" class="error">
+                    <div *ngIf="userForm.get('password')?.errors?.['required']">La contraseña es requerida.</div>
+                    <div *ngIf="userForm.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 8 caracteres.</div>
+                </div>
+            </div>              
+            <div class="form-group">
+                <label for="confirm-password">Confirmar Contraseña:</label>
+                <input [type]="showPassword ? 'text' : 'password'" formControlName="confirmPassword" required>
+                <div *ngIf="userForm.errors?.['notSame'] && (userForm.get('confirmPassword')?.touched || userForm.get('password')?.touched)" class="error">
+                    Las contraseñas no coinciden.
+                </div>
+            </div>
+            <button type="submit" [disabled]="!userForm.valid">Crear Usuario</button>
+        </form>
+    </div>
+    <div class="listado-users grafico-box">
+        <!-- Aquí iría el contenido adicional, por ejemplo, un listado de usuarios -->
+    </div>
+</div>
