@@ -1,93 +1,149 @@
+import paho.mqtt.client as mqtt
 import firebase_admin
+import json
 import time
 import random
 import threading
-import json
 from datetime import datetime
-import paho.mqtt.client as mqtt
 from firebase_admin import credentials, firestore
 
-### SINCRONIZACIÓN ###
-# Obtenemos las credenciales
+# Variables globales
 credenciales_cliente = credentials.Certificate('./lpro-e1d36-firebase-adminsdk-qvco3-f1151578a9.json')
 credenciales_workers = credentials.Certificate('./lpro-workers-firebase-adminsdk-yf4f8-595b4803e9.json')
 
-# Inicializamos las aplicaciones con sus credenciales
 app_clientes = firebase_admin.initialize_app(credenciales_cliente, name='clientes')
 app_workers = firebase_admin.initialize_app(credenciales_workers, name='workers')
 
-# Inicializamos las instancias de Firestore
-db_clientes = firestore.client(app_clientes)
+db_clients = firestore.client(app_clientes)
 db_workers = firestore.client(app_workers)
 
-# Definimos las variables iniciales
+MQTT_BROKER_ADDRESS = "localhost"
+MQTT_PORT = 4500
+MQTT_TRANSPORT = "websockets"
+MQTT_API_VERSION = mqtt.CallbackAPIVersion.VERSION2
+cliente = None
+
 maquinas = ["minas", "industriales", "teleco", "biologia"]
 niveles = [{'maquina': maquina, "fecha": "", "niveles": []} for maquina in maquinas]
 compras = [{'maquina': maquina, "compras": []} for maquina in maquinas]
-
 compras_ids = set()
-
 niveles_maximos = {"nivel_cafe_gr": 100, "nivel_leche_ml": 200, "nivel_agua_ml": 200, "patatillas_u": 10}
 
 # Estados de la comunicación
 ESTADO_ESPERANDO_COMPRA = 0
 ESTADO_ESPERANDO_CODIGO = 1
+TIEMPO_TIMEOUT = 60
 
-TIEMPO_TIMEOUT = 30
-
-# Diccionario para mantener el estado y código de cada máquina
 maquinas_estado = {maquina: {"estado": ESTADO_ESPERANDO_COMPRA, "codigo": None} for maquina in maquinas}
 
-def obtener_historial_reposiciones(db, nombre_maquina):
-    print("##########################################################")
-    print("Actualizando niveles desde el historial de reposiciones...")
-    print("##########################################################\n")
+# Compras
+MENSAJE_COMPRA_REQUEST = "REQUEST Compra"
+MENSAJE_CODIGO_RESPONSE_PREFIX = "RESPONSE Código:"
+MENSAJE_ACK_CODIGO = "ACK: Introduce el código"
+MENSAJE_SUCCESS_COMPRA = "SUCCESS: Compra realizada correctamente"
+MENSAJE_ERROR_CODIGO = "ERROR: Código incorrecto"
+CODIGO_MASTER = "3333"
 
+
+def setup_mqtt_client():
+    global cliente
+    cliente = mqtt.Client(transport=MQTT_TRANSPORT, callback_api_version=MQTT_API_VERSION)
+    cliente.on_connect = on_connect
+    cliente.on_disconnect = on_disconnect
+    cliente.on_publish = on_publish
+    cliente.on_message = on_message
+
+    try:
+        cliente.connect(MQTT_BROKER_ADDRESS, MQTT_PORT)
+        cliente.loop_start()
+        print("Intentando conectar con el broker MQTT...")
+    except Exception as e:
+        print(f"Error al intentar conectar con el broker MQTT: {e}")
+
+def suscribe_to_topics():
+    for maquina in maquinas:
+        topico = f'{maquina}/compra'
+        cliente.subscribe(topico)
+        print(f"Suscrito al tópico de compras: {topico}")
+
+    topico = 'reposicion'
+    cliente.subscribe(topico)
+    print(f"Suscrito al tópico de reposición: {topico}")
+
+def actualizar_publicacion_mqtt():
+    print("Publicando niveles actuales...")
+    for maquina_nivel in niveles:
+        maquina_sin_fecha = maquina_nivel.copy()
+        maquina_sin_fecha.pop('fecha', None)
+        mensaje = json.dumps(maquina_sin_fecha)
+        print(f"Publicando niveles de '{maquina_sin_fecha['maquina']}': {mensaje}")
+        cliente.publish(f"{maquina_sin_fecha['maquina']}/nivel", mensaje)
+        time.sleep(1)
+
+def on_connect(cliente, userdata, flags, rc, properties=None):
+    if rc == 0:
+        print("Conectado al broker MQTT exitosamente!\n")
+        suscribe_to_topics()
+        # Obtenemos el historial de reposiciones
+        for maquina in maquinas:
+            obtener_historial_reposiciones(db_workers,maquina)
+
+        # Obtenemos las compras
+        obtener_compras(db_clients)
+    else:
+        print(f"Fallo en la conexión con el broker MQTT, código de error: {rc}")
+
+def on_disconnect(cliente, userdata, rc=None, properties=None):
+    print("Desconexión del broker MQTT completada.")
+
+def on_publish(cliente, userdata, mid, rc=None, properties=None):
+    print(" ")
+
+def on_message(cliente, userdata, message):
+    mensaje = message.payload.decode()
+    topico = message.topic
+    #print(f"Mensaje recibido en '{topico}': {mensaje_str}")
+
+    if topico.endswith("compra"):
+        gestionar_compra(mensaje,topico)
+    elif topico == "reposicion":
+        print("\n### NUEVA REPOSICION ###\n")
+        time.sleep(2)
+        obtener_historial_reposiciones(db_workers,mensaje)
+
+def obtener_historial_reposiciones(db, nombre_maquina):
+    print(f"Obteniendo historial de reposiciones para la máquina: {nombre_maquina}")
     for nivel_maquina in niveles:
-        if (nivel_maquina['maquina'] == nombre_maquina):
-            maquina = nivel_maquina['maquina']
-            path = f'niveles/{maquina}/historial_reposiciones'
+        if nivel_maquina['maquina'] == nombre_maquina:
+            path = f'niveles/{nombre_maquina}/historial_reposiciones'
             documentos = db.collection(path).order_by('fecha', direction=firestore.Query.DESCENDING).limit(1).get()
-            
             for documento in documentos:
                 datos_reposicion = documento.to_dict()
                 nivel_maquina['niveles'] = datos_reposicion['niveles']
                 nivel_maquina['fecha'] = datos_reposicion['fecha']
-                print(f"Última reposición en '{maquina}': {datos_reposicion['fecha']} - Niveles: {datos_reposicion['niveles']}")
+                print(f"Última reposición para '{nombre_maquina}': {datos_reposicion['fecha']} - Niveles: {datos_reposicion['niveles']}")
 
-            break
-
-def obtener_datos(db):
-    print("\nConsultando nuevas compras...")
-    
+def obtener_compras(db):
+    print("Consultando compras recientes...")
     compras_ref = db.collection_group("compras")
     compras_snapshot = compras_ref.get()
-
-    if not compras_snapshot:
-        print("No se encontraron nuevas compras.")
-        return
 
     for doc in compras_snapshot:
         compra_data = doc.to_dict()
         compra_id = doc.id
-
         if compra_id not in compras_ids:
             compras_ids.add(compra_id)
-            print(f"Nueva compra registrada: {compra_data}")
-
+            print(f"Nueva compra detectada: {compra_data}")
             for maquina_compras in compras:
                 if maquina_compras['maquina'] == compra_data['maquina']:
                     maquina_compras['compras'].append(compra_data)
                     actualizar_nivel(compra_data)
-                    break
 
 def actualizar_nivel(compra_data):
+    print(f"Actualizando niveles para '{compra_data['maquina']}' debido a la compra de '{compra_data['producto']}'")
     for maquina_nivel in niveles:
         if maquina_nivel['maquina'] == compra_data['maquina'] and compra_data['fecha'] > maquina_nivel['fecha']:
-            nivel_actual = maquina_nivel['niveles']
-            obtener_nuevo_nivel(compra_data['producto'], nivel_actual)
-            print(f"Niveles actualizados para '{compra_data['maquina']}': {nivel_actual}")
-            break
+            obtener_nuevo_nivel(compra_data['producto'], maquina_nivel['niveles'])
 
 def obtener_nuevo_nivel(producto, nivel_actual):
     # Esta función actualiza los niveles basándose en el producto comprado
@@ -109,114 +165,64 @@ def obtener_nuevo_nivel(producto, nivel_actual):
 
 def gestionar_compra(mensaje_str, topico):
     maquina = topico.split('/')[0]
-
     estado_actual = maquinas_estado[maquina]["estado"]
 
-    if estado_actual == ESTADO_ESPERANDO_COMPRA and mensaje_str == "REQUEST Compra":
-        maquinas_estado[maquina]["estado"] = ESTADO_ESPERANDO_CODIGO
-        print(f"### Nueva compra solicitada en {maquina} ###")
-        codigo_generado = random.randint(1000, 9999)
-        maquinas_estado[maquina]["codigo"] = codigo_generado
-        time.sleep(1)
-        print(f"El código para {maquina} es: {codigo_generado}")
-        cliente.publish(topico, "ACK: Introduce el código")
-        # Iniciar temporizador de timeout específico para la máquina
-        threading.Timer(TIEMPO_TIMEOUT, timeout, args=(maquina,)).start()
+    if estado_actual == ESTADO_ESPERANDO_COMPRA and mensaje_str == MENSAJE_COMPRA_REQUEST:
+        # Preparación para recibir el código de la compra
+        preparar_compra(maquina, topico)
 
-    elif estado_actual == ESTADO_ESPERANDO_CODIGO and mensaje_str.startswith("RESPONSE Código:"):
+    elif estado_actual == ESTADO_ESPERANDO_CODIGO and mensaje_str.startswith(MENSAJE_CODIGO_RESPONSE_PREFIX):
+        # Verificación del código de la compra
         codigo_cliente = mensaje_str.split(":")[1].strip()
-        if codigo_cliente == str(maquinas_estado[maquina]["codigo"]) or codigo_cliente == "3333":
-            print(f"Compra realizada correctamente en {maquina}.")
-            cliente.publish(topico, "SUCCESS: Compra realizada correctamente")
-            maquinas_estado[maquina]["estado"] = ESTADO_ESPERANDO_COMPRA
-            time.sleep(5)
-            obtener_datos(db_clientes)
-        else:
-            print(f"El código introducido es incorrecto en {maquina}. Volviendo a esperar una nueva compra...")
-            cliente.publish(topico, "ERROR: Código incorrecto")
-            maquinas_estado[maquina]["estado"] = ESTADO_ESPERANDO_COMPRA
+        verificar_codigo_compra(maquina, topico, codigo_cliente)
 
-# Función de timeout modificada para manejar múltiples máquinas
+def preparar_compra(maquina, topico):
+    maquinas_estado[maquina]["estado"] = ESTADO_ESPERANDO_CODIGO
+    print(f"### Nueva compra solicitada en {maquina} ###")
+
+    codigo_generado = random.randint(1000, 9999)
+    maquinas_estado[maquina]["codigo"] = codigo_generado
+
+    time.sleep(1)  # Simula un breve retardo
+
+    print(f"El código para {maquina} es: {codigo_generado}")
+    cliente.publish(topico, MENSAJE_ACK_CODIGO)
+
+    # Inicia el temporizador de timeout para esta máquina
+    threading.Timer(TIEMPO_TIMEOUT, timeout, args=(maquina,)).start()
+
+def verificar_codigo_compra(maquina, topico, codigo_cliente):
+    codigo_correcto = maquinas_estado[maquina]["codigo"]
+    if codigo_cliente == str(codigo_correcto) or codigo_cliente == CODIGO_MASTER:
+        print(f"Compra realizada correctamente en {maquina}.")
+        cliente.publish(topico, MENSAJE_SUCCESS_COMPRA)
+        maquinas_estado[maquina]["estado"] = ESTADO_ESPERANDO_COMPRA
+
+        time.sleep(2)
+        obtener_compras(db_clients)
+    else:
+        print(f"El código introducido es incorrecto en {maquina}. Volviendo a esperar una nueva compra...")
+        cliente.publish(topico, MENSAJE_ERROR_CODIGO)
+        maquinas_estado[maquina]["estado"] = ESTADO_ESPERANDO_COMPRA
+
 def timeout(maquina):
     if maquinas_estado[maquina]["estado"] == ESTADO_ESPERANDO_CODIGO:
         print(f"Timeout para {maquina}: El código no fue introducido a tiempo.")
         maquinas_estado[maquina]["estado"] = ESTADO_ESPERANDO_COMPRA
 
-### PUBLICACIÓN MQTT ###
-# Configuración
-direccion_broker = "localhost"
-puerto = 4500
 
-# Funciones de callback
-def on_connect(cliente, userdata, flags, rc, properties=None):
-    if rc == 0:
-        print("Conectado al broker MQTT exitosamente!\n")
-        # Nos suscribimos al topico para compras
-        for maquina in maquinas:
-            topico = f"{maquina}/compra"
-            cliente.subscribe(topico)
-            print(f"Suscrito en el tópico {topico}")
-        # Nos suscribismos al topico para las reposiciones
-        cliente.subscribe('reposicion')
-    else:
-        print(f"Fallo al conectar, código: {rc}")
+def main():
+    setup_mqtt_client()
+    time.sleep(10) 
+    try:
+        print("\n### PUBLICANDO DATOS EN MQTT ###\n")
+        while True:
+            actualizar_publicacion_mqtt()
+            time.sleep(5) 
+    except KeyboardInterrupt:
+        print("Deteniendo el sistema por solicitud del usuario.")
+        cliente.loop_stop()
+        cliente.disconnect()
 
-def on_disconnect(cliente, userdata, flags, rc=None, properties=None):
-    print("Desconectado del broker MQTT")
-
-def on_publish(cliente, userdata, mid, rc=None, properties=None):
-    print(f"Mensaje publicado en MQTT con ID: {mid}\n")
-
-def on_message(cliente, userdata, mensaje):
-    mensaje_str = mensaje.payload.decode()
-    topico = mensaje.topic
-    # print(f"Mensaje recibido: '{mensaje_str}' en el tópico: {mensaje.topic}")
-    if topico.endswith("compra"):
-        gestionar_compra(mensaje_str,topico)
-    if mensaje.topic == "reposicion":
-        print("### NUEVA REPOSICION ###")
-        time.sleep(2)
-        obtener_historial_reposiciones(db_workers,mensaje_str)
-
-# Creación de la instancia del cliente
-cliente = mqtt.Client(transport="websockets", callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
-cliente.on_connect = on_connect
-cliente.on_disconnect = on_disconnect
-cliente.on_publish = on_publish
-cliente.on_message = on_message
-
-# Conexión al broker
-try:
-    cliente.connect(direccion_broker, puerto)
-    cliente.loop_start()
-except Exception as e:
-    print(f"Fallo al conectar: {e}")
-
-# Obtenemos los niveles
-for maquina in maquinas:
-    obtener_historial_reposiciones(db_workers, maquina)
-obtener_datos(db_clientes)
-
-try:
-    while True:
-
-        # Publicación MQTT
-        for maquina_nivel in niveles:
-            # Crea una copia del diccionario antes de modificarlo
-            maquina_sin_fecha = maquina_nivel.copy()
-
-            maquina_sin_fecha.pop('fecha', None)
-            
-            mensaje = json.dumps(maquina_sin_fecha)
-            print(mensaje)
-            cliente.publish(f"{maquina_sin_fecha['maquina']}/nivel", mensaje)
-            time.sleep(1)
-
-        time.sleep(5)
-except KeyboardInterrupt:
-    print("\nTerminando el programa.")
-
-# Detener el bucle y desconectar
-cliente.loop_stop()
-cliente.disconnect()
-
+if __name__ == "__main__":
+    main()
