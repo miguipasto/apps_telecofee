@@ -189,7 +189,7 @@ def preparar_compra(maquina, topico):
     codigo_generado = random.randint(1000, 9999)
     maquinas_estado[maquina]["codigo"] = codigo_generado
 
-    time.sleep(1)  # Simula un breve retardo
+    #time.sleep(1)  # Simula un breve retardo
 
     print(f"El código para {maquina} es: {codigo_generado}")
     cliente.publish(topico, MENSAJE_ACK_CODIGO)

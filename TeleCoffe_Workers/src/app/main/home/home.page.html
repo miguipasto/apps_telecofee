@@ -10,7 +10,7 @@
       <div *ngFor="let product of products" class="producto">
         <div class="foto-producto">
           <button (click)="redirect_to_elementos(product.name)">
-            <ion-img [src]="product.img" class="producto-foto"></ion-img>  
+            <img [src]="product.img" class="producto-foto"/>
           </button>
                   
         </div>

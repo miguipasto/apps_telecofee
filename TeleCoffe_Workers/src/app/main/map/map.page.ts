@@ -54,14 +54,9 @@ export class MapPage implements OnInit, AfterViewInit {
     },
 };
 
-
-
-
-
-
   ngOnInit() {
     this.subscribeToTopics();
-    //this.mapIsVisible=false;
+    this.mapIsVisible = false;
   }
 
   ngAfterViewInit(){
@@ -156,9 +151,6 @@ subscribeToTopics() {
       
         console.log("Actualizado")
 
-        // Aquí puedes realizar tus acciones en función de los datos recibidos
-        // Por ejemplo, puedes agregar lógica para verificar los niveles de agua, café, etc.
-
         if(data.niveles.nivel_agua_pr < 30) {
           console.log(`${nombre} tiene que reponer agua`);
           this.nivelesActualizar[nombre]["agua"] = 1;
@@ -186,8 +178,8 @@ subscribeToTopics() {
          // Verificar si se han recibido las cuatro respuestas
          if (respuestasRecibidas === 4) {
             this.mapIsVisible=true;
-           // Llamar a la función para configurar la ruta
-           this.configurarRuta();
+            // Llamar a la función para configurar la ruta
+            this.configurarRuta();
          }
       },
       error: (error: any) => {

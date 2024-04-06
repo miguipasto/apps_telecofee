@@ -126,10 +126,8 @@ export class ElementosPage implements OnInit, AfterViewInit{
   }
 
  adjustGraphSize() {
-    const width =330; // Ancho de la pantalla menos el espacio de margen
+    const width = 330; // Ancho de la pantalla menos el espacio de margen
     const height = 370; // Altura deseada
-
-    // No es necesario calcular las coordenadas x e y ya que el contenedor está centrado en CSS
 
     // Establece la vista con el ancho y la altura calculados
     this.viewSizeNivel = [width, height];

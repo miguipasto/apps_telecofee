@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class BackendService {
-  private apiUrl = 'http://83.35.235.160:5000/api'; // Reemplaza con la URL de tu servidor API
+  private apiUrl = 'https://telecoffe-server.duckdns.org/api'; // Reemplaza con la URL de tu servidor API
 
   constructor(private http: HttpClient) { }
 
