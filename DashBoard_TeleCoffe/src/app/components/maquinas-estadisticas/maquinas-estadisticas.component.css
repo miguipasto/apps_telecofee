@@ -78,11 +78,12 @@
     display: grid;
     padding-left: 10%;
     padding-right: 10%;
-    grid-template-rows: 1fr 1fr 1fr 0.5fr;
+    grid-template-rows: 1fr 2fr 2fr 0.5fr;
     justify-content: center;
     align-items: center;
     text-align: center;
     height: auto;
+    padding-bottom: 5%;
 }
 
 .texto-porcentaje{
@@ -108,16 +109,17 @@
 
 
 h1, h2, h3{
-    font-size: medium;
+    font-size: large;
     margin: 0px;
 }
 
 h3{
     color:#70442B;
+    margin-bottom: 5%;
 }
 
 p{
-    font-size: small;
+    font-size: medium;
     color:rgb(116, 116, 116);
 }
 

@@ -87,6 +87,7 @@ export class TrabajadoresComponent implements OnInit {
         })
         .then(() => {
           alert("Usuario creado correctamente")
+          this.getUsers();
           console.log('Usuario registrado con éxito en Firestore');
         })
         .catch(error => {
