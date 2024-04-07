@@ -105,10 +105,11 @@ export class TrabajadoresComponent implements OnInit {
   }
   
 
-  delete_account(user: any){
-    this.backendService.deleteUser(user.uuid).subscribe({
+  delete_account(user_id: any){
+    this.backendService.deleteUser(user_id).subscribe({
       next: (compras) => {
         alert("Usuario eliminado correctamente.")
+        this.getUsers();
       },
       error: (error) => {
         console.error(error);

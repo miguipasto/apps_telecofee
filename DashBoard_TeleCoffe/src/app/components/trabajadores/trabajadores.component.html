@@ -54,7 +54,7 @@
             <div class="informacion">
                 <h3>{{ user.email }}</h3>
                 <button class="restablecer-button" (click)="reset_password(user.email)">Restablecer Contraseña</button>
-                <button class="eliminar-button" (click)="delete_account(user)">Eliminar Cuenta</button>
+                <button class="eliminar-button" (click)="delete_account(user.id)">Eliminar Cuenta</button>
             </div>
         </diV>
     </div>

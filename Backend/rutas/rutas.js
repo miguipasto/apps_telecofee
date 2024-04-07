@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { dbClients, dbWorkers } = require('../firebase/Firebase'); 
+const { dbClients, dbWorkers, authWorkers} = require('../firebase/Firebase'); 
 const { Timestamp } = require('firebase-admin/firestore');
 
 
@@ -214,10 +214,10 @@ router.delete('/usuarios/:uid', async (req, res) => {
 
     try {
         // Eliminar el usuario de Firebase Auth
-        await admin.auth().deleteUser(uid);
+        await authWorkers.deleteUser(uid);
 
         // Elimina también los datos del usuario de Firestore si es necesario
-        await admin.firestore().collection('usuarios').doc(uid).delete();
+        await dbWorkers.collection('usuarios').doc(uid).delete();
 
         res.status(200).json({
             success: true,
