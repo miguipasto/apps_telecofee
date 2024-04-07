@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'telecoffee.clients',
   appName: 'TeleCoffee_Clients',
   webDir: 'www',
   server: {

@@ -12,6 +12,8 @@ import { AlertController } from '@ionic/angular';
 })
 export class HomePage implements OnInit {
 
+  isLoading = true;
+
   isOverlayVisibleAzucar: boolean = false;
   isOVerlayVisible: boolean = false;
   isOverlayCompra: boolean = false;
@@ -114,8 +116,8 @@ export class HomePage implements OnInit {
         if (procesar_compra) {
           this.dataService.crearCompra(compra)
           .then((response: any) => {
-              //alert("¡Compra realizada exitosamente!");
               this.presentAlert("¡Compra realizada exitosamente!","Recoja su producto")
+              this.isLoading = false;
           })
           .catch((error) => {
               console.error("Error al crear la compra:", error);
@@ -138,12 +140,14 @@ export class HomePage implements OnInit {
         const subscription = this.mqttService.observe(`${this.maquinaSeleccionada}/compra`).subscribe({
             next: (message: IMqttMessage) => {
                 const mensaje = message.payload.toString();
-                
+            
                 // Manejamos los mensajes
                 if (mensaje.includes("NACK")){
                   //alert("Otra compra en curso, inténtelo más tarde")
+                  this.isLoading = false;
                   this.presentAlert("Compra denegada","Otra compra está en curso, inténtelo más tarde.")
-                }else if (mensaje.includes("ACK")){
+                } else if (mensaje.includes("ACK")){
+                  this.isLoading = false;
                   this.isOverlayCompra = true;
                 } else if(mensaje.includes("SUCCESS")){
                   console.log(mensaje)
@@ -152,6 +156,7 @@ export class HomePage implements OnInit {
                   subscription.unsubscribe();
                   resolve(true);
                 } else if(mensaje.includes("ERROR")){
+                  this.isLoading = false;
                   console.log(mensaje)
                   //alert("Código incorrecto... Cancelando compra")
                   this.presentAlert("Código incorrecto","El código introducido es incorrecto, inténtelo de nuevo.")
@@ -173,6 +178,7 @@ export class HomePage implements OnInit {
                 reject(error);
             }
         });
+        this.isLoading = true;
     });
   }
 
@@ -195,6 +201,7 @@ export class HomePage implements OnInit {
     }); 
     this.codigoConfirmacion=null;
     this.closeOverlay();
+    this.isLoading = true;
   }
 
 
@@ -206,11 +213,13 @@ export class HomePage implements OnInit {
     if (this.subscription) {
       this.subscription.unsubscribe();
       console.log('Desuscripto del tópico anterior.');
+      this.isLoading = true;
     }
 
     // Intentamos suscribirnos al tópico
     this.subscription = this.mqttService.observe(topic).subscribe({
       next: (message: IMqttMessage) => {
+        this.isLoading = false;
         this.receiveNews += message.payload.toString() + '\n';
         this.checkAvailableProducto(message.payload.toString());
       },
