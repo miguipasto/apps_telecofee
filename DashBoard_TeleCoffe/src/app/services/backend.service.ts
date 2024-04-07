@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { deleteUser } from 'firebase/auth';
 
 
 @Injectable({
@@ -50,6 +51,11 @@ export class BackendService {
 
     const url = `${this.apiUrl}/niveles${queryParams.length > 0 ? '?' + queryParams : ''}`;
     return this.http.get<any>(url);
+  }
+
+  deleteUser(uuid: string){
+    const url = `${this.apiUrl}/usuaris${uuid}`;
+    return this.http.delete<any>(url);
   }
 
 }

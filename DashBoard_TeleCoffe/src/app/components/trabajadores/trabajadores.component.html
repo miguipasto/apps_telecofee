@@ -46,6 +46,16 @@
         </form>
     </div>
     <div class="listado-users grafico-box">
-        <!-- Aquí iría el contenido adicional, por ejemplo, un listado de usuarios -->
+        <diV *ngFor="let user of users" class="user-container grafico-box">
+            <div class="informacion">
+                <h1>{{ user.nombre }} {{ user.apellidos }}</h1>
+                <p>{{ user.create_at }}</p>
+            </div>
+            <div class="informacion">
+                <h3>{{ user.email }}</h3>
+                <button class="restablecer-button" (click)="reset_password(user.email)">Restablecer Contraseña</button>
+                <button class="eliminar-button" (click)="delete_account(user)">Eliminar Cuenta</button>
+            </div>
+        </diV>
     </div>
 </div>

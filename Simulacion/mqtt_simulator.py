@@ -204,7 +204,7 @@ def verificar_codigo_compra(maquina, topico, codigo_cliente):
         cliente.publish(topico, MENSAJE_SUCCESS_COMPRA)
         maquinas_estado[maquina]["estado"] = ESTADO_ESPERANDO_COMPRA
 
-        time.sleep(5)
+        time.sleep(10)
         obtener_compras(db_clients)
     else:
         print(f"El código introducido es incorrecto en {maquina}. Volviendo a esperar una nueva compra...")

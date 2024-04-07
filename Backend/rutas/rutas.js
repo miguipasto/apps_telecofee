@@ -207,4 +207,31 @@ router.get('/incidencias', async (req, res) => {
         }
 });
 
+
+// Eliminar usuario
+router.delete('/usuarios/:uid', async (req, res) => {
+    const { uid } = req.params;
+
+    try {
+        // Eliminar el usuario de Firebase Auth
+        await admin.auth().deleteUser(uid);
+
+        // Elimina también los datos del usuario de Firestore si es necesario
+        await admin.firestore().collection('usuarios').doc(uid).delete();
+
+        res.status(200).json({
+            success: true,
+            message: `El usuario con UID ${uid} ha sido eliminado correctamente.`,
+        });
+    } catch (error) {
+        console.error('Error al eliminar el usuario:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al eliminar el usuario',
+            error: error.message
+        });
+    }
+});
+
+
 module.exports = router;
