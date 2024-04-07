@@ -5,6 +5,7 @@ import 'leaflet-routing-machine';
 
 import { MqttService, IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
+import { AlertController } from '@ionic/angular';
 
 
 
@@ -18,7 +19,7 @@ export class MapPage implements OnInit, AfterViewInit {
   mapIsVisible: boolean = false ;
 
 
-  constructor(private mqttService: MqttService) { }
+  constructor(private mqttService: MqttService, public alertController: AlertController) { }
 
   subscriptions: { [nombreMaquina: string]: Subscription } = {};
   public receiveNews = '';
@@ -61,6 +62,16 @@ export class MapPage implements OnInit, AfterViewInit {
 
   ngAfterViewInit(){
         
+  }
+
+  async presentAlert(header: string, mensaje: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: mensaje,
+      buttons: ['OK'],
+    });
+  
+    await alert.present();
   }
 
   async configurarRuta(){
@@ -114,7 +125,8 @@ export class MapPage implements OnInit, AfterViewInit {
     }
   
 
-    alert("Se ha creado una ruta para reponer:\n" + this.reponer.join(''));
+    //alert("Se ha creado una ruta para reponer:\n" + this.reponer.join(''));
+    this.presentAlert("Nueva ruta de reposición", this.reponer.join(''))
 
 }
   

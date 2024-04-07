@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } 
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { DataService } from 'src/app/services/data.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-profile',
@@ -19,7 +20,8 @@ export class ProfilePage implements OnInit {
     public authService: UserService,
     public route: Router,
     private formBuilder: FormBuilder,
-    private dataService: DataService) { }
+    private dataService: DataService,
+    public alertController: AlertController) { }
 
   async ngOnInit() {  
     this.formPassword = new FormGroup({
@@ -45,13 +47,24 @@ export class ProfilePage implements OnInit {
             ? 'Current password is required.'
             : 'There are errors in current password.';
         }
-        alert(errorMessage);
+        //alert(errorMessage);
+        this.presentAlert("Error", errorMessage)
         this.formPassword.reset();
         return;
       }
     }
     this.isOverlayVisible = true;
     this.cadena = cadena;
+  }
+
+  async presentAlert(header: string, mensaje: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: mensaje,
+      buttons: ['OK'],
+    });
+  
+    await alert.present();
   }
   
   

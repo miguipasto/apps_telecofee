@@ -200,24 +200,24 @@ button {
     z-index:2;
   }
   
-.add-balance-popup {
+  .add-balance-popup {
     display: grid;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
     background-color: white;
-    padding: 20px;
     border-radius: 40px; /* Bordes redondeados */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
     text-align: center; /* Alinea el texto al centro */
-    
 }
   
 .add-balance-popup input{
+    width: 20vw;
     height: 5vh;
-    width: 10vw;
+    margin-left: 10px;
     margin-bottom: 5%;
     background-color: white;
     color: black;
-    
-
 }
 
 .add-balance-popup button{
@@ -226,14 +226,25 @@ button {
     border-radius: 40px; /* Esquinas redondeadas para el botón */
     background-color: #E9DBAB; /* Color de fondo del botón */
     color: #5C5353; /* Color del texto del botón */
-    margin-left: 10%;
-    margin-right: 10%;
     font-size: 20px;
+    margin-top: 5%;
     margin-bottom: 5%;
     height: 5vh;
-    width: 30vw;
     font-weight: bold;
 }
+
+.selector-azucar{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 2% 2%;
+}
+
+.selector-azucar button{
+    background: transparent;
+    border-width: 0px;
+}
+
 .grafico-box {
     border-radius: 10px;
     border: 2px solid #70442B;
@@ -253,5 +264,21 @@ button {
     justify-content: center; /* Centra horizontalmente */
     align-items: center; /* Centra verticalmente */
     display: flex;
+}
+
+.loadingPage {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+
+ion-spinner {
+    width: 100px;
 }
 

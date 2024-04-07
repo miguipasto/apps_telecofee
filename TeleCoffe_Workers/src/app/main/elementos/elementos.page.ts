@@ -2,6 +2,7 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { HttpClient} from '@angular/common/http';
+import { AlertController } from '@ionic/angular';
 
 import { MqttService, IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
@@ -54,6 +55,7 @@ interface GraficaNiveles {
 })
 export class ElementosPage implements OnInit, AfterViewInit{
   selectedDate: string = '';
+  isLoading: boolean = true;
 
   productos = ["agua",  "cafe", "leche", "patatillas","ventas"]
   nombresFormales: { [key: string]: string } = {
@@ -98,7 +100,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
   public isConnection = false;
 
 
-  constructor(private route: ActivatedRoute, private router:Router, private mqttService: MqttService, private dataService: DataService, private backendService: BackendSocketsService) { 
+  constructor(private route: ActivatedRoute, private router:Router, private mqttService: MqttService, private dataService: DataService, private backendService: BackendSocketsService, public alertController: AlertController) { 
   }
 
   ngOnInit() {
@@ -421,7 +423,9 @@ export class ElementosPage implements OnInit, AfterViewInit{
       // Avisamos por MQTT
       this.nuevaReposicon(data['maquina']);
 
-      alert("Producto actualizado") 
+      //alert("Producto actualizado") 
+      this.presentAlert("Producto actualizado correctamente.","")
+
       console.log("Actualizando producto:", this.amountToAdd);
       this.closeOverlay();
     }
@@ -466,6 +470,16 @@ export class ElementosPage implements OnInit, AfterViewInit{
     
   }
 
+  async presentAlert(header: string, mensaje: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: mensaje,
+      buttons: ['OK'],
+    });
+  
+    await alert.present();
+  }
+
   subscribeToTopic(maquina : String) {
     this.isConnection = true;
     const nombre=this.nombresMaquinas[this.nombre];
@@ -480,6 +494,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
     
     this.subscription = this.mqttService.observe(topic).subscribe({
       next: (message: IMqttMessage) => {
+        this.isLoading = false;
         this.receiveNews += message.payload.toString() + '\n';
         this.lastLineLevels = message.payload.toString();
         let data = JSON.parse(message.payload.toString());

@@ -30,8 +30,6 @@ export class HomePage implements OnInit {
   redirect_to_elementos(nombre: string) {
     this.router.navigate(['/main/main/elementos/', nombre]); // Aquí utilizamos la coma para separar los segmentos de la ruta y luego pasamos nombre como un argumento adicional
   }
-  
-  
 
 }
 
