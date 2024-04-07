@@ -15,6 +15,13 @@ export class SupportPage implements OnInit {
   emailActual: string = "";
   index :  number=0;
   datosIncidencia: { descripcion: string; fecha: any; maquina: string; email: string; enviado: boolean }[] = [];
+  nombresFormales: { [maquina: string]: string } = {
+    teleco: "Escuela de Ingienería de Telecomunicación",
+    minas: "Escuela de Ingeniería de Minas y Energía",
+    industriales: "Escuela de Ingienería Industrial",
+    biologia: "Facultad de Biología"
+  };
+
 
   constructor(private backend: BackendSocketsService) {}
 
@@ -30,7 +37,8 @@ export class SupportPage implements OnInit {
     // Convertir la fecha de timestamp de Firestore a cadena
     this.datosIncidencia = incidencias.map(incidencia => ({
       ...incidencia,
-      fecha: this.convertirFecha(incidencia.fecha)
+      fecha: this.convertirFecha(incidencia.fecha),
+      maquina: this.obtenerNombreFormalMaquina(incidencia.maquina)
     }));
   
     console.log(this.datosIncidencia[0].fecha);
@@ -42,6 +50,10 @@ export class SupportPage implements OnInit {
       year: 'numeric', month: 'long', day: 'numeric',
       hour: '2-digit', minute: '2-digit', second: '2-digit'
     });
+  }
+
+  obtenerNombreFormalMaquina(nombreOriginal: string): string {
+    return this.nombresFormales[nombreOriginal] || nombreOriginal;
   }
   
   

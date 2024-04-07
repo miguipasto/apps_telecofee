@@ -4,7 +4,7 @@
     margin-top: 20%;
     height: 100%;
     display: grid;
-    grid-template-rows: 0.5fr 4fr;
+    grid-template-rows: 0.8fr 4fr;
     row-gap: 5%;
 }
 
@@ -63,7 +63,7 @@
 .contenedores-content{
     display: grid;
     grid-template-columns: repeat(2, minmax(120px, 1fr)); /* Cambiar a tres columnas */
-    gap: 20px; /* Aumentar el espacio entre elementos */
+    gap: 20px;
     overflow: auto;
     padding: 5% 5%;
 }
@@ -135,7 +135,7 @@ button {
 /* Graficas */
 .graficas-content{
     display: grid;
-    grid-template-rows: 0.5fr 4.5fr;
+    grid-template-rows: 0.7fr 4.5fr;
 }
 
 .selector-productos{
@@ -246,7 +246,6 @@ button {
 }
 
 .maquina-directo {
-    margin: 2%;
     margin-top: 5%;
 }
 

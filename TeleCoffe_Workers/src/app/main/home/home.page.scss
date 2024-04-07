@@ -3,7 +3,7 @@
     margin-top: 20%;
     height: 100%;
     display: grid;
-    grid-template-rows: 0.5fr 4fr;
+    grid-template-rows: 0.7fr 4.2fr;
     row-gap: 5%;
 }
 
@@ -81,7 +81,7 @@ button {
 
 .producto-foto {
     border-radius: 10px;
-    max-height: 80%;
+    max-height: 75%;
 }
 
 .texto-producto {
@@ -90,6 +90,6 @@ button {
     display: flex;
     flex-direction: column;
     width: 100%; 
-    font-size: 18px;
+    font-size: 15px;
 }
 

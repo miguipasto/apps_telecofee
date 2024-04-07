@@ -1,6 +1,7 @@
 <div class="support-container">
   <div class="support-header">
     <h2 id="nombre">Incidencias</h2>
+    <hr class="linea-decorativa">
   </div>
   <div class="support-content">
     <div *ngFor="let incidencia of datosIncidencia; let i = index" [ngClass]="{'incidencia-enviada': incidencia.enviado, 'incidencia-no-enviada': !incidencia.enviado}" class="incidencia" >
