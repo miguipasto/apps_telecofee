@@ -79,7 +79,7 @@ def actualizar_publicacion_mqtt():
         mensaje = json.dumps(maquina_sin_fecha)
         print(f"Publicando niveles de '{maquina_sin_fecha['maquina']}': {mensaje}")
         cliente.publish(f"{maquina_sin_fecha['maquina']}/nivel", mensaje)
-        time.sleep(1)
+        #time.sleep(1)
 
 def on_connect(cliente, userdata, flags, rc, properties=None):
     if rc == 0:
@@ -182,6 +182,10 @@ def gestionar_compra(mensaje_str, topico):
         codigo_cliente = mensaje_str.split(":")[1].strip()
         verificar_codigo_compra(maquina, topico, codigo_cliente)
 
+    elif mensaje_str.startswith(MENSAJE_SUCCESS_COMPRA):
+        time.sleep(10)
+        obtener_compras(db_clients)
+
 def preparar_compra(maquina, topico):
     maquinas_estado[maquina]["estado"] = ESTADO_ESPERANDO_CODIGO
     print(f"### Nueva compra solicitada en {maquina} ###")
@@ -189,9 +193,9 @@ def preparar_compra(maquina, topico):
     codigo_generado = random.randint(1000, 9999)
     maquinas_estado[maquina]["codigo"] = codigo_generado
 
-    #time.sleep(1)  # Simula un breve retardo
+    time.sleep(1)  # Simula un breve retardo
 
-    print(f"El código para {maquina} es: {codigo_generado}")
+    print(f"{topico}: El código para {maquina} es: {codigo_generado}")
     cliente.publish(topico, MENSAJE_ACK_CODIGO)
 
     # Inicia el temporizador de timeout para esta máquina
@@ -203,9 +207,6 @@ def verificar_codigo_compra(maquina, topico, codigo_cliente):
         print(f"Compra realizada correctamente en {maquina}.")
         cliente.publish(topico, MENSAJE_SUCCESS_COMPRA)
         maquinas_estado[maquina]["estado"] = ESTADO_ESPERANDO_COMPRA
-
-        time.sleep(5)
-        obtener_compras(db_clients)
     else:
         print(f"El código introducido es incorrecto en {maquina}. Volviendo a esperar una nueva compra...")
         cliente.publish(topico, MENSAJE_ERROR_CODIGO)

@@ -100,16 +100,17 @@
 
 
 h1, h2, h3{
-    font-size: medium;
+    font-size: large;
     margin: 0px;
 }
 
 h3{
     color:#70442B;
+    margin-bottom: 5%;
 }
 
 p{
-    font-size: small;
+    font-size: medium;
     color:rgb(116, 116, 116);
 }
 

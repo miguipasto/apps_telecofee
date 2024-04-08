@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { deleteUser } from 'firebase/auth';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackendService {
-  private apiUrl = 'https://telecoffe-server.duckdns.org/api'; // Reemplaza con la URL de tu servidor API
+  private apiUrl = 'https://telecoffe-server.duckdns.org/api';
 
   constructor(private http: HttpClient) { }
 
@@ -50,6 +51,11 @@ export class BackendService {
 
     const url = `${this.apiUrl}/niveles${queryParams.length > 0 ? '?' + queryParams : ''}`;
     return this.http.get<any>(url);
+  }
+
+  deleteUser(uuid: string){
+    const url = `${this.apiUrl}/usuarios/${uuid}`;
+    return this.http.delete<any>(url);
   }
 
 }

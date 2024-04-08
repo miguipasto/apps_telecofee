@@ -16,5 +16,6 @@ const workerApp = admin.initializeApp({
 // Accediendo a Firestore para cada instancia
 const dbClients = clientApp.firestore();
 const dbWorkers = workerApp.firestore();
+const authWorkers = workerApp.auth()
 
-module.exports = { admin, dbClients, dbWorkers };
+module.exports = { admin, dbClients, dbWorkers, authWorkers };

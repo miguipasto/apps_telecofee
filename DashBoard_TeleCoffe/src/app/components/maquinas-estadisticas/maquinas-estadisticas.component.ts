@@ -88,7 +88,7 @@ export class MaquinasEstadisticasComponent implements OnInit {
   // Gráficas
   graficaNivelDirecto: GraficaNivelDirecto = {
     data: [],
-    viewSize: [200,200],
+    viewSize: [100,100],
     xAxisLabel: '',
     yAxisLabel: 'Porcentaje (%)',
     showXAxisLabel: false,
@@ -151,17 +151,17 @@ export class MaquinasEstadisticasComponent implements OnInit {
 
   adjustGraphSize() {
     const widthCircular = this.masVendido.nativeElement.offsetWidth - 20;
-    const heighCircular = this.masVendido.nativeElement.offsetHeight - 50;
+    const heighCircular = this.masVendido.nativeElement.offsetHeight - 70;
     this.graficaCircular.viewSize = [widthCircular,heighCircular];
     this.mostrarGraficaCircular = true;  
 
     const widthMaquinaNivelDirecto = this.maquinaNivelDirectoStyle.nativeElement.offsetWidth - 60;
-    const heighMaquinaNivelDirecto = this.maquinaNivelDirectoStyle.nativeElement.offsetHeight - 100;
+    const heighMaquinaNivelDirecto = this.maquinaNivelDirectoStyle.nativeElement.offsetHeight - 150;
     this.graficaNivelDirecto.viewSize = [widthMaquinaNivelDirecto,heighMaquinaNivelDirecto];
     this.mostrarGraficaNivelDirecto = true;
 
     const widthProductosHistorial = this.productosHistorialStyle.nativeElement.offsetWidth - 60;
-    const heighProductosHistorial = this.productosHistorialStyle.nativeElement.offsetHeight - 80;
+    const heighProductosHistorial = this.productosHistorialStyle.nativeElement.offsetHeight - 100;
     this.viewSizeGraficaHistorialProducto = [widthProductosHistorial,heighProductosHistorial];
     this.inicializarGraficaHistorialProducto();
     this.mostrarGraficasHistorialProductos = true;
