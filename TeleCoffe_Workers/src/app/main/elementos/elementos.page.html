@@ -71,8 +71,7 @@
               [yAxis]="graficasNiveles[this.selectedCategory].yAxis"
               [gradient]="graficasNiveles[this.selectedCategory].gradient"
               [showGridLines]="graficasNiveles[this.selectedCategory].showGridLines"
-              [yScaleMax]="graficasNiveles[this.selectedCategory].yScaleMax"
-              (select)="onDataPointSelected($event)">
+              [yScaleMax]="graficasNiveles[this.selectedCategory].yScaleMax">
               </ngx-charts-bar-vertical>
               
               <div class="selector-fecha" *ngIf="this.selectedCategory ==='ventas'">

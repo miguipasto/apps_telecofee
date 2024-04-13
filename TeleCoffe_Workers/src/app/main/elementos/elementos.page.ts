@@ -55,6 +55,7 @@ interface GraficaNiveles {
 })
 export class ElementosPage implements OnInit, AfterViewInit{
   selectedDate: string = '';
+  fechasDisponibles: string[] = [];
   isLoading: boolean = true;
 
   productos = ["agua",  "cafe", "leche", "patatillas","ventas"]
@@ -104,6 +105,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
   }
 
   ngOnInit() {
+    this.selectedDate='' 
     this.route.paramMap.subscribe(params => {
       const nombre = params.get('nombre');
       if (nombre) {
@@ -200,16 +202,17 @@ export class ElementosPage implements OnInit, AfterViewInit{
 
 
   procesarDatos(datos: any[]){
-    const ultimos10Dias = this.obtenerUltimos10Dias();
+    const ultimos7Dias = this.obtenerUltimos7Dias();
     datos.forEach(data => {
-      const fecha = new Date(data.fecha._seconds * 1000).toISOString().split('T')[0];
+      const fecha2 = new Date(data.fecha._seconds * 1000).toISOString().split('T')[0];
       const nivel_agua = data.niveles.nivel_agua_pr;
       const nivel_cafe = data.niveles.nivel_cafe_pr;
       const nivel_leche = data.niveles.nivel_leche_pr;
       const nivel_patatillas = data.niveles.patatillas_pr;
 
-      if(ultimos10Dias.includes(fecha)){
+      if(ultimos7Dias.includes(fecha2)){
         // Actualizar los datos de las gráficas correspondientes
+        const fecha=this.convertir_fecha(fecha2)
         this.graficasNiveles['agua'].data.push({ name: fecha, value: nivel_agua });
         this.graficasNiveles['cafe'].data.push({ name: fecha, value: nivel_cafe });
         this.graficasNiveles['leche'].data.push({ name: fecha, value: nivel_leche });
@@ -223,13 +226,14 @@ export class ElementosPage implements OnInit, AfterViewInit{
 
   actualizarUltimaFecha(message: any) {
     let data = JSON.parse(message);
-    const fecha = new Date().toISOString().split('T')[0];
+    const fecha2 = new Date().toISOString().split('T')[0];
     const nivel_agua = data.niveles.nivel_agua_pr;
     const nivel_cafe = data.niveles.nivel_cafe_pr;
     const nivel_leche = data.niveles.nivel_leche_pr;
     const nivel_patatillas = data.niveles.patatillas_pr;
   
     // Encuentra el índice del último elemento en el arreglo de datos para cada tipo de producto
+    const fecha=this.convertir_fecha(fecha2)
     const indiceUltimaFecha = this.graficasNiveles['agua'].data.findIndex(dato => dato.name === fecha);
   
     // Si se encuentra la fecha en el arreglo de datos, actualiza su valor; de lo contrario, no hagas nada
@@ -243,7 +247,8 @@ export class ElementosPage implements OnInit, AfterViewInit{
 
 
   actualizarVentas() {
-      this.backendService.ventas(this.nombresMaquinas[this.nombre], this.selectedDate).subscribe({
+      const fecha= this.convertir_fecha(this.selectedDate)
+      this.backendService.ventas(this.nombresMaquinas[this.nombre], fecha).subscribe({
         next: (ventas) => {
           this.procesarVentas(ventas);
         },
@@ -529,32 +534,38 @@ export class ElementosPage implements OnInit, AfterViewInit{
     
   }
 
-  onDataPointSelected(event: any) {
-        // Aquí puedes acceder a la información de la barra seleccionada a través del objeto event
-        alert("Valor: "+ event.value);
-
-        // Puedes realizar acciones adicionales aquí, como mostrar detalles en un modal o actualizar otra parte de tu interfaz de usuario.
-    }
-
-    fechasDisponibles: string[] = [];
-
     initializeDates() {
+      this.fechasDisponibles = [];
       const startDate = new Date('2024-03-25');
       const today = new Date();
       const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // Se suma 1 para incluir la fecha actual
-
+    
+      // Función para obtener la fecha en formato 'dd-mm-yyyy'
+      function obtenerFormatoFecha(fecha: Date) {
+        const dia = fecha.getDate();
+        const mes = fecha.getMonth() + 1; // Los meses van de 0 a 11, por eso sumamos 1
+        const año = fecha.getFullYear();
+        
+        // Asegurarse de que haya dos dígitos en día y mes
+        const diaStr = (dia < 10) ? '0' + dia : dia;
+        const mesStr = (mes < 10) ? '0' + mes : mes;
+        
+        return diaStr + '-' + mesStr + '-' + año;
+      }
+    
       // Generar el rango de fechas
       const currentDate = new Date(startDate);
       while (currentDate <= endDate) {
-        this.fechasDisponibles.push(currentDate.toISOString().split('T')[0]);
+        this.fechasDisponibles.push(obtenerFormatoFecha(currentDate));
         currentDate.setDate(currentDate.getDate() + 1); // Avanzar al siguiente día
-
       }
     }
+    
 
     initializeSelectedDate() {
       const today = new Date();
-      this.selectedDate = today.toISOString().split('T')[0];
+      const hoy= this.obtenerFormatoFecha(today)
+      this.selectedDate = hoy.toString().split('T')[0];
       this.fechasDisponibles.push(this.selectedDate);
     }
     
@@ -562,16 +573,36 @@ export class ElementosPage implements OnInit, AfterViewInit{
       this.actualizarVentas();
     }
 
-    obtenerUltimos10Dias(): string[] {
-      const ultimos10Dias: string[] = [];
+    obtenerUltimos7Dias(): string[] {
+      const ultimos7Dias: string[] = [];
       const fechaActual = new Date();
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 7; i++) {
         const fecha = new Date(fechaActual);
         fecha.setDate(fecha.getDate() - i);
-        ultimos10Dias.push(fecha.toISOString().split('T')[0]);
+        ultimos7Dias.push(fecha.toISOString().split('T')[0]);
       }
-      return ultimos10Dias;
+      return ultimos7Dias;
     }
+
+    convertir_fecha(fecha:string){
+      const partes_fecha = fecha.split('-')
+      const fecha_invertida = partes_fecha[2] + '-' + partes_fecha[1] + '-' + partes_fecha[0]
+      return fecha_invertida
+    }
+
+    // Función para obtener la fecha en formato 'dd-mm-yyyy'
+    obtenerFormatoFecha(fecha: Date) {
+      const dia = fecha.getDate();
+      const mes = fecha.getMonth() + 1; // Los meses van de 0 a 11, por eso sumamos 1
+      const año = fecha.getFullYear();
+      
+      // Asegurarse de que haya dos dígitos en día y mes
+      const diaStr = (dia < 10) ? '0' + dia : dia;
+      const mesStr = (mes < 10) ? '0' + mes : mes;
+      
+      return diaStr + '-' + mesStr + '-' + año;
+    }
+      
 
 }
 
