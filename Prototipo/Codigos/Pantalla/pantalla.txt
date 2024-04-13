@@ -1,9 +1,0 @@
-VDD => 5V
-GND => GND
-CK => D13
-SI => D11
-SO => D12
-CS => D10
-RT => D9
-DC => D8
-BL => D4
