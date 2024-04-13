@@ -17,7 +17,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { TrabajadoresComponent } from './components/trabajadores/trabajadores.component';
 import { MaquinasEstadisticasComponent } from './components/maquinas-estadisticas/maquinas-estadisticas.component';
 
-// Configuración de MQTT
+//Configuración de MQTT
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: 'telecoffe-server.duckdns.org',
   port: 443,
@@ -25,6 +25,14 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   protocol: 'wss', 
   
 };
+
+// export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
+//   hostname: '192.168.1.130',
+//   port: 4500,
+//   path: '/mqtt',
+//   protocol: 'ws', 
+  
+// };
 
 @NgModule({
   declarations: [

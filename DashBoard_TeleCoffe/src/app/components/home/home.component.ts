@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { MqttService, IMqttMessage } from 'ngx-mqtt';
-import { Subscription } from 'rxjs';
+import { Subscription, timeInterval } from 'rxjs';
 import { BackendService } from 'src/app/services/backend.service';
 import { Router } from '@angular/router';
 
@@ -139,6 +139,7 @@ export class HomeComponent implements OnInit{
 
   ngOnInit(): void {
     this.subscribeToTopic();
+    this.obtenerCompras("","")
   }
 
   ngOnDestroy() {
@@ -401,7 +402,7 @@ export class HomeComponent implements OnInit{
         this.graficasNiveles[maquina].data = newData;
         
         // Recalculamos las compras
-        this.obtenerCompras("","");
+        //this.obtenerCompras("","");
       }
     } catch (error) {
       console.error('Error al procesar el mensaje:', error);
@@ -444,10 +445,34 @@ export class HomeComponent implements OnInit{
         }
       });
     }
+
+    // Nos suscribimos a todos los tópicos
+    for(const maquina of this.maquinas){
+      const topico = `${maquina}/compra`
+      this.subscription = this.mqttService.observe(topico).subscribe({
+        next: (message: IMqttMessage) => {
+          this.receiveNews += message.payload.toString() + '\n';
+          //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`)
+          if(message.payload.toString().startsWith("SUCCESS")){
+            this.sleep(5);
+            this.obtenerCompras("","")
+          }
+          
+        },
+        error: (error: any) => {
+          console.error(`Connection error: ${error}`);
+        }
+      });
+    }
   }
+
+  async sleep(milliseconds: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+  }
+  
 
   redirigir_maquinasEstadisiticas(nombnre_maquina: string){
     this.router.navigate(['/home', nombnre_maquina]);
-}
+  }
 
 }
