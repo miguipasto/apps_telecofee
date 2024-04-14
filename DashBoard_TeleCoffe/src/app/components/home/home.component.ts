@@ -157,7 +157,7 @@ export class HomeComponent implements OnInit{
 
   adjustGraphSize() {
     const width = this.maquinasNivelStyle.nativeElement.offsetWidth - 50;
-    const height = this.maquinasNivelStyle.nativeElement.offsetHeight - 90;
+    const height = this.maquinasNivelStyle.nativeElement.offsetHeight - 100;
     this.viewSizeNivel = [width, height];
     this.inicializarGraficasNiveles();
     this.mostrarGraficasNivel = true;
