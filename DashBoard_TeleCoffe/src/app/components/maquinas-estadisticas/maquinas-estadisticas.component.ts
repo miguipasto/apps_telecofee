@@ -1,9 +1,11 @@
 import { Component, OnInit, ElementRef, ViewChild} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MqttService, IMqttMessage } from 'ngx-mqtt';
+import { IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
 import { BackendService } from 'src/app/services/backend.service';
 import { Router } from '@angular/router';
+import { MqttServerService } from 'src/app/services/mqtt-server.service';
+import { MqttPrototipoService } from 'src/app/services/mqtt-prototipo.service';
 
 interface Niveles {
   patatillas_pr: number;
@@ -132,7 +134,12 @@ export class MaquinasEstadisticasComponent implements OnInit {
 
   gananciasTotales: any = 0;
 
-  constructor(private mqttService: MqttService, private backendService: BackendService, private router: Router, private route: ActivatedRoute) {}
+  constructor( 
+    private mqttServerService: MqttServerService,
+    private mqttPrototipoService: MqttPrototipoService, 
+    private backendService: BackendService, 
+    private router: Router, 
+    private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.nombreMaquina = this.route.snapshot.paramMap.get('nombre_maquina');
@@ -335,16 +342,6 @@ export class MaquinasEstadisticasComponent implements OnInit {
     this.gananciasHoy = this.calcularGananciasTotalesDia(hoy);
     this.gananciasAyer = this.calcularGananciasTotalesDia(ayer);
 
-    // if (this.ventasAyer === 0 || this.gananciasAyer === 0) {
-    //   console.log("No hay datos de ventas para el día anterior.");
-    // } else if  (this.ventasHoy === 0 || this.gananciasHoy === 0) {
-    //   this.cambioPorcentual = 0;
-    //   this.cambioPorcentualGanancias = 0;
-    // } else {
-    //   this.cambioPorcentual = (((this.ventasHoy - this.ventasAyer) / this.ventasAyer) * 100).toFixed(2);
-    //   this.cambioPorcentualGanancias = (this.gananciasHoy - this.gananciasAyer).toFixed(2);
-    // }
-
     this.cambioPorcentual = (((this.ventasHoy - this.ventasAyer) / this.ventasAyer) * 100).toFixed(2);
     this.cambioPorcentualGanancias = (this.gananciasHoy - this.gananciasAyer).toFixed(2);
   }
@@ -400,25 +397,51 @@ export class MaquinasEstadisticasComponent implements OnInit {
   }
 
   subscribeToTopic() {
-    this.mqttService.onConnect.subscribe(() => {
-      console.log('Connected to MQTT broker.');
-    });
 
-    this.mqttService.onError.subscribe(error => {
-      console.error('Connection error:', error);
-    });
+    if(this.nombreMaquina === 'teleco'){
+      this.mqttPrototipoService.onConnect.subscribe(() => {
+        console.log('Connected to MQTT broker.');
+      });
+  
+      this.mqttPrototipoService.onError.subscribe(error => {
+        console.error('Connection error:', error);
+      });
+  
+      const topico = `${this.nombreMaquina}/nivel`
+      this.subscription = this.mqttPrototipoService.observe(topico).subscribe({
+        next: (message: IMqttMessage) => {
+          this.receiveNews += message.payload.toString() + '\n';
+          //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`);
+          this.actualizarNivelDirecto(message.payload.toString());
+        },
+        error: (error: any) => {
+          console.error(`Connection error: ${error}`);
+        }
+      });
 
-    const topico = `${this.nombreMaquina}/nivel`
-    this.subscription = this.mqttService.observe(topico).subscribe({
-      next: (message: IMqttMessage) => {
-        this.receiveNews += message.payload.toString() + '\n';
-        //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`);
-        this.actualizarNivelDirecto(message.payload.toString());
-      },
-      error: (error: any) => {
-        console.error(`Connection error: ${error}`);
-      }
-    });
+    } else{
+      this.mqttServerService.onConnect.subscribe(() => {
+        console.log('Connected to MQTT broker.');
+      });
+  
+      this.mqttServerService.onError.subscribe(error => {
+        console.error('Connection error:', error);
+      });
+  
+      const topico = `${this.nombreMaquina}/nivel`
+      this.subscription = this.mqttServerService.observe(topico).subscribe({
+        next: (message: IMqttMessage) => {
+          this.receiveNews += message.payload.toString() + '\n';
+          //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`);
+          this.actualizarNivelDirecto(message.payload.toString());
+        },
+        error: (error: any) => {
+          console.error(`Connection error: ${error}`);
+        }
+      });
+    }
+
+
     
   }
 

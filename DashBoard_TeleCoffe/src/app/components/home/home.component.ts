@@ -1,9 +1,10 @@
-import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
-import { MqttService, IMqttMessage } from 'ngx-mqtt';
-import { Subscription, timeInterval } from 'rxjs';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { IMqttMessage } from 'ngx-mqtt';
+import { Subscription } from 'rxjs';
 import { BackendService } from 'src/app/services/backend.service';
 import { Router } from '@angular/router';
-
+import { MqttServerService } from 'src/app/services/mqtt-server.service';
+import { MqttPrototipoService } from 'src/app/services/mqtt-prototipo.service';
 
 interface Niveles {
   patatillas_pr: number;
@@ -134,7 +135,12 @@ export class HomeComponent implements OnInit{
 
   gananciasTotales: any = 0;
 
-  constructor(private mqttService: MqttService, private backendService: BackendService, private router: Router) {}
+  constructor(
+    private mqttServerService: MqttServerService,
+    private mqttPrototipoService: MqttPrototipoService,
+    private backendService: BackendService, 
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.subscribeToTopic();
@@ -402,18 +408,19 @@ export class HomeComponent implements OnInit{
 
   // Funciones MQTT
   subscribeToTopic() {
-    this.mqttService.onConnect.subscribe(() => {
-      console.log('Connected to MQTT broker.');
+    // Server
+    this.mqttServerService.onConnect.subscribe(() => {
+      console.log('Connected to MQTT broker - Server.');
     });
 
-    this.mqttService.onError.subscribe(error => {
+    this.mqttServerService.onError.subscribe(error => {
       console.error('Connection error:', error);
     });
 
     // Nos suscribimos a todos los tópicos
     for(const maquina of this.maquinas){
       const topico = `${maquina}/nivel`
-      this.subscription = this.mqttService.observe(topico).subscribe({
+      this.subscription = this.mqttServerService.observe(topico).subscribe({
         next: (message: IMqttMessage) => {
           this.receiveNews += message.payload.toString() + '\n';
           //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`);
@@ -428,7 +435,7 @@ export class HomeComponent implements OnInit{
     // Nos suscribimos a todos los tópicos
     for(const maquina of this.maquinas){
       const topico = `${maquina}/compra`
-      this.subscription = this.mqttService.observe(topico).subscribe({
+      this.subscription = this.mqttServerService.observe(topico).subscribe({
         next: (message: IMqttMessage) => {
           this.receiveNews += message.payload.toString() + '\n';
           //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`)
@@ -443,6 +450,44 @@ export class HomeComponent implements OnInit{
         }
       });
     }
+    /* ********************************** */
+    // Prototipo
+    this.mqttPrototipoService.onConnect.subscribe(() => {
+      console.log('Connected to MQTT broker - Prototipo.');
+    });
+
+    this.mqttPrototipoService.onError.subscribe(error => {
+      console.error('Connection error:', error);
+    });
+
+    // Nos suscribimos a todos los tópicos
+    this.subscription = this.mqttPrototipoService.observe('teleco/nivel').subscribe({
+      next: (message: IMqttMessage) => {
+        this.receiveNews += message.payload.toString() + '\n';
+        //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`);
+        this.actualizarEstadoMaquina(message.payload.toString());
+      },
+      error: (error: any) => {
+        console.error(`Connection error: ${error}`);
+      }
+    });
+
+
+    this.subscription = this.mqttPrototipoService.observe('teleco/compra').subscribe({
+      next: (message: IMqttMessage) => {
+        this.receiveNews += message.payload.toString() + '\n';
+        //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`)
+        if(message.payload.toString().startsWith("SUCCESS")){
+          this.sleep(5);
+          this.obtenerCompras("","")
+        }
+        
+      },
+      error: (error: any) => {
+        console.error(`Connection error: ${error}`);
+      }
+    });
+    
   }
 
   async sleep(milliseconds: number): Promise<void> {

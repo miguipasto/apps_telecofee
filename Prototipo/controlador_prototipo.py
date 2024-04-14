@@ -63,7 +63,6 @@ def update_levels(data_dict):
 def product_ack():
     if niveles["niveles"]["patatillas_u"] > 0:
         niveles["niveles"]["patatillas_u"] -= 1
-        update_levels({})
 
 def send_levels():
     json_data = json.dumps(niveles)
