@@ -9,33 +9,12 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
-import { NgApexchartsModule } from 'ng-apexcharts';
-
-import { MqttModule, IMqttServiceOptions } from 'ngx-mqtt';
- 
-import { HttpClient,HttpClientModule } from '@angular/common/http';
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { NgApexchartsModule } from 'ng-apexcharts'; 
+import { HttpClientModule } from '@angular/common/http';
+import { SocketIoModule } from 'ngx-socket-io';
 
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';  // added
-
-// Configuración de MQTT
-// export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
-//   hostname: 'telecoffe-server.duckdns.org',
-//   port: 443,
-//   path: '/mqtt',
-//   protocol: 'wss', 
-  
-// };
-
-// Configuración de MQTT
-export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
-  hostname: '192.168.1.130',
-  port: 4500,
-  path: '/mqtt',
-  protocol: 'ws', 
-  
-};
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -58,8 +37,7 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
       "measurementId":"G-DDS83BHVR9"
     })),
     provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore()),
-    MqttModule.forRoot(MQTT_SERVICE_OPTIONS)
+    provideFirestore(() => getFirestore())
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy},HttpClientModule,SocketIoModule],
   bootstrap: [AppComponent],

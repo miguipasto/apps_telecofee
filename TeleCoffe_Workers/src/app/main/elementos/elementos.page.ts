@@ -1,14 +1,13 @@
-//import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { HttpClient} from '@angular/common/http';
 import { AlertController } from '@ionic/angular';
 
-import { MqttService, IMqttMessage } from 'ngx-mqtt';
+import { IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { BackendSocketsService } from 'src/app/services/BackEndSocketService';
-
+import { MqttServerService } from 'src/app/services/mqtt-server.service';
+import { MqttPrototipoService } from 'src/app/services/mqtt-prototipo.service';
 
 interface GraficaDataBarras {
   name: string;
@@ -92,7 +91,8 @@ export class ElementosPage implements OnInit, AfterViewInit{
   codigoConfirmacion : number = 0;
   amountToAdd!: number | null;
   productoSeleccionado: string = "";
-  nombre: string = ""; // Cambiado a string
+  nombre: string = "";
+  mqttClient: any;
 
 
   private subscription: Subscription | undefined;
@@ -101,7 +101,14 @@ export class ElementosPage implements OnInit, AfterViewInit{
   public isConnection = false;
 
 
-  constructor(private route: ActivatedRoute, private router:Router, private mqttService: MqttService, private dataService: DataService, private backendService: BackendSocketsService, public alertController: AlertController) { 
+  constructor(
+    private route: ActivatedRoute, 
+    private router:Router, 
+    private mqttServerService: MqttServerService, 
+    private mqttPrototipoService : MqttPrototipoService,
+    private dataService: DataService, 
+    private backendService: BackendSocketsService, 
+    public alertController: AlertController) { 
   }
 
   ngOnInit() {
@@ -109,7 +116,16 @@ export class ElementosPage implements OnInit, AfterViewInit{
     this.route.paramMap.subscribe(params => {
       const nombre = params.get('nombre');
       if (nombre) {
+
         this.nombre = nombre;
+
+        if(this.nombresMaquinas[this.nombre] === 'teleco'){
+          this.mqttClient = this.mqttPrototipoService;
+        } else{
+          this.mqttClient = this.mqttServerService;
+        }
+
+        
         this.subscribeToTopic(this.nombresMaquinas[this.nombre]);
         this.inicializarGraficasNiveles();
         this.initializeDates();
@@ -437,7 +453,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
   }
 
   nuevaReposicon(maquina : String){
-    this.mqttService.publish(`reposicion`, `${maquina}`).subscribe({
+    this.mqttClient.publish(`reposicion`, `${maquina}`).subscribe({
       next: () => console.log(`Nueva repisicion ${maquina}`),
       error: (error: any) => {
           console.error("Error al publicar mensaje:", error);
@@ -498,7 +514,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
     }
 
     
-    this.subscription = this.mqttService.observe(topic).subscribe({
+    this.subscription = this.mqttClient.observe(topic).subscribe({
       next: (message: IMqttMessage) => {
         this.isLoading = false;
         this.receiveNews += message.payload.toString() + '\n';
@@ -517,15 +533,6 @@ export class ElementosPage implements OnInit, AfterViewInit{
         console.log("Actualizado")
     
         this.actualizarUltimaFecha(message.payload.toString());
-    
-        //Comprobamos si los valores que vienen son iguales a los que había
-        // if (!this.sonNivelesIguales(this.product["consumos"], anteriores)) {
-        //   console.log("Nuevos valores")
-        //   //this.actualizarVentas();
-        // } else{
-        //   console.log("No ha cambiado nada")
-        // }
-    
       },
       error: (error: any) => {
         this.isConnection = false;
@@ -533,7 +540,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
       }
     });
 
-    this.subscription = this.mqttService.observe(topic_compra).subscribe({
+    this.subscription = this.mqttClient.observe(topic_compra).subscribe({
       next: (message: IMqttMessage) => {
         this.receiveNews += message.payload.toString() + '\n';
         if(message.payload.toString().startsWith("SUCCESS")){
