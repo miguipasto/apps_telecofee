@@ -20,13 +20,23 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';  // added
 
 // Configuración de MQTT
+// export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
+//   hostname: 'telecoffe-server.duckdns.org',
+//   port: 443,
+//   path: '/mqtt',
+//   protocol: 'wss', 
+  
+// };
+
+// Configuración de MQTT
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
-  hostname: 'telecoffe-server.duckdns.org',
-  port: 443,
+  hostname: '192.168.1.130',
+  port: 4500,
   path: '/mqtt',
-  protocol: 'wss', 
+  protocol: 'ws', 
   
 };
+
 
 @NgModule({
   declarations: [AppComponent],

@@ -487,8 +487,9 @@ export class ElementosPage implements OnInit, AfterViewInit{
 
   subscribeToTopic(maquina : String) {
     this.isConnection = true;
-    const nombre=this.nombresMaquinas[this.nombre];
+    const nombre = this.nombresMaquinas[this.nombre];
     const topic = `${nombre}/nivel`;
+    const topic_compra = `${nombre}/compra`;
 
     // Primero, verifica si ya hay una suscripción y desuscríbete
     if (this.subscription) {
@@ -518,12 +519,12 @@ export class ElementosPage implements OnInit, AfterViewInit{
         this.actualizarUltimaFecha(message.payload.toString());
     
         //Comprobamos si los valores que vienen son iguales a los que había
-        if (!this.sonNivelesIguales(this.product["consumos"], anteriores)) {
-          console.log("Nuevos valores")
-          this.actualizarVentas();
-        } else{
-          console.log("No ha cambiado nada")
-        }
+        // if (!this.sonNivelesIguales(this.product["consumos"], anteriores)) {
+        //   console.log("Nuevos valores")
+        //   //this.actualizarVentas();
+        // } else{
+        //   console.log("No ha cambiado nada")
+        // }
     
       },
       error: (error: any) => {
@@ -531,67 +532,35 @@ export class ElementosPage implements OnInit, AfterViewInit{
         console.error(`Connection error: ${error}`);
       }
     });
+
+    this.subscription = this.mqttService.observe(topic_compra).subscribe({
+      next: (message: IMqttMessage) => {
+        this.receiveNews += message.payload.toString() + '\n';
+        if(message.payload.toString().startsWith("SUCCESS")){
+          this.sleep(5);
+          this.actualizarVentas();
+        }
+        
+      },
+      error: (error: any) => {
+        console.error(`Connection error: ${error}`);
+      }
+    });
     
   }
 
-    initializeDates() {
-      this.fechasDisponibles = [];
-      const startDate = new Date('2024-03-25');
-      const today = new Date();
-      const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // Se suma 1 para incluir la fecha actual
-    
-      // Función para obtener la fecha en formato 'dd-mm-yyyy'
-      function obtenerFormatoFecha(fecha: Date) {
-        const dia = fecha.getDate();
-        const mes = fecha.getMonth() + 1; // Los meses van de 0 a 11, por eso sumamos 1
-        const año = fecha.getFullYear();
-        
-        // Asegurarse de que haya dos dígitos en día y mes
-        const diaStr = (dia < 10) ? '0' + dia : dia;
-        const mesStr = (mes < 10) ? '0' + mes : mes;
-        
-        return diaStr + '-' + mesStr + '-' + año;
-      }
-    
-      // Generar el rango de fechas
-      const currentDate = new Date(startDate);
-      while (currentDate <= endDate) {
-        this.fechasDisponibles.push(obtenerFormatoFecha(currentDate));
-        currentDate.setDate(currentDate.getDate() + 1); // Avanzar al siguiente día
-      }
-    }
-    
+  async sleep(milliseconds: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+  }
 
-    initializeSelectedDate() {
-      const today = new Date();
-      const hoy= this.obtenerFormatoFecha(today)
-      this.selectedDate = hoy.toString().split('T')[0];
-      this.fechasDisponibles.push(this.selectedDate);
-    }
-    
-    updateChart() {
-      this.actualizarVentas();
-    }
-
-    obtenerUltimos7Dias(): string[] {
-      const ultimos7Dias: string[] = [];
-      const fechaActual = new Date();
-      for (let i = 0; i < 7; i++) {
-        const fecha = new Date(fechaActual);
-        fecha.setDate(fecha.getDate() - i);
-        ultimos7Dias.push(fecha.toISOString().split('T')[0]);
-      }
-      return ultimos7Dias;
-    }
-
-    convertir_fecha(fecha:string){
-      const partes_fecha = fecha.split('-')
-      const fecha_invertida = partes_fecha[2] + '-' + partes_fecha[1] + '-' + partes_fecha[0]
-      return fecha_invertida
-    }
-
+  initializeDates() {
+    this.fechasDisponibles = [];
+    const startDate = new Date('2024-03-25');
+    const today = new Date();
+    const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // Se suma 1 para incluir la fecha actual
+  
     // Función para obtener la fecha en formato 'dd-mm-yyyy'
-    obtenerFormatoFecha(fecha: Date) {
+    function obtenerFormatoFecha(fecha: Date) {
       const dia = fecha.getDate();
       const mes = fecha.getMonth() + 1; // Los meses van de 0 a 11, por eso sumamos 1
       const año = fecha.getFullYear();
@@ -602,7 +571,56 @@ export class ElementosPage implements OnInit, AfterViewInit{
       
       return diaStr + '-' + mesStr + '-' + año;
     }
-      
+  
+    // Generar el rango de fechas
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      this.fechasDisponibles.push(obtenerFormatoFecha(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1); // Avanzar al siguiente día
+    }
+  }
+    
 
+  initializeSelectedDate() {
+    const today = new Date();
+    const hoy= this.obtenerFormatoFecha(today)
+    this.selectedDate = hoy.toString().split('T')[0];
+    this.fechasDisponibles.push(this.selectedDate);
+  }
+    
+  updateChart() {
+    this.actualizarVentas();
+  }
+
+  obtenerUltimos7Dias(): string[] {
+    const ultimos7Dias: string[] = [];
+    const fechaActual = new Date();
+    for (let i = 0; i < 7; i++) {
+      const fecha = new Date(fechaActual);
+      fecha.setDate(fecha.getDate() - i);
+      ultimos7Dias.push(fecha.toISOString().split('T')[0]);
+    }
+    return ultimos7Dias;
+  }
+
+  convertir_fecha(fecha:string){
+    const partes_fecha = fecha.split('-')
+    const fecha_invertida = partes_fecha[2] + '-' + partes_fecha[1] + '-' + partes_fecha[0]
+    return fecha_invertida
+  }
+
+  // Función para obtener la fecha en formato 'dd-mm-yyyy'
+  obtenerFormatoFecha(fecha: Date) {
+    const dia = fecha.getDate();
+    const mes = fecha.getMonth() + 1; // Los meses van de 0 a 11, por eso sumamos 1
+    const año = fecha.getFullYear();
+    
+    // Asegurarse de que haya dos dígitos en día y mes
+    const diaStr = (dia < 10) ? '0' + dia : dia;
+    const mesStr = (mes < 10) ? '0' + mes : mes;
+    
+    return diaStr + '-' + mesStr + '-' + año;
+  }
+      
 }
 

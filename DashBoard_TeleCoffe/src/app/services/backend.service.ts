@@ -8,7 +8,7 @@ import { deleteUser } from 'firebase/auth';
   providedIn: 'root'
 })
 export class BackendService {
-  private apiUrl = 'https://telecoffe-server.duckdns.org/api';
+  private apiUrl = 'https://telecoffe.duckdns.org/server/api';
 
   constructor(private http: HttpClient) { }
 

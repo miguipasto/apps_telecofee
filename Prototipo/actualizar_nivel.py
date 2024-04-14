@@ -8,7 +8,7 @@ from firebase_admin import credentials, firestore
 # Configuración MQTT
 direccion_broker = "localhost"
 puerto = 4500
-maquinas = ["minas", "industriales", "biologia"]
+maquinas = ["teleco"]
 mensajes_recibidos = {}
 
 # Configuración Firebase
