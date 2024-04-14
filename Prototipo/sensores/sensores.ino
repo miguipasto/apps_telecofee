@@ -54,7 +54,7 @@ void loop() {
 
 void measureAndReport() {
   //float peso_actual = LoadCell.getData();  // Obtiene una lectura inicial del peso
-  float peso_actual = 3333.33;
+  float peso_actual = 0;
   float peso_anterior = peso_actual;       // Inicializa peso_anterior con el mismo valor para la primera comparación
   int measurementCount = 0;
 
