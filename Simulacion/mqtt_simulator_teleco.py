@@ -23,7 +23,7 @@ MQTT_TRANSPORT = "websockets"
 MQTT_API_VERSION = mqtt.CallbackAPIVersion.VERSION2
 cliente = None
 
-maquinas = ["minas", "industriales", "biologia"]
+maquinas = ["minas", "industriales", "teleco", "biologia"]
 niveles = [{'maquina': maquina, "fecha": "", "niveles": []} for maquina in maquinas]
 compras = [{'maquina': maquina, "compras": []} for maquina in maquinas]
 compras_ids = set()

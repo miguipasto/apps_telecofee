@@ -10,17 +10,6 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { NgModule } from '@angular/core';
 import { sendPasswordResetEmail } from 'firebase/auth';
 
-import { MqttModule, IMqttServiceOptions } from 'ngx-mqtt';
-
-// Configuración de MQTT
-export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
-  hostname: 'telecoffe-server.duckdns.org',
-  port: 443,
-  path: '/mqtt',
-  protocol: 'wss', 
-  
-};
-
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -39,7 +28,6 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
     })),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
-    MqttModule.forRoot(MQTT_SERVICE_OPTIONS),
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],

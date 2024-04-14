@@ -1,0 +1,11 @@
+[Unit]
+Description=MQTT controller
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python /home/lpro/LPRO/apps_telecofee/Prototipo/controlador_prototipo.py
+WorkingDirectory=/home/lpro/LPRO/apps_telecofee/Prototipo/
+User=lpro
+
+[Install]
+WantedBy=default.target

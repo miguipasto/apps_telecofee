@@ -1,9 +1,10 @@
-import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
-import { MqttService, IMqttMessage } from 'ngx-mqtt';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
 import { BackendService } from 'src/app/services/backend.service';
 import { Router } from '@angular/router';
-
+import { MqttServerService } from 'src/app/services/mqtt-server.service';
+import { MqttPrototipoService } from 'src/app/services/mqtt-prototipo.service';
 
 interface Niveles {
   patatillas_pr: number;
@@ -64,7 +65,6 @@ interface GraficaCircular{
   data: GraficaDataBarras[];
   viewSize: [number,number];
 }
-
 
 @Component({
   selector: 'app-home',
@@ -135,10 +135,16 @@ export class HomeComponent implements OnInit{
 
   gananciasTotales: any = 0;
 
-  constructor(private mqttService: MqttService, private backendService: BackendService, private router: Router) {}
+  constructor(
+    private mqttServerService: MqttServerService,
+    private mqttPrototipoService: MqttPrototipoService,
+    private backendService: BackendService, 
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.subscribeToTopic();
+    this.obtenerCompras("","")
   }
 
   ngOnDestroy() {
@@ -270,16 +276,6 @@ export class HomeComponent implements OnInit{
     this.gananciasHoy = this.calcularGananciasTotalesDia(hoy);
     this.gananciasAyer = this.calcularGananciasTotalesDia(ayer);
 
-    // if (this.ventasAyer === 0 || this.gananciasAyer === 0) {
-    //   console.log("No hay datos de ventas para el día anterior.");
-    // } else if  (this.ventasHoy === 0 || this.gananciasHoy === 0) {
-    //   this.cambioPorcentual = 0;
-    //   this.cambioPorcentualGanancias = 0;
-    // } else {
-    //   this.cambioPorcentual = (((this.ventasHoy - this.ventasAyer) / this.ventasAyer) * 100).toFixed(2);
-    //   this.cambioPorcentualGanancias = (this.gananciasHoy - this.gananciasAyer).toFixed(2);
-    // }
-
     this.cambioPorcentual = (((this.ventasHoy - this.ventasAyer) / this.ventasAyer) * 100).toFixed(2);
     this.cambioPorcentualGanancias = (this.gananciasHoy - this.gananciasAyer).toFixed(2);
   }
@@ -327,16 +323,6 @@ export class HomeComponent implements OnInit{
 
     this.gananciasSemanaAnterior = this.calcularGananciasTotalesSemana(numeroSemanaAnterior, añoSemanaAnterior);
     this.gananciasSemanaActual = this.calcularGananciasTotalesSemana(numeroSemanaActual, añoActual);
-  
-    // if (this.ventasSemanaAnterior === 0 || this.gananciasSemanaAnterior === 0) {
-    //   console.log("No hay datos de ventas para la semana anterior.");
-    // } else if  (this.ventasSemanaActual === 0 || this.gananciasSemanaActual === 0) {
-    //   this.cambioPorcentualSemanal = 0;
-    //   this.cambioPorcentualGananciasSemanal = 0;
-    // } else {
-    //   this.cambioPorcentualSemanal = (((this.ventasSemanaActual - this.ventasSemanaAnterior) / this.ventasSemanaAnterior) * 100).toFixed(2);
-    //   this.cambioPorcentualGananciasSemanal = (this.gananciasSemanaActual - this.gananciasSemanaAnterior).toFixed(2);
-    // }
 
     this.cambioPorcentualSemanal = (((this.ventasSemanaActual - this.ventasSemanaAnterior) / this.ventasSemanaAnterior) * 100).toFixed(2);
     this.cambioPorcentualGananciasSemanal = (this.gananciasSemanaActual - this.gananciasSemanaAnterior).toFixed(2);
@@ -401,7 +387,7 @@ export class HomeComponent implements OnInit{
         this.graficasNiveles[maquina].data = newData;
         
         // Recalculamos las compras
-        this.obtenerCompras("","");
+        //this.obtenerCompras("","");
       }
     } catch (error) {
       console.error('Error al procesar el mensaje:', error);
@@ -422,18 +408,19 @@ export class HomeComponent implements OnInit{
 
   // Funciones MQTT
   subscribeToTopic() {
-    this.mqttService.onConnect.subscribe(() => {
-      console.log('Connected to MQTT broker.');
+    // Server
+    this.mqttServerService.onConnect.subscribe(() => {
+      console.log('Connected to MQTT broker - Server.');
     });
 
-    this.mqttService.onError.subscribe(error => {
+    this.mqttServerService.onError.subscribe(error => {
       console.error('Connection error:', error);
     });
 
     // Nos suscribimos a todos los tópicos
     for(const maquina of this.maquinas){
       const topico = `${maquina}/nivel`
-      this.subscription = this.mqttService.observe(topico).subscribe({
+      this.subscription = this.mqttServerService.observe(topico).subscribe({
         next: (message: IMqttMessage) => {
           this.receiveNews += message.payload.toString() + '\n';
           //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`);
@@ -444,10 +431,72 @@ export class HomeComponent implements OnInit{
         }
       });
     }
+
+    // Nos suscribimos a todos los tópicos
+    for(const maquina of this.maquinas){
+      const topico = `${maquina}/compra`
+      this.subscription = this.mqttServerService.observe(topico).subscribe({
+        next: (message: IMqttMessage) => {
+          this.receiveNews += message.payload.toString() + '\n';
+          //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`)
+          if(message.payload.toString().startsWith("SUCCESS")){
+            this.sleep(5);
+            this.obtenerCompras("","")
+          }
+          
+        },
+        error: (error: any) => {
+          console.error(`Connection error: ${error}`);
+        }
+      });
+    }
+    /* ********************************** */
+    // Prototipo
+    this.mqttPrototipoService.onConnect.subscribe(() => {
+      console.log('Connected to MQTT broker - Prototipo.');
+    });
+
+    this.mqttPrototipoService.onError.subscribe(error => {
+      console.error('Connection error:', error);
+    });
+
+    // Nos suscribimos a todos los tópicos
+    this.subscription = this.mqttPrototipoService.observe('teleco/nivel').subscribe({
+      next: (message: IMqttMessage) => {
+        this.receiveNews += message.payload.toString() + '\n';
+        //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`);
+        this.actualizarEstadoMaquina(message.payload.toString());
+      },
+      error: (error: any) => {
+        console.error(`Connection error: ${error}`);
+      }
+    });
+
+
+    this.subscription = this.mqttPrototipoService.observe('teleco/compra').subscribe({
+      next: (message: IMqttMessage) => {
+        this.receiveNews += message.payload.toString() + '\n';
+        //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`)
+        if(message.payload.toString().startsWith("SUCCESS")){
+          this.sleep(5);
+          this.obtenerCompras("","")
+        }
+        
+      },
+      error: (error: any) => {
+        console.error(`Connection error: ${error}`);
+      }
+    });
+    
   }
+
+  async sleep(milliseconds: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+  }
+  
 
   redirigir_maquinasEstadisiticas(nombnre_maquina: string){
     this.router.navigate(['/home', nombnre_maquina]);
-}
+  }
 
 }

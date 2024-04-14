@@ -3,7 +3,7 @@ import time
 import json
 
 # Configura el puerto serial y la velocidad de baudios
-arduino = serial.Serial(port='COM3', baudrate=57600, timeout=1)
+arduino = serial.Serial(port='/dev/ttyACM1', baudrate=57600, timeout=1)
 niveles_maximos = {"nivel_cafe_gr": 100, "nivel_leche_ml": 4800, "nivel_agua_ml": 4800, "patatillas_u": 10}
 niveles = {"nivel_cafe_gr": 0, "nivel_leche_ml": 0, "nivel_agua_ml": 0, "patatillas_u": 10}
 
@@ -12,6 +12,7 @@ def convert_cm_to_ml(distance_measured, width=13.5, length=24.5, height=16.5):
     return round((liquid_height * width * length), 2)
 
 def update_levels(data_dict):
+    print(data_dict)
     niveles["nivel_cafe_gr"] = data_dict["peso_gr"]
     niveles["nivel_leche_ml"] = convert_cm_to_ml(data_dict["sensor_1_cm"])
     niveles["nivel_agua_ml"] = convert_cm_to_ml(data_dict["sensor_2_cm"])

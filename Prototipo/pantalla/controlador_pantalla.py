@@ -2,7 +2,7 @@ import serial
 import time
 
 # Configura el puerto serial y la velocidad de baudios
-arduino = serial.Serial(port='COM4', baudrate=115200, timeout=1)
+arduino = serial.Serial(port='/dev/ttyACM0', baudrate=115200, timeout=1)
 
 def send_to_arduino(send_str):
     send_str += ';'

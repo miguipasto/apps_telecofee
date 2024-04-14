@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
-import { MqttService, IMqttMessage } from 'ngx-mqtt';
+import { IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
 import { AlertController } from '@ionic/angular';
+import { MqttPrototipoService } from 'src/app/services/mqtt-prototipo.service';
+import { MqttServerService } from 'src/app/services/mqtt-server.service';
 
 
 @Component({
@@ -21,15 +23,21 @@ export class HomePage implements OnInit {
   amountToAdd=0;
   productoSeleccionado: any = [];
   maquinaSeleccionada: String = "teleco"
+  mqttClient: any = this.mqttPrototipoService;
 
   private subscription: Subscription | undefined;
   public receiveNews = '';
   public isConnection = false;
 
-  constructor(private dataService: DataService, private mqttService: MqttService, public alertController: AlertController) { }
+  constructor(
+    private dataService: DataService, 
+    private mqttPrototipoService: MqttPrototipoService,
+    private mqttServerService: MqttServerService,
+    public alertController: AlertController) { }
 
   ngOnInit() {
     this.subscribeToTopic(this.maquinaSeleccionada);
+    this.setTimeoutForLoading(10000); //MS
   }
 
   selectedCategory: string = 'cafe'; // Valor inicial para mostrar algo al inicio
@@ -47,6 +55,11 @@ export class HomePage implements OnInit {
   };
 
   onMaquinaSeleccionada(){
+    if (this.maquinaSeleccionada === 'teleco'){
+      this.mqttClient = this.mqttPrototipoService;
+    } else{
+      this.mqttClient = this.mqttServerService;
+    }
     this.subscribeToTopic(this.maquinaSeleccionada);
   }
 
@@ -137,7 +150,7 @@ export class HomePage implements OnInit {
 
     return new Promise((resolve, reject) => {
         // Primero, nos suscribimos al tópico de compra
-        const subscription = this.mqttService.observe(`${this.maquinaSeleccionada}/compra`).subscribe({
+        const subscription = this.mqttClient.observe(`${this.maquinaSeleccionada}/compra`).subscribe({
             next: (message: IMqttMessage) => {
                 const mensaje = message.payload.toString();
             
@@ -171,7 +184,7 @@ export class HomePage implements OnInit {
         });
 
         // Solicitamos realizar una compra
-        this.mqttService.publish(`${this.maquinaSeleccionada}/compra`, 'REQUEST Compra').subscribe({
+        this.mqttClient.publish(`${this.maquinaSeleccionada}/compra`, 'REQUEST Compra').subscribe({
             next: () => console.log("REQUEST Compra"),
             error: (error: any) => {
                 console.error("Error al publicar mensaje:", error);
@@ -193,7 +206,7 @@ export class HomePage implements OnInit {
   }
 
   enviarCodigo(){
-    this.mqttService.publish(`${this.maquinaSeleccionada}/compra`, `RESPONSE Código:${this.codigoConfirmacion}`).subscribe({
+    this.mqttClient.publish(`${this.maquinaSeleccionada}/compra`, `RESPONSE Código:${this.codigoConfirmacion}`).subscribe({
       next: () => console.log(`RESPONSE Código:${this.codigoConfirmacion}`),
       error: (error: any) => {
           console.error("Error al publicar mensaje:", error);
@@ -217,7 +230,7 @@ export class HomePage implements OnInit {
     }
 
     // Intentamos suscribirnos al tópico
-    this.subscription = this.mqttService.observe(topic).subscribe({
+    this.subscription = this.mqttClient.observe(topic).subscribe({
       next: (message: IMqttMessage) => {
         this.isLoading = false;
         this.receiveNews += message.payload.toString() + '\n';
@@ -263,4 +276,16 @@ export class HomePage implements OnInit {
     }
 
   }
+
+  private setTimeoutForLoading(time : any) {
+    const timeoutDuration = time;
+  
+    setTimeout(() => {
+      if (this.isLoading) {
+        this.isLoading = false;
+        this.presentAlert('Timeout', 'No se ha podido conectar con la máquina solicitada, por favor inténtelo de nuevo.');
+      }
+    }, timeoutDuration);
+  }
+  
 }

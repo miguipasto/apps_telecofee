@@ -1,14 +1,13 @@
-//import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { HttpClient} from '@angular/common/http';
 import { AlertController } from '@ionic/angular';
 
-import { MqttService, IMqttMessage } from 'ngx-mqtt';
+import { IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { BackendSocketsService } from 'src/app/services/BackEndSocketService';
-
+import { MqttServerService } from 'src/app/services/mqtt-server.service';
+import { MqttPrototipoService } from 'src/app/services/mqtt-prototipo.service';
 
 interface GraficaDataBarras {
   name: string;
@@ -55,6 +54,7 @@ interface GraficaNiveles {
 })
 export class ElementosPage implements OnInit, AfterViewInit{
   selectedDate: string = '';
+  fechasDisponibles: string[] = [];
   isLoading: boolean = true;
 
   productos = ["agua",  "cafe", "leche", "patatillas","ventas"]
@@ -91,7 +91,8 @@ export class ElementosPage implements OnInit, AfterViewInit{
   codigoConfirmacion : number = 0;
   amountToAdd!: number | null;
   productoSeleccionado: string = "";
-  nombre: string = ""; // Cambiado a string
+  nombre: string = "";
+  mqttClient: any;
 
 
   private subscription: Subscription | undefined;
@@ -100,14 +101,30 @@ export class ElementosPage implements OnInit, AfterViewInit{
   public isConnection = false;
 
 
-  constructor(private route: ActivatedRoute, private router:Router, private mqttService: MqttService, private dataService: DataService, private backendService: BackendSocketsService, public alertController: AlertController) { 
+  constructor(
+    private route: ActivatedRoute, 
+    private router:Router, 
+    private mqttServerService: MqttServerService, 
+    private mqttPrototipoService : MqttPrototipoService,
+    private dataService: DataService, 
+    private backendService: BackendSocketsService, 
+    public alertController: AlertController) { 
   }
 
   ngOnInit() {
+    this.selectedDate='' 
     this.route.paramMap.subscribe(params => {
       const nombre = params.get('nombre');
       if (nombre) {
+
         this.nombre = nombre;
+
+        if(this.nombresMaquinas[this.nombre] === 'teleco'){
+          this.mqttClient = this.mqttPrototipoService;
+        } else{
+          this.mqttClient = this.mqttServerService;
+        }
+
         this.subscribeToTopic(this.nombresMaquinas[this.nombre]);
         this.inicializarGraficasNiveles();
         this.initializeDates();
@@ -200,16 +217,17 @@ export class ElementosPage implements OnInit, AfterViewInit{
 
 
   procesarDatos(datos: any[]){
-    const ultimos10Dias = this.obtenerUltimos10Dias();
+    const ultimos7Dias = this.obtenerUltimos7Dias();
     datos.forEach(data => {
-      const fecha = new Date(data.fecha._seconds * 1000).toISOString().split('T')[0];
+      const fecha2 = new Date(data.fecha._seconds * 1000).toISOString().split('T')[0];
       const nivel_agua = data.niveles.nivel_agua_pr;
       const nivel_cafe = data.niveles.nivel_cafe_pr;
       const nivel_leche = data.niveles.nivel_leche_pr;
       const nivel_patatillas = data.niveles.patatillas_pr;
 
-      if(ultimos10Dias.includes(fecha)){
+      if(ultimos7Dias.includes(fecha2)){
         // Actualizar los datos de las gráficas correspondientes
+        const fecha=this.convertir_fecha(fecha2)
         this.graficasNiveles['agua'].data.push({ name: fecha, value: nivel_agua });
         this.graficasNiveles['cafe'].data.push({ name: fecha, value: nivel_cafe });
         this.graficasNiveles['leche'].data.push({ name: fecha, value: nivel_leche });
@@ -223,13 +241,14 @@ export class ElementosPage implements OnInit, AfterViewInit{
 
   actualizarUltimaFecha(message: any) {
     let data = JSON.parse(message);
-    const fecha = new Date().toISOString().split('T')[0];
+    const fecha2 = new Date().toISOString().split('T')[0];
     const nivel_agua = data.niveles.nivel_agua_pr;
     const nivel_cafe = data.niveles.nivel_cafe_pr;
     const nivel_leche = data.niveles.nivel_leche_pr;
     const nivel_patatillas = data.niveles.patatillas_pr;
   
     // Encuentra el índice del último elemento en el arreglo de datos para cada tipo de producto
+    const fecha=this.convertir_fecha(fecha2)
     const indiceUltimaFecha = this.graficasNiveles['agua'].data.findIndex(dato => dato.name === fecha);
   
     // Si se encuentra la fecha en el arreglo de datos, actualiza su valor; de lo contrario, no hagas nada
@@ -243,7 +262,8 @@ export class ElementosPage implements OnInit, AfterViewInit{
 
 
   actualizarVentas() {
-      this.backendService.ventas(this.nombresMaquinas[this.nombre], this.selectedDate).subscribe({
+      const fecha= this.convertir_fecha(this.selectedDate)
+      this.backendService.ventas(this.nombresMaquinas[this.nombre], fecha).subscribe({
         next: (ventas) => {
           this.procesarVentas(ventas);
         },
@@ -432,7 +452,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
   }
 
   nuevaReposicon(maquina : String){
-    this.mqttService.publish(`reposicion`, `${maquina}`).subscribe({
+    this.mqttClient.publish(`reposicion`, `${maquina}`).subscribe({
       next: () => console.log(`Nueva repisicion ${maquina}`),
       error: (error: any) => {
           console.error("Error al publicar mensaje:", error);
@@ -482,8 +502,9 @@ export class ElementosPage implements OnInit, AfterViewInit{
 
   subscribeToTopic(maquina : String) {
     this.isConnection = true;
-    const nombre=this.nombresMaquinas[this.nombre];
+    const nombre = this.nombresMaquinas[this.nombre];
     const topic = `${nombre}/nivel`;
+    const topic_compra = `${nombre}/compra`;
 
     // Primero, verifica si ya hay una suscripción y desuscríbete
     if (this.subscription) {
@@ -492,7 +513,7 @@ export class ElementosPage implements OnInit, AfterViewInit{
     }
 
     
-    this.subscription = this.mqttService.observe(topic).subscribe({
+    this.subscription = this.mqttClient.observe(topic).subscribe({
       next: (message: IMqttMessage) => {
         this.isLoading = false;
         this.receiveNews += message.payload.toString() + '\n';
@@ -511,67 +532,101 @@ export class ElementosPage implements OnInit, AfterViewInit{
         console.log("Actualizado")
     
         this.actualizarUltimaFecha(message.payload.toString());
-    
-        //Comprobamos si los valores que vienen son iguales a los que había
-        if (!this.sonNivelesIguales(this.product["consumos"], anteriores)) {
-          console.log("Nuevos valores")
-          this.actualizarVentas();
-        } else{
-          console.log("No ha cambiado nada")
-        }
-    
       },
       error: (error: any) => {
         this.isConnection = false;
         console.error(`Connection error: ${error}`);
       }
     });
+
+    this.subscription = this.mqttClient.observe(topic_compra).subscribe({
+      next: (message: IMqttMessage) => {
+        this.receiveNews += message.payload.toString() + '\n';
+        if(message.payload.toString().startsWith("SUCCESS")){
+          this.sleep(5);
+          this.actualizarVentas();
+        }
+        
+      },
+      error: (error: any) => {
+        console.error(`Connection error: ${error}`);
+      }
+    });
     
   }
 
-  onDataPointSelected(event: any) {
-        // Aquí puedes acceder a la información de la barra seleccionada a través del objeto event
-        alert("Valor: "+ event.value);
+  async sleep(milliseconds: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+  }
 
-        // Puedes realizar acciones adicionales aquí, como mostrar detalles en un modal o actualizar otra parte de tu interfaz de usuario.
+  initializeDates() {
+    this.fechasDisponibles = [];
+    const startDate = new Date('2024-03-25');
+    const today = new Date();
+    const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // Se suma 1 para incluir la fecha actual
+  
+    // Función para obtener la fecha en formato 'dd-mm-yyyy'
+    function obtenerFormatoFecha(fecha: Date) {
+      const dia = fecha.getDate();
+      const mes = fecha.getMonth() + 1; // Los meses van de 0 a 11, por eso sumamos 1
+      const año = fecha.getFullYear();
+      
+      // Asegurarse de que haya dos dígitos en día y mes
+      const diaStr = (dia < 10) ? '0' + dia : dia;
+      const mesStr = (mes < 10) ? '0' + mes : mes;
+      
+      return diaStr + '-' + mesStr + '-' + año;
     }
-
-    fechasDisponibles: string[] = [];
-
-    initializeDates() {
-      const startDate = new Date('2024-03-25');
-      const today = new Date();
-      const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // Se suma 1 para incluir la fecha actual
-
-      // Generar el rango de fechas
-      const currentDate = new Date(startDate);
-      while (currentDate <= endDate) {
-        this.fechasDisponibles.push(currentDate.toISOString().split('T')[0]);
-        currentDate.setDate(currentDate.getDate() + 1); // Avanzar al siguiente día
-
-      }
+  
+    // Generar el rango de fechas
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      this.fechasDisponibles.push(obtenerFormatoFecha(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1); // Avanzar al siguiente día
     }
-
-    initializeSelectedDate() {
-      const today = new Date();
-      this.selectedDate = today.toISOString().split('T')[0];
-      this.fechasDisponibles.push(this.selectedDate);
-    }
+  }
     
-    updateChart() {
-      this.actualizarVentas();
-    }
 
-    obtenerUltimos10Dias(): string[] {
-      const ultimos10Dias: string[] = [];
-      const fechaActual = new Date();
-      for (let i = 0; i < 10; i++) {
-        const fecha = new Date(fechaActual);
-        fecha.setDate(fecha.getDate() - i);
-        ultimos10Dias.push(fecha.toISOString().split('T')[0]);
-      }
-      return ultimos10Dias;
-    }
+  initializeSelectedDate() {
+    const today = new Date();
+    const hoy= this.obtenerFormatoFecha(today)
+    this.selectedDate = hoy.toString().split('T')[0];
+    this.fechasDisponibles.push(this.selectedDate);
+  }
+    
+  updateChart() {
+    this.actualizarVentas();
+  }
 
+  obtenerUltimos7Dias(): string[] {
+    const ultimos7Dias: string[] = [];
+    const fechaActual = new Date();
+    for (let i = 0; i < 7; i++) {
+      const fecha = new Date(fechaActual);
+      fecha.setDate(fecha.getDate() - i);
+      ultimos7Dias.push(fecha.toISOString().split('T')[0]);
+    }
+    return ultimos7Dias;
+  }
+
+  convertir_fecha(fecha:string){
+    const partes_fecha = fecha.split('-')
+    const fecha_invertida = partes_fecha[2] + '-' + partes_fecha[1] + '-' + partes_fecha[0]
+    return fecha_invertida
+  }
+
+  // Función para obtener la fecha en formato 'dd-mm-yyyy'
+  obtenerFormatoFecha(fecha: Date) {
+    const dia = fecha.getDate();
+    const mes = fecha.getMonth() + 1; // Los meses van de 0 a 11, por eso sumamos 1
+    const año = fecha.getFullYear();
+    
+    // Asegurarse de que haya dos dígitos en día y mes
+    const diaStr = (dia < 10) ? '0' + dia : dia;
+    const mesStr = (mes < 10) ? '0' + mes : mes;
+    
+    return diaStr + '-' + mesStr + '-' + año;
+  }
+      
 }
 

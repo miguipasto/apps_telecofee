@@ -12,6 +12,12 @@ boolean newData = false;
 
 DFRobot_ILI9488_320x480_HW_SPI screen(TFT_DC, TFT_CS, TFT_RST);
 
+// Pantallas
+// 1,codigo; => Muestra codigo
+// 2,; => Pantalla Bienvenidos
+// 3,; => Pantalla Dispensando
+// 4,; => Pantalla Compra correcta
+
 void setup() {
   Serial.begin(115200);
   screen.begin();
@@ -25,7 +31,6 @@ void loop() {
     displayReceivedData();
   }
 }
-
 
 void receiveSerialData() {
     static byte ndx = 0;
