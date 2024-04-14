@@ -65,7 +65,6 @@ interface GraficaCircular{
   viewSize: [number,number];
 }
 
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -271,16 +270,6 @@ export class HomeComponent implements OnInit{
     this.gananciasHoy = this.calcularGananciasTotalesDia(hoy);
     this.gananciasAyer = this.calcularGananciasTotalesDia(ayer);
 
-    // if (this.ventasAyer === 0 || this.gananciasAyer === 0) {
-    //   console.log("No hay datos de ventas para el día anterior.");
-    // } else if  (this.ventasHoy === 0 || this.gananciasHoy === 0) {
-    //   this.cambioPorcentual = 0;
-    //   this.cambioPorcentualGanancias = 0;
-    // } else {
-    //   this.cambioPorcentual = (((this.ventasHoy - this.ventasAyer) / this.ventasAyer) * 100).toFixed(2);
-    //   this.cambioPorcentualGanancias = (this.gananciasHoy - this.gananciasAyer).toFixed(2);
-    // }
-
     this.cambioPorcentual = (((this.ventasHoy - this.ventasAyer) / this.ventasAyer) * 100).toFixed(2);
     this.cambioPorcentualGanancias = (this.gananciasHoy - this.gananciasAyer).toFixed(2);
   }
@@ -328,16 +317,6 @@ export class HomeComponent implements OnInit{
 
     this.gananciasSemanaAnterior = this.calcularGananciasTotalesSemana(numeroSemanaAnterior, añoSemanaAnterior);
     this.gananciasSemanaActual = this.calcularGananciasTotalesSemana(numeroSemanaActual, añoActual);
-  
-    // if (this.ventasSemanaAnterior === 0 || this.gananciasSemanaAnterior === 0) {
-    //   console.log("No hay datos de ventas para la semana anterior.");
-    // } else if  (this.ventasSemanaActual === 0 || this.gananciasSemanaActual === 0) {
-    //   this.cambioPorcentualSemanal = 0;
-    //   this.cambioPorcentualGananciasSemanal = 0;
-    // } else {
-    //   this.cambioPorcentualSemanal = (((this.ventasSemanaActual - this.ventasSemanaAnterior) / this.ventasSemanaAnterior) * 100).toFixed(2);
-    //   this.cambioPorcentualGananciasSemanal = (this.gananciasSemanaActual - this.gananciasSemanaAnterior).toFixed(2);
-    // }
 
     this.cambioPorcentualSemanal = (((this.ventasSemanaActual - this.ventasSemanaAnterior) / this.ventasSemanaAnterior) * 100).toFixed(2);
     this.cambioPorcentualGananciasSemanal = (this.gananciasSemanaActual - this.gananciasSemanaAnterior).toFixed(2);

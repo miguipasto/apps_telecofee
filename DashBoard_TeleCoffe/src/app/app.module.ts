@@ -21,7 +21,7 @@ import { MaquinasEstadisticasComponent } from './components/maquinas-estadistica
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: 'telecoffe.duckdns.org',
   port: 443,
-  path: '/server/mqtt',
+  path: '/prototipo/mqtt',
   protocol: 'wss', 
   
 };
