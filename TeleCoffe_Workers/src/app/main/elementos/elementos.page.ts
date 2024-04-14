@@ -125,7 +125,6 @@ export class ElementosPage implements OnInit, AfterViewInit{
           this.mqttClient = this.mqttServerService;
         }
 
-        
         this.subscribeToTopic(this.nombresMaquinas[this.nombre]);
         this.inicializarGraficasNiveles();
         this.initializeDates();
