@@ -19,8 +19,8 @@ export class HomePage implements OnInit {
   isOverlayVisibleAzucar: boolean = false;
   isOVerlayVisible: boolean = false;
   isOverlayCompra: boolean = false;
-  codigoConfirmacion: number | null =null;
-  amountToAdd=0;
+  codigoConfirmacion: number | null = null;
+  amountToAdd = 0;
   productoSeleccionado: any = [];
   maquinaSeleccionada: String = "teleco"
   mqttClient: any = this.mqttPrototipoService;
@@ -30,7 +30,7 @@ export class HomePage implements OnInit {
   public isConnection = false;
 
   constructor(
-    private dataService: DataService, 
+    private dataService: DataService,
     private mqttPrototipoService: MqttPrototipoService,
     private mqttServerService: MqttServerService,
     public alertController: AlertController) { }
@@ -54,13 +54,14 @@ export class HomePage implements OnInit {
     ]
   };
 
-  onMaquinaSeleccionada(){
-    if (this.maquinaSeleccionada === 'teleco'){
+  onMaquinaSeleccionada() {
+    if (this.maquinaSeleccionada === 'teleco') {
       this.mqttClient = this.mqttPrototipoService;
-    } else{
+    } else {
       this.mqttClient = this.mqttServerService;
     }
     this.subscribeToTopic(this.maquinaSeleccionada);
+    this.setTimeoutForLoading(10000); //MS
   }
 
   selectCategory(category: string) {
@@ -69,9 +70,9 @@ export class HomePage implements OnInit {
 
   showOverlay(producto: any) {
     this.productoSeleccionado = producto;
-    if(producto.name == "Café con leche" || producto.name == "Café americano"){
+    if (producto.name == "Café con leche" || producto.name == "Café americano") {
       this.isOverlayVisibleAzucar = true;
-    } else{
+    } else {
       this.isOVerlayVisible = true;
     }
   }
@@ -81,9 +82,8 @@ export class HomePage implements OnInit {
     this.isOVerlayVisible = false;
     this.isOverlayCompra = false;
   }
-  
+
   addBalance() {
-    console.log("Añadiendo azúcar:", this.amountToAdd);
     this.comprar(this.productoSeleccionado);
   }
 
@@ -110,33 +110,28 @@ export class HomePage implements OnInit {
     }
   }
 
-  async comprar(producto: any){
-    console.log("Comprando " + producto.name)
-    const compra = {"producto": producto.name, "precio": producto.price, "fecha": new Date(), "maquina": this.maquinaSeleccionada};
+  async comprar(producto: any) {
+    const compra = { "producto": producto.name, "precio": producto.price, "fecha": new Date(), "maquina": this.maquinaSeleccionada };
 
-    this.amountToAdd=0;
+    this.amountToAdd = 0;
     this.closeOverlay();
 
     const datosUser: any = await this.dataService.obetenerDatosUsuario();
     if (datosUser.saldo < compra.precio) {
-      console.log("Dinero insuficiente.")
-      //alert("No se pudo realizar la compra, revisa tu saldo");
-      this.presentAlert("Error en la compra","No se ha podido hacer la solicitud de compra, revise su saldo.")
+      this.presentAlert("Error en la compra", "No se ha podido hacer la solicitud de compra, revise su saldo.")
     } else {
       console.log("Saldo suficiente")
       try {
         const procesar_compra = await this.compraMqtt();
         if (procesar_compra) {
           this.dataService.crearCompra(compra)
-          .then((response: any) => {
-              this.presentAlert("¡Compra realizada exitosamente!","Recoja su producto")
+            .then((response: any) => {
               this.isLoading = false;
-          })
-          .catch((error) => {
+            })
+            .catch((error) => {
               console.error("Error al crear la compra:", error);
-              //alert("No se pudo realizar la compra, revisa tu saldo");
-              this.presentAlert("Error realizando la compra","Error al realizar la compra, disculpe las molestias e inténtelo de nuevo")
-          });
+              this.presentAlert("Error realizando la compra", "Error al realizar la compra, disculpe las molestias e inténtelo de nuevo")
+            });
         }
       } catch (error) {
         console.error("Error al procesar la compra MQTT:", error);
@@ -144,54 +139,51 @@ export class HomePage implements OnInit {
     }
   }
 
-  
+
   compraMqtt() {
     console.log("MQTT Compra");
 
     return new Promise((resolve, reject) => {
-        // Primero, nos suscribimos al tópico de compra
-        const subscription = this.mqttClient.observe(`${this.maquinaSeleccionada}/compra`).subscribe({
-            next: (message: IMqttMessage) => {
-                const mensaje = message.payload.toString();
-            
-                // Manejamos los mensajes
-                if (mensaje.includes("NACK")){
-                  //alert("Otra compra en curso, inténtelo más tarde")
-                  this.isLoading = false;
-                  this.presentAlert("Compra denegada","Otra compra está en curso, inténtelo más tarde.")
-                } else if (mensaje.includes("ACK")){
-                  this.isLoading = false;
-                  this.isOverlayCompra = true;
-                } else if(mensaje.includes("SUCCESS")){
-                  console.log(mensaje)
-                  //alert("Código correcto... Procesando compra")
-                  this.presentAlert("Código correcto!","Espere mientres se procesa su compra\n ¡Gracias!")
-                  subscription.unsubscribe();
-                  resolve(true);
-                } else if(mensaje.includes("ERROR")){
-                  this.isLoading = false;
-                  console.log(mensaje)
-                  //alert("Código incorrecto... Cancelando compra")
-                  this.presentAlert("Código incorrecto","El código introducido es incorrecto, inténtelo de nuevo.")
-                  subscription.unsubscribe();
-                  resolve(false);
-                }
-            },
-            error: (error: any) => {
-                console.error("Connection error:", error);
-                reject(error);
-            }
-        });
+      // Primero, nos suscribimos al tópico de compra
+      const subscription = this.mqttClient.observe(`${this.maquinaSeleccionada}/compra`).subscribe({
+        next: (message: IMqttMessage) => {
+          const mensaje = message.payload.toString();
 
-        // Solicitamos realizar una compra
-        this.mqttClient.publish(`${this.maquinaSeleccionada}/compra`, 'REQUEST Compra').subscribe({
-            next: () => console.log("REQUEST Compra"),
-            error: (error: any) => {
-                console.error("Error al publicar mensaje:", error);
-                reject(error);
-            }
-        });
-        this.isLoading = true;
+          // Manejamos los mensajes
+          if (mensaje.includes("NACK")) {
+            this.isLoading = false;
+            this.presentAlert("Compra denegada", "Otra compra está en curso, inténtelo más tarde.")
+          } else if (mensaje.includes("ACK")) {
+            this.isLoading = false;
+            this.isOverlayCompra = true;
+          } else if (mensaje.includes("SUCCESS")) {
+            //console.log(mensaje)
+            this.presentAlert("Código correcto!", "Espere mientres se procesa su compra\n ¡Gracias!")
+            subscription.unsubscribe();
+            resolve(true);
+          } else if (mensaje.includes("ERROR")) {
+            this.isLoading = false;
+            //console.log(mensaje)
+            this.presentAlert("Código incorrecto", "El código introducido es incorrecto, inténtelo de nuevo.")
+            subscription.unsubscribe();
+            resolve(false);
+          }
+        },
+        error: (error: any) => {
+          console.error("Connection error:", error);
+          reject(error);
+        }
+      });
+
+      // Solicitamos realizar una compra
+      this.mqttClient.publish(`${this.maquinaSeleccionada}/compra`, 'REQUEST Compra').subscribe({
+        next: () => console.log("REQUEST Compra"),
+        error: (error: any) => {
+          console.error("Error al publicar mensaje:", error);
+          reject(error);
+        }
+      });
+      this.isLoading = true;
     });
   }
 
@@ -201,24 +193,24 @@ export class HomePage implements OnInit {
       message: mensaje,
       buttons: ['OK'],
     });
-  
+
     await alert.present();
   }
 
-  enviarCodigo(){
+  enviarCodigo() {
     this.mqttClient.publish(`${this.maquinaSeleccionada}/compra`, `RESPONSE Código:${this.codigoConfirmacion}`).subscribe({
       next: () => console.log(`RESPONSE Código:${this.codigoConfirmacion}`),
       error: (error: any) => {
-          console.error("Error al publicar mensaje:", error);
+        console.error("Error al publicar mensaje:", error);
       }
-    }); 
-    this.codigoConfirmacion=null;
+    });
+    this.codigoConfirmacion = null;
     this.closeOverlay();
     this.isLoading = true;
   }
 
 
-  private subscribeToTopic(maquina : String) {
+  private subscribeToTopic(maquina: String) {
     this.isConnection = true;
     const topic = `${this.maquinaSeleccionada}/nivel`;
 
@@ -248,28 +240,28 @@ export class HomePage implements OnInit {
     console.log(jsonData);
 
     // Café con leche
-    if(jsonData.niveles.nivel_leche_pr >= 5 && jsonData.niveles.nivel_cafe_pr >=5){
+    if (jsonData.niveles.nivel_leche_pr >= 5 && jsonData.niveles.nivel_cafe_pr >= 5) {
       this.products.cafe[0].available = true;
     } else {
       this.products.cafe[0].available = false;
     }
 
     // Café americano
-    if(jsonData.niveles.nivel_leche_pr >= 5 && jsonData.niveles.nivel_cafe_pr >=10){
+    if (jsonData.niveles.nivel_leche_pr >= 5 && jsonData.niveles.nivel_cafe_pr >= 10) {
       this.products.cafe[1].available = true;
     } else {
       this.products.cafe[1].available = false;
     }
 
     // Patatillas
-    if(jsonData.niveles.patatillas_u >= 1){
+    if (jsonData.niveles.patatillas_u >= 1) {
       this.products.aperitivos[0].available = true;
     } else {
       this.products.aperitivos[0].available = false;
     }
 
     // Leche
-    if(jsonData.niveles.nivel_leche_pr >= 10){
+    if (jsonData.niveles.nivel_leche_pr >= 10) {
       this.products.bebidas[0].available = true;
     } else {
       this.products.bebidas[0].available = false;
@@ -277,9 +269,9 @@ export class HomePage implements OnInit {
 
   }
 
-  private setTimeoutForLoading(time : any) {
+  private setTimeoutForLoading(time: any) {
     const timeoutDuration = time;
-  
+
     setTimeout(() => {
       if (this.isLoading) {
         this.isLoading = false;
@@ -287,5 +279,5 @@ export class HomePage implements OnInit {
       }
     }, timeoutDuration);
   }
-  
+
 }

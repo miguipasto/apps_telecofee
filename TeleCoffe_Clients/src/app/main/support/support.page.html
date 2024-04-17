@@ -9,26 +9,25 @@
             <h3 style="font-weight: bold;  text-align: center; color: black">Problemas o Dudas</h3>
             <ion-item>
                 <ion-label position="floating">Nombre y apellidos</ion-label>
-                <ion-input [(ngModel)]="nombre"></ion-input> 
+                <ion-input [(ngModel)]="nombre"></ion-input>
             </ion-item>
             <ion-item>
                 <ion-label>Elige una máquina:</ion-label>
                 <ion-select interface="popover" placeholder="Selecciona uno" [(ngModel)]="maquinaSeleccionada">
-                  <ion-select-option value="teleco">Teleco</ion-select-option>
-                  <ion-select-option value="biologia">Biología</ion-select-option>
-                  <ion-select-option value="industriales">Industriales</ion-select-option>
-                  <ion-select-option value="minas">Minas</ion-select-option>
+                    <ion-select-option value="teleco">Teleco</ion-select-option>
+                    <ion-select-option value="biologia">Biología</ion-select-option>
+                    <ion-select-option value="industriales">Industriales</ion-select-option>
+                    <ion-select-option value="minas">Minas</ion-select-option>
                 </ion-select>
-              </ion-item>
+            </ion-item>
             <ion-item>
                 <ion-label position="floating">Descripción del problema</ion-label>
                 <ion-textarea [(ngModel)]="descripcion"></ion-textarea>
             </ion-item>
-  
+
             <div class="botón" style="position: absolute; left: 50%; transform: translate(-50%, -50%);">
                 <button (click)="enviar_incidencia()">Enviar</button>
             </div>
         </div>
     </div>
-  </div>
-  
+</div>

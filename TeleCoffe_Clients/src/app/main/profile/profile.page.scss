@@ -1,7 +1,7 @@
 @import "~@fortawesome/fontawesome-free/css/all.css";
 
 // Estilos para poder solapar header y poner texto
-.profile-container{
+.profile-container {
     margin-top: 35%;
     height: 100%;
     display: grid;
@@ -10,44 +10,44 @@
 }
 
 /* Header especial para cada pantalla */
-.profile-header{
+.profile-header {
     display: grid;
     justify-content: center;
     text-align: center;
 }
 
-.profile-header h1{
-    color:black;
+.profile-header h1 {
+    color: black;
     font-weight: bold;
     margin: 0px;
 }
 
-.profile-header h4{
-    color:black;
+.profile-header h4 {
+    color: black;
     font-size: 18px;
     margin: 0px;
 }
 
 .corner-button {
     position: fixed;
-    top: 10px; /* Puedes ajustar esta posición según tu preferencia */
-    right: 10px; /* Puedes ajustar esta posición según tu preferencia */
-    z-index: 999; /* Asegura que esté sobre otros elementos */
-  }
+    top: 10px;
+    right: 10px;
+    z-index: 999;
+}
 
 /* Contenido */
-.profile-content{
+.profile-content {
     display: grid;
     grid-template-rows: 1fr 1fr;
 }
 
-.change-password{
+.change-password {
     display: block;
     padding: 2%;
     justify-content: center;
 }
 
-h2{
+h2 {
     color: black;
     font-size: 20px;
     font-weight: bold;
@@ -65,11 +65,11 @@ h2{
 }
 
 .change-password-confirm button {
-    cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
-    border: none; /* Remueve el borde del botón */
-    border-radius: 5px; /* Esquinas redondeadas para el botón */
-    background-color: #70442b; /* Color de fondo del botón */
-    color: white; /* Color del texto del botón */
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #70442b;
+    color: white;
     font-size: 20px;
     justify-content: center;
     width: 80vw;
@@ -80,24 +80,24 @@ i {
     margin-left: 4%;
 }
 
-.delete-account{
+.delete-account {
     display: block;
     padding: 2%;
     width: 100%;
 }
 
-.delete-account-confirm{
+.delete-account-confirm {
     display: grid;
     margin-top: 5%;
     height: 15%;
 }
 
 .delete-account-confirm button {
-    cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
-    border: none; /* Remueve el borde del botón */
-    border-radius: 5px; /* Esquinas redondeadas para el botón */
-    background-color: #a31515; /* Color de fondo del botón */
-    color: white; /* Color del texto del botón */
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #a31515;
+    color: white;
     font-size: 20px;
     width: 80%;
     margin-left: 8%;
@@ -108,26 +108,26 @@ i {
 
 /* Confirmar */
 .confirmation-popup {
-    position: fixed; /* Posición fija sobre todo lo demás */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5); /* Fondo semitransparente */
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente */
+    justify-content: center;
+    align-items: center;
     z-index: 9999;
-    
+
 }
 
 .popup-content {
     display: grid;
     background-color: white;
     padding: 20px;
-    border-radius: 40px; /* Bordes redondeados */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    text-align: center; /* Alinea el texto al centro */
+    border-radius: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 .popup-content h2 {
@@ -141,11 +141,11 @@ i {
 
 .button-container button {
     margin: 0 10px;
-    cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
-    border: none; /* Remueve el borde del botón */
-    border-radius: 40px; /* Esquinas redondeadas para el botón */
-    background-color: #E9DBAB; /* Color de fondo del botón */
-    color: #5C5353; /* Color del texto del botón */
+    cursor: pointer;
+    border: none;
+    border-radius: 40px;
+    background-color: #E9DBAB;
+    color: #5C5353;
     margin-left: 10%;
     margin-right: 10%;
     font-size: 20px;
@@ -153,6 +153,4 @@ i {
     height: 5vh;
     width: 80%;
     font-weight: bold;
-}   
-
-
+}

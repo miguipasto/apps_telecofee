@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Firestore, addDoc, collection, setDoc, doc, getDoc, updateDoc, query, getDocs, deleteDoc } from '@angular/fire/firestore';
-import { UserService } from './user.service'; 
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,15 +10,15 @@ export class DataService {
   constructor(public firestore: Firestore, private userService: UserService) { }
 
   async crearIncidencia(nombre: string, descripcion: string, maquina: String) {
-    
+
     const user = this.userService.getProfile();
-    if (user == null){
+    if (user == null) {
       console.error('No hay un usuario autenticado.');
       return;
-    } else{
+    } else {
       try {
         await addDoc(collection(this.firestore, 'incidencias'), {
-          user_id: user.uid, 
+          user_id: user.uid,
           email: user.email,
           nombre: nombre,
           descripcion: descripcion,
@@ -29,7 +29,7 @@ export class DataService {
       } catch (error) {
         console.error("Error al crear el documento: ", error);
       }
-    }  
+    }
   }
 
   async crearUsuario(uid: string, nombre: string, apellidos: string, email: string) {
@@ -117,7 +117,7 @@ export class DataService {
       const q = query(comprasRef);
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
-        let compras : any = [];
+        let compras: any = [];
         querySnapshot.forEach((doc) => {
           compras.push(doc.data());
         });
@@ -139,23 +139,23 @@ export class DataService {
       console.error('No hay un usuario autenticado.');
       return;
     }
-  
+
     // Comprobamos el saldo del cliente
     const datosUser: any = await this.obetenerDatosUsuario();
-  
+
     if (datosUser.saldo < compra.precio) {
       console.log("Dinero insuficiente.")
       return null;
     } else {
       console.log("Saldo suficiente")
-      
+
       // Actualizamos el saldo
       const nuevoSaldo = datosUser.saldo - compra.precio;
       await this.actualizarSaldoUsuario(nuevoSaldo);
 
       // Referencia a la subcolección de compras para el usuario actual
       const comprasRef = collection(this.firestore, `compras/${uid}/compras`);
-  
+
       try {
         const docRef = await addDoc(comprasRef, compra);
         console.log("Compra registrada con ID: ", docRef.id);

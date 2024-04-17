@@ -9,7 +9,7 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
   background-color: #f8f1d7;
   height: 50%;
   width: 100%;
@@ -34,7 +34,8 @@
 }
 
 .logo {
-  width: 100%; /* Asegura que el logo ocupe todo el tamaño de su contenedor */
+  width: 100%;
+  /* Asegura que el logo ocupe todo el tamaño de su contenedor */
   height: 100%;
 }
 
@@ -56,8 +57,8 @@
   grid-template-rows: 1fr 5fr 1fr 1fr;
 }
 
-.sign-up-buttons, 
-.sign-up-form, 
+.sign-up-buttons,
+.sign-up-form,
 .sign-up-button,
 .forgot-password {
   display: block;
@@ -71,9 +72,9 @@
 .btn {
   display: block;
   padding: 10px 20px;
-  background-color: #fff; 
+  background-color: #fff;
   cursor: pointer;
-  outline: none; 
+  outline: none;
   color: black;
 }
 
@@ -92,7 +93,7 @@
 }
 
 
-.signup{
+.signup {
   background-color: #cccccc;
   border-radius: 50px;
   z-index: 2;
@@ -103,13 +104,13 @@
 }
 
 // Formulario
-.sign-up-form{
+.sign-up-form {
   margin-top: 5%;
   justify-content: center;
   align-items: center;
 }
 
-.sign-up-form h2{
+.sign-up-form h2 {
   text-align: center;
   font-size: 24px;
   font-family: Nunito;
@@ -125,11 +126,11 @@
 }
 
 .sign-up-button button {
-  cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
-  border: none; /* Remueve el borde del botón */
-  border-radius: 50px; /* Esquinas redondeadas para el botón */
+  cursor: pointer;
+  border: none;
+  border-radius: 50px;
   background-color: #e9dbab;
-  color: white; /* Color del texto del botón */
+  color: white;
   font-size: 20px;
   justify-content: center;
   width: 80vw;
@@ -140,19 +141,19 @@
   color: #2b2222;
 }
 
-.forgot-password{
+.forgot-password {
   display: grid;
   justify-content: center;
   align-items: center;
 }
 
 .forgot-password button {
-  cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
-  border: none; /* Remueve el borde del botón */
-  border-radius: 50px; /* Esquinas redondeadas para el botón */
+  cursor: pointer;
+  border: none;
+  border-radius: 50px;
   border-width: 0px;
   background-color: transparent;
-  color: white; /* Color del texto del botón */
+  color: white;
   font-size: 20px;
   justify-content: center;
   width: 80vw;

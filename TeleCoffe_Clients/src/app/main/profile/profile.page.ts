@@ -23,7 +23,7 @@ export class ProfilePage implements OnInit {
     private dataService: DataService,
     public alertController: AlertController) { }
 
-  async ngOnInit() {  
+  async ngOnInit() {
     this.formPassword = new FormGroup({
       currentPassword: new FormControl('', Validators.required),
       newPassword: new FormControl('', Validators.required)
@@ -36,9 +36,6 @@ export class ProfilePage implements OnInit {
   showOverlay(cadena: string) {
     if (cadena.includes('contraseña')) {
 
-      //console.log("Nueva " + this.formPassword.value.newPassword);
-      //console.log("Actual " + this.formPassword.value.currentPassword);
-  
       if (this.formPassword.invalid) {
         const currentPasswordErrors = this.formPassword?.get('currentPassword')?.errors;
         let errorMessage = 'Por favor rellene todos los campos o corrija errores.';
@@ -47,8 +44,7 @@ export class ProfilePage implements OnInit {
             ? 'Contraseña actual es obligatoria.'
             : 'Hay errores en la contraseña actual.';
         }
-        //alert(errorMessage);
-        this.presentAlert("Error",errorMessage)
+        this.presentAlert("Error", errorMessage)
         this.formPassword.reset();
         return;
       }
@@ -63,44 +59,42 @@ export class ProfilePage implements OnInit {
       message: mensaje,
       buttons: ['OK'],
     });
-  
+
     await alert.present();
   }
-  
-  
+
+
   async Confirm(cadena: string) {
     if (cadena.includes('Eliminar')) {
       await this.authService.deleteAccount().then(async () => {
         await this.dataService.borrarUsuario().then(() => {
-          console.log('Cuenta eliminada');
-          //alert('Cuenta eliminada con éxito');
-          this.presentAlert("Cuenta eliminada correctamente","Gracias.")
+          //console.log('Cuenta eliminada');
+          this.presentAlert("Cuenta eliminada correctamente", "Gracias.")
           this.route.navigate(['login']);
         })
-        
+
       }).catch(error => {
         console.error('Error al eliminar la cuenta', error);
-        //alert('Error al eliminar la cuenta');
-        this.presentAlert("Error","No hemos podido eliminar su cuenta.")
+        this.presentAlert("Error", "No hemos podido eliminar su cuenta.")
       });
-    }else{
-      const np=this.formPassword.value.currentPassword
-      const op=this.formPassword.value.newPassword
+    } else {
+      const np = this.formPassword.value.currentPassword
+      const op = this.formPassword.value.newPassword
 
-      this.authService.reauthenticateWithCredential(np,op);
+      this.authService.reauthenticateWithCredential(np, op);
       this.formPassword.reset();
 
 
     }
     this.isOverlayVisible = false;
   }
-  
+
 
   Cancel() {
     this.isOverlayVisible = false;
   }
 
-  LogOut(){
+  LogOut() {
     this.authService.signOut();
     this.route.navigate(['login'])
   }

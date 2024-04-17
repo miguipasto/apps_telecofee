@@ -14,9 +14,7 @@
   <div class="wallet-content">
     <div *ngFor="let compra of compras" class="compra">
       <div class="icono-container">
-        <!-- Mostrar ícono de café si el producto incluye "Café" en su nombre -->
         <i *ngIf="compra.producto.includes('Café')" class="fa-solid fa-mug-hot icono"></i>
-        <!-- Mostrar ícono de galleta si el producto no incluye "Café" en su nombre -->
         <i *ngIf="!compra.producto.includes('Café')" class="fa-solid fa-cookie-bite icono"></i>
       </div>
       <div class="text-container">

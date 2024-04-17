@@ -10,15 +10,15 @@ import { AlertController } from '@ionic/angular';
   templateUrl: 'signup.page.html',
   styleUrls: ['signup.page.scss'],
 })
-export class SignUpPage implements OnInit{
+export class SignUpPage implements OnInit {
 
   formReg!: FormGroup
- 
 
-  constructor(private router: Router, private userService: UserService, private formBuilder: FormBuilder, private dataService: DataService,  public alertController: AlertController) {
+
+  constructor(private router: Router, private userService: UserService, private formBuilder: FormBuilder, private dataService: DataService, public alertController: AlertController) {
 
   }
- 
+
   ngOnInit(): void {
     this.formReg = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -29,8 +29,7 @@ export class SignUpPage implements OnInit{
 
   onSubmit() {
     if (this.formReg.invalid) {
-      //alert('Por favor rellene todos los campos');
-      this.presentAlert("Error","Por favor, rellena todos los campos")
+      this.presentAlert("Error", "Por favor, rellena todos los campos")
       this.formReg.reset();
       return;
     }
@@ -38,25 +37,23 @@ export class SignUpPage implements OnInit{
       .then(response => {
         //Creamos su entrada en la base de datos
         const uid = response.user.uid;
-        const nombre=(this.formReg.value.name).split(" ")[0];
-        var apellidos=(this.formReg.value.name).split(" ")[1];
-        if(apellidos==undefined){
-          apellidos="";
-        } 
+        const nombre = (this.formReg.value.name).split(" ")[0];
+        var apellidos = (this.formReg.value.name).split(" ")[1];
+        if (apellidos == undefined) {
+          apellidos = "";
+        }
 
-        this.dataService.crearUsuario(uid, nombre,apellidos,this.formReg.value.email)
+        this.dataService.crearUsuario(uid, nombre, apellidos, this.formReg.value.email)
         localStorage.setItem('isUserLoggedIn', 'true');
         localStorage.setItem('uid', response.user.uid);
         this.router.navigate(['main']);
       })
       .catch(error => {
         console.log(error);
-        // Si hay un error en el inicio de sesión, muestra un mensaje de error
-        //alert('Correo o contraseña inválida. Contraseña debe de tener al menos 6 caracteres. Por favor vuelva a intentarlo.');
-        this.presentAlert("Error","Email o contraseña inválidos. Por favor, inténtelo de nuevo.\n La contraseña debe tener 6 caracteres")
+        this.presentAlert("Error", "Email o contraseña inválidos. Por favor, inténtelo de nuevo.\n La contraseña debe tener 6 caracteres")
       });
 
-      
+
   }
 
   async presentAlert(header: string, mensaje: string) {
@@ -65,7 +62,7 @@ export class SignUpPage implements OnInit{
       message: mensaje,
       buttons: ['OK'],
     });
-  
+
     await alert.present();
   }
 
@@ -77,5 +74,5 @@ export class SignUpPage implements OnInit{
   resetForm() {
     this.formReg.reset();
   }
-  
+
 }

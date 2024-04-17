@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AlertController } from '@ionic/angular';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
@@ -8,25 +9,32 @@ import { DataService } from 'src/app/services/data.service';
 })
 export class WalletPage implements OnInit {
 
-  userData : any;
-  wallet : number = 0;
-  nombre : string = "";
-  compras : any = [];
+  userData: any;
+  wallet: number = 0;
+  nombre: string = "";
+  compras: any[] = [];
   isOverlayVisible: boolean = false;
   amountToAdd: number = 0;
 
-
-  constructor(private dataService : DataService) { }
+  constructor(private dataService: DataService, public alertController: AlertController) { }
 
   async ngOnInit() {
-    this.userData = await this.dataService.obetenerDatosUsuario();
-    if (this.userData) {
-      this.wallet = parseFloat(this.userData.saldo.toFixed(2));
-      this.nombre = this.userData.nombre;
-    }
+    try {
+      this.userData = await this.dataService.obetenerDatosUsuario();
+      if (this.userData) {
+        this.wallet = parseFloat(this.userData.saldo.toFixed(2));
+        this.nombre = this.userData.nombre;
+      }
 
-    this.compras = await this.dataService.obtenerComprasUsuario();
-    console.log(this.compras)
+      let comprasRaw = await this.dataService.obtenerComprasUsuario();
+      this.compras = this.ordenarComprasPorFecha(comprasRaw);
+    } catch (error) {
+      console.error("Error al obtener los datos del usuario", error);
+    }
+  }
+
+  ordenarComprasPorFecha(compras: any[]): any[] {
+    return compras.sort((a, b) => b.fecha.seconds - a.fecha.seconds);
   }
 
   showOverlay() {
@@ -38,17 +46,32 @@ export class WalletPage implements OnInit {
   }
 
   async addBalance() {
-
-    if (isNaN(this.amountToAdd) || this.amountToAdd < 0) {
+    if (isNaN(this.amountToAdd) || this.amountToAdd <= 0) {
+      console.error("Cantidad a añadir no válida.");
       this.amountToAdd = 0;
+      return;
     }
-    console.log("Añadiendo saldo:", this.amountToAdd);
-    
-    this.wallet = this.amountToAdd + this.wallet;
-    await this.dataService.actualizarSaldoUsuario(this.wallet);
 
-    this.closeOverlay();
+    console.log("Añadiendo saldo:", this.amountToAdd);
+    this.wallet += this.amountToAdd;
+    try {
+      await this.dataService.actualizarSaldoUsuario(this.wallet);
+      this.presentAlert("¡Gracias!", "Saldo añadido correctamente");
+    } catch (error) {
+      console.error("Error al actualizar el saldo", error);
+    } finally {
+      this.closeOverlay();
+    }
   }
 
+  async presentAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: message,
+      buttons: ['OK'],
+    });
+
+    await alert.present();
+  }
 
 }

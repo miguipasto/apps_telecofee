@@ -54,10 +54,8 @@ export class UserService {
     if (user != null) {
       return deleteUser(user).then(() => {
         console.log('Usuario eliminado exitosamente');
-        //alert('Usuario eliminado exitosamente');
       }).catch((error) => {
         console.error('Usuario no eliminado', error);
-        //alert('Usuario no eliminado');
       });
     }
   }

@@ -1,7 +1,7 @@
 @import "~@fortawesome/fontawesome-free/css/all.css";
 
 // Estilos para poder solapar header y poner texto
-.wallet-container{
+.wallet-container {
     margin-top: 35%;
     height: 100%;
     display: grid;
@@ -10,17 +10,18 @@
 }
 
 /* Header especial para cada pantalla */
-.wallet-header{
+.wallet-header {
     display: grid;
     grid-template-rows: 1fr 2fr;
     width: 100%;
 }
 
-.wallet-titulo{
+.wallet-titulo {
     display: grid;
     margin-bottom: 0px;
 }
-.wallet-header h1{
+
+.wallet-header h1 {
     text-align: center;
     font-weight: bold;
     color: black;
@@ -38,14 +39,14 @@
 
 }
 
-.wallet-header h2{
+.wallet-header h2 {
     color: black;
     font-size: 20px;
 }
 
-.wallet-balance{
-    display:block;
-    color:#70442b;
+.wallet-balance {
+    display: block;
+    color: #70442b;
     font-size: 15px;
     font-weight: bold;
     justify-content: center;
@@ -60,37 +61,49 @@
     margin-top: 8%;
     margin-left: 2%;
     margin-right: 2%;
-    align-items: start; /* Cambio para alinear al inicio */
-    overflow-y: auto; /* Habilita el desplazamiento vertical si es necesario */
-    gap: 10px; /* Espacio entre cajones de compras */
+    align-items: start;
+    /* Cambio para alinear al inicio */
+    overflow-y: auto;
+    /* Habilita el desplazamiento vertical si es necesario */
+    gap: 10px;
+    /* Espacio entre cajones de compras */
 
-  }
-  
+}
+
 .compra {
-    display: grid; /* Cambio para usar flex y asegurar alineación y distribución */
+    display: grid;
+    /* Cambio para usar flex y asegurar alineación y distribución */
     grid-template-columns: 0.7fr 3fr;
-    justify-content: center; /* Centra el contenido horizontalmente */
-    align-items: center; /* Centra el contenido verticalmente */
+    justify-content: center;
+    /* Centra el contenido horizontalmente */
+    align-items: center;
+    /* Centra el contenido verticalmente */
     background-color: rgb(255, 255, 255);
-    border-radius: 10px; /* Ajuste para un poco de redondeo de bordes */
-    height: 10vh; /* Altura fija para todos los cajones */
+    border-radius: 10px;
+    /* Ajuste para un poco de redondeo de bordes */
+    height: 10vh;
+    /* Altura fija para todos los cajones */
     border: 1px solid rgba(0, 0, 0, 0.274);
 }
 
-.icono-container{
+.icono-container {
     display: block;
-    justify-content: center; /* Centra el contenido horizontalmente */
-    align-items: center; /* Centra el contenido verticalmente */
+    justify-content: center;
+    /* Centra el contenido horizontalmente */
+    align-items: center;
+    /* Centra el contenido verticalmente */
     text-align: center;
 }
-.icono{
+
+.icono {
     color: black;
     font-size: 30px;
 }
 
-.text-container{
+.text-container {
     display: flex;
-    justify-content: space-between; /* Centra el contenido horizontalmente */
+    justify-content: space-between;
+    /* Centra el contenido horizontalmente */
     align-items: center;
     margin-left: 5%;
     margin-right: 8%;
@@ -105,11 +118,16 @@
 }
 
 .wallet-add-balance button {
-    cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
-    border: none; /* Remueve el borde del botón */
-    border-radius: 5px; /* Esquinas redondeadas para el botón */
-    background-color: #70442b; /* Color de fondo del botón */
-    color: white; /* Color del texto del botón */
+    cursor: pointer;
+    /* Cambia el cursor a mano cuando se pasa sobre el botón */
+    border: none;
+    /* Remueve el borde del botón */
+    border-radius: 5px;
+    /* Esquinas redondeadas para el botón */
+    background-color: #70442b;
+    /* Color de fondo del botón */
+    color: white;
+    /* Color del texto del botón */
     margin-left: 10%;
     margin-right: 10%;
     font-size: 20px;
@@ -117,48 +135,57 @@
 
 /* Añadir saldo */
 .overlay {
-    position: fixed; /* Posición fija sobre todo lo demás */
+    position: fixed;
+    /* Posición fija sobre todo lo demás */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5); /* Fondo semitransparente */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Fondo semitransparente */
     display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente */
-  }
-  
+    justify-content: center;
+    /* Centra horizontalmente */
+    align-items: center;
+    /* Centra verticalmente */
+}
+
 .add-balance-popup {
     display: grid;
     justify-content: center;
     align-items: center;
     width: 80%;
     background-color: white;
-    border-radius: 40px; /* Bordes redondeados */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    text-align: center; /* Alinea el texto al centro */
+    border-radius: 40px;
+    /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Sombra suave */
+    text-align: center;
+    /* Alinea el texto al centro */
 }
-  
 
-.add-balance-popup input{
+
+.add-balance-popup input {
     height: 5vh;
     margin-bottom: 5%;
     background-color: white;
     color: black;
 }
 
-.add-balance-popup button{
-    cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
-    border: none; /* Remueve el borde del botón */
-    border-radius: 40px; /* Esquinas redondeadas para el botón */
-    background-color: #E9DBAB; /* Color de fondo del botón */
-    color: #5C5353; /* Color del texto del botón */
+.add-balance-popup button {
+    cursor: pointer;
+    /* Cambia el cursor a mano cuando se pasa sobre el botón */
+    border: none;
+    /* Remueve el borde del botón */
+    border-radius: 40px;
+    /* Esquinas redondeadas para el botón */
+    background-color: #E9DBAB;
+    /* Color de fondo del botón */
+    color: #5C5353;
+    /* Color del texto del botón */
     font-size: 20px;
     margin-top: 5%;
     margin-bottom: 5%;
     height: 5vh;
     font-weight: bold;
 }
-
-
-  

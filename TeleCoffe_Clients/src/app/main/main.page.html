@@ -1,9 +1,10 @@
-<div class="main" [ngClass]="{ 'home': currentPageClass === 'home', 'wallet': currentPageClass === 'wallet', 'support': currentPageClass === 'support', 'profile': currentPageClass === 'profile' }">
+<div class="main"
+  [ngClass]="{ 'home': currentPageClass === 'home', 'wallet': currentPageClass === 'wallet', 'support': currentPageClass === 'support', 'profile': currentPageClass === 'profile' }">
   <!-- HEADER  -->
   <div class="header">
     <div class="logo-container">
       <div class="logo-box">
-          <ion-img src="../../assets/icon/v5_133.png" class="logo"></ion-img>
+        <ion-img src="../../assets/icon/v5_133.png" class="logo"></ion-img>
       </div>
     </div>
   </div>
@@ -15,15 +16,15 @@
         <a href="/main/main/home" class="tab-button" [class.active]="currentPageClass === 'home'">
           <i class="fas fa-home"></i>
         </a>
-      
+
         <a href="/main/main/wallet" class="tab-button" [class.active]="currentPageClass === 'wallet'">
           <i class="fas fa-wallet"></i>
         </a>
-      
+
         <a href="/main/main/support" class="tab-button" [class.active]="currentPageClass === 'support'">
           <i class="fa-solid fa-triangle-exclamation"></i>
         </a>
-      
+
         <a href="/main/main/profile" class="tab-button" [class.active]="currentPageClass === 'profile'">
           <i class="fa-solid fa-user"></i>
         </a>

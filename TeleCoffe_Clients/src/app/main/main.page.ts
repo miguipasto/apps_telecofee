@@ -12,6 +12,6 @@ export class MainPage implements OnInit {
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
-   
+
   }
 }

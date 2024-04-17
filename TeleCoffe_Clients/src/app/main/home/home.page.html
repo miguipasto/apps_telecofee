@@ -1,9 +1,9 @@
 <div class="home-container">
   <div class="home-header">
     <h1>¿Qué quieres tomar?</h1>
-    <!-- <input class="input-id" placeholder="Introduce el ID de la máquina"/> -->
     <label for="opciones">Elige una máquina</label>
-    <select name="opciones" class="opciones" [(ngModel)]="maquinaSeleccionada" (ngModelChange)="onMaquinaSeleccionada()">
+    <select name="opciones" class="opciones" [(ngModel)]="maquinaSeleccionada"
+      (ngModelChange)="onMaquinaSeleccionada()">
       <option value="teleco">Teleco</option>
       <option value="biologia">Biología</option>
       <option value="industriales">Industriales</option>
@@ -16,7 +16,8 @@
         <h2>Café</h2>
         <hr class="linea-decorativa">
       </div>
-      <div class="title-box" (click)="selectCategory('aperitivos')" [ngClass]="{'active': selectedCategory === 'aperitivos'}">
+      <div class="title-box" (click)="selectCategory('aperitivos')"
+        [ngClass]="{'active': selectedCategory === 'aperitivos'}">
         <h2>Aperitivos</h2>
         <hr class="linea-decorativa">
       </div>
@@ -34,12 +35,12 @@
           </div>
           <div class="foto-producto">
             <button (click)="showOverlay(product)">
-              <img [src]="product.img" class="producto-foto"/>
+              <img [src]="product.img" class="producto-foto" />
             </button>
           </div>
           <div class="texto-producto">
-              <p>{{ product.name }}</p>
-              <p style="color:#70442b">{{ product.price }}€</p>
+            <p>{{ product.name }}</p>
+            <p style="color:#70442b; font-weight: bold;">{{ product.price }}€</p>
           </div>
         </div>
 
@@ -50,7 +51,8 @@
           <div class="selector-azucar">
             <b style="color: black">Azúcar</b> <!-- Aquí se agrega "Azúcar" -->
             <button (click)="decrementAmount()" [disabled]="amountToAdd <= 0"><span>&#9660;</span></button>
-            <input type="text" [(ngModel)]="amountToAdd" placeholder="Cantidad a añadir" (input)="validateAmount($event)">
+            <input type="text" [(ngModel)]="amountToAdd" placeholder="Cantidad a añadir"
+              (input)="validateAmount($event)">
             <button (click)="incrementAmount()" [disabled]="amountToAdd >= 5"><span>&#9650;</span></button>
           </div>
           <p style="color: #70442b;">Se hará una carga en tu cuenta de<br><b>{{ productoSeleccionado.price }}€</b></p>
@@ -76,10 +78,10 @@
           <button (click)="closeOverlay()">Cancelar</button>
         </div>
       </div>
-      
-  </div>
-</div>
 
-<div *ngIf="isLoading" class="loadingPage">
-  <ion-spinner color="dark"></ion-spinner>
-</div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loadingPage">
+    <ion-spinner color="dark"></ion-spinner>
+  </div>
