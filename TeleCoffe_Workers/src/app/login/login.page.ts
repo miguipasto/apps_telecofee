@@ -12,7 +12,7 @@ import { AlertController } from '@ionic/angular';
 export class LoginPage implements OnInit {
   formLogIn!: FormGroup;
 
-  constructor(private router: Router, private userService: UserService, public formBuilder: FormBuilder, public alertController: AlertController) {}
+  constructor(private router: Router, private userService: UserService, public formBuilder: FormBuilder, public alertController: AlertController) { }
 
   ngOnInit(): void {
     this.initLoginForm();
@@ -27,8 +27,7 @@ export class LoginPage implements OnInit {
 
   onSubmit(): void {
     if (this.formLogIn.invalid) {
-      //alert('Por favor rellene todos los campos');
-      this.presentAlert("Error","Por favor, rellena todos los campos.")
+      this.presentAlert("Error", "Por favor, rellena todos los campos.")
       this.formLogIn.reset();
       return;
     }
@@ -40,8 +39,7 @@ export class LoginPage implements OnInit {
       })
       .catch(error => {
         console.error(error);
-        //alert('Contraseña o correo inválido. Por favor vuelva a intentarlo.');
-        this.presentAlert("Error","Por favor, rellena todos los campos.")
+        this.presentAlert("Error", "Por favor, rellena todos los campos.")
         this.formLogIn.reset();
       });
   }
@@ -52,7 +50,7 @@ export class LoginPage implements OnInit {
       message: mensaje,
       buttons: ['OK'],
     });
-  
+
     await alert.present();
   }
 

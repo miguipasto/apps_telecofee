@@ -1,5 +1,5 @@
 // Estilos para poder solapar header y poner texto
-.home-container{
+.home-container {
     margin-top: 20%;
     height: 100%;
     display: grid;
@@ -8,7 +8,7 @@
 }
 
 /* Header especial para cada pantalla */
-.home-header{
+.home-header {
     display: grid;
     justify-content: center;
     text-align: center;
@@ -16,18 +16,18 @@
 
 
 /* Contenido */
-.home-content{
+.home-content {
     display: grid;
     grid-template-rows: 0.5fr 8fr;
 }
 
-.titles-container{
+.titles-container {
     display: grid;
     justify-content: center;
     align-items: center;
 }
 
-.titles-container h2{
+.titles-container h2 {
     color: #70442b;
     font-weight: bold;
     font-size: 30px;
@@ -40,7 +40,7 @@
     width: 100%;
     border-radius: 20px;
     background-color: #70442b;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Productos */
@@ -55,8 +55,8 @@
 .producto {
     background-color: #f8f1d7;
     display: flex;
-    flex-direction: column; 
-    align-items: center; 
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
     border-radius: 30px;
     width: 44vw;
@@ -89,7 +89,6 @@ button {
     color: black;
     display: flex;
     flex-direction: column;
-    width: 100%; 
+    width: 100%;
     font-size: 15px;
 }
-

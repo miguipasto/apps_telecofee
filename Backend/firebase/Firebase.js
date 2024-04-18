@@ -6,7 +6,7 @@ const serviceAccountWorkers = require('./lpro-workers-firebase-adminsdk-yf4f8-59
 // Inicializa la instancia para clientes
 const clientApp = admin.initializeApp({
     credential: admin.credential.cert(serviceAccountClients)
-}, 'clients'); 
+}, 'clients');
 
 // Inicializa la instancia para trabajadores
 const workerApp = admin.initializeApp({

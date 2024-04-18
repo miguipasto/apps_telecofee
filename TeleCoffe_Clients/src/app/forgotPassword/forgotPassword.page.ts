@@ -19,14 +19,12 @@ export class ForgotPasswordPage implements OnInit {
   ngOnInit(): void {
     this.formForgotPassword=new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
-
     })
   }
 
 
   onSubmit() {
     if (this.formForgotPassword.invalid) {
-      //alert('Please fill in all fields');
       this.presentAlert("Error","Por favor, rellena todos los campos")
       this.formForgotPassword.reset();
       return;
@@ -40,8 +38,6 @@ export class ForgotPasswordPage implements OnInit {
       })
       .catch(error => {
         console.log(error);
-        // Si hay un error en el inicio de sesión, muestra un mensaje de error
-        //alert('Invalid email or password. Please try again.');
         this.presentAlert("Error","Email o contraseña inválidos. Por favor, inténtelo de nuevo.")
         this.formForgotPassword.reset();
       });

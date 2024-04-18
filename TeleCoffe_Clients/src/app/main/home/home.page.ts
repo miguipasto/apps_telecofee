@@ -60,8 +60,9 @@ export class HomePage implements OnInit {
     } else {
       this.mqttClient = this.mqttServerService;
     }
-    this.subscribeToTopic(this.maquinaSeleccionada);
     this.setTimeoutForLoading(10000); //MS
+    this.subscribeToTopic(this.maquinaSeleccionada);
+    
   }
 
   selectCategory(category: string) {
@@ -218,7 +219,7 @@ export class HomePage implements OnInit {
     if (this.subscription) {
       this.subscription.unsubscribe();
       console.log('Desuscripto del tópico anterior.');
-      this.isLoading = true;
+      //this.isLoading = true;
     }
 
     // Intentamos suscribirnos al tópico

@@ -11,13 +11,13 @@ import { AlertController } from '@ionic/angular';
 })
 export class ForgotPasswordPage implements OnInit {
   formForgotPassword!: FormGroup;
-  
 
-  constructor(private router: Router,private userService:UserService, public formBuilder: FormBuilder, public alertController: AlertController){
-    
+
+  constructor(private router: Router, private userService: UserService, public formBuilder: FormBuilder, public alertController: AlertController) {
+
   }
   ngOnInit(): void {
-    this.formForgotPassword=new FormGroup({
+    this.formForgotPassword = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
 
     })
@@ -26,13 +26,12 @@ export class ForgotPasswordPage implements OnInit {
 
   onSubmit() {
     if (this.formForgotPassword.invalid) {
-      //alert('Please fill in all fields');
-      this.presentAlert("Error","Por favor, rellena todos los campos")
+      this.presentAlert("Error", "Por favor, rellena todos los campos")
       this.formForgotPassword.reset();
       return;
     }
     console.log(this.formForgotPassword.value)
-    const email=JSON.stringify((this.formForgotPassword.value).email)
+    const email = JSON.stringify((this.formForgotPassword.value).email)
     this.userService.resetPassword(email.replace(/^"(.*)"$/, '$1'))
       .then(response => {
         console.log(response);
@@ -40,20 +39,18 @@ export class ForgotPasswordPage implements OnInit {
       })
       .catch(error => {
         console.log(error);
-        // Si hay un error en el inicio de sesión, muestra un mensaje de error
-        //alert('Invalid email or password. Please try again.');
-        this.presentAlert("Error","Email o contraseña inválidos. Por favor, inténtelo de nuevo.")
+        this.presentAlert("Error", "Email o contraseña inválidos. Por favor, inténtelo de nuevo.")
         this.formForgotPassword.reset();
       });
   }
-  
+
   async presentAlert(header: string, mensaje: string) {
     const alert = await this.alertController.create({
       header: header,
       message: mensaje,
       buttons: ['OK'],
     });
-  
+
     await alert.present();
   }
 
@@ -66,12 +63,12 @@ export class ForgotPasswordPage implements OnInit {
     this.router.navigate(['login']);
     this.formForgotPassword.reset();
   }
-  
+
 
   resetForm() {
     this.formForgotPassword.reset();
   }
 
 
-  
+
 }

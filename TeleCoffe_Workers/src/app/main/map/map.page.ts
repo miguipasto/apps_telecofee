@@ -3,10 +3,11 @@ import { Map, marker, tileLayer } from 'leaflet';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 
-import { MqttService, IMqttMessage } from 'ngx-mqtt';
+import { IMqttMessage } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
 import { AlertController } from '@ionic/angular';
-
+import { MqttPrototipoService } from 'src/app/services/mqtt-prototipo.service';
+import { MqttServerService } from 'src/app/services/mqtt-server.service';
 
 
 @Component({
@@ -16,10 +17,13 @@ import { AlertController } from '@ionic/angular';
 })
 export class MapPage implements OnInit, AfterViewInit {
   reponer: string[] = [];
-  mapIsVisible: boolean = false ;
+  mapIsVisible: boolean = false;
+  mqttClient: any;
 
-
-  constructor(private mqttService: MqttService, public alertController: AlertController) { }
+  constructor(
+    private mqttPrototipoService: MqttPrototipoService,
+    private mqttServerService: MqttServerService,
+    public alertController: AlertController) { }
 
   subscriptions: { [nombreMaquina: string]: Subscription } = {};
   public receiveNews = '';
@@ -30,38 +34,38 @@ export class MapPage implements OnInit, AfterViewInit {
 
   nivelesActualizar: { [nombre: string]: { [producto: string]: number } } = {
     "Telecomunicación": {
-        "agua": 0,
-        "café": 0,
-        "leche": 0,
-        "patatas": 0
+      "agua": 0,
+      "café": 0,
+      "leche": 0,
+      "patatas": 0
     },
     "Minas": {
-        "agua": 0,
-        "café": 0,
-        "leche": 0,
-        "patatas": 0
+      "agua": 0,
+      "café": 0,
+      "leche": 0,
+      "patatas": 0
     },
     "Industriales": {
-        "agua": 0,
-        "café": 0,
-        "leche": 0,
-        "patatas": 0
+      "agua": 0,
+      "café": 0,
+      "leche": 0,
+      "patatas": 0
     },
     "Biología": {
-        "agua": 0,
-        "café": 0,
-        "leche": 0,
-        "patatas": 0
+      "agua": 0,
+      "café": 0,
+      "leche": 0,
+      "patatas": 0
     },
-};
+  };
 
   ngOnInit() {
     this.subscribeToTopics();
     this.mapIsVisible = false;
   }
 
-  ngAfterViewInit(){
-        
+  ngAfterViewInit() {
+
   }
 
   async presentAlert(header: string, mensaje: string) {
@@ -70,49 +74,49 @@ export class MapPage implements OnInit, AfterViewInit {
       message: mensaje,
       buttons: ['OK'],
     });
-  
+
     await alert.present();
   }
 
-  async configurarRuta(){
+  async configurarRuta() {
 
     console.log("Configurando ruta...")
-    const map= new Map('map').setView([42.16926,-8.68377], 15.4);
+    const map = new Map('map').setView([42.16926, -8.68377], 15.4);
     tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 20,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      maxZoom: 20,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
-    
-    marker([42.16876,-8.68843]).addTo(map).bindPopup("<b>Minas</b><br>").openPopup();
-    marker([42.16785,-8.68943]).addTo(map).bindPopup("<b>Industriales</b><br>").openPopup();
-    marker([42.16719,-8.68528]).addTo(map).bindPopup("<b>Biología</b><br>").openPopup();
-    marker([42.16979,-8.68809]).addTo(map).bindPopup("<b>Teleco</b><br>").openPopup();
+
+    marker([42.16876, -8.68843]).addTo(map).bindPopup("<b>Minas</b><br>").openPopup();
+    marker([42.16785, -8.68943]).addTo(map).bindPopup("<b>Industriales</b><br>").openPopup();
+    marker([42.16719, -8.68528]).addTo(map).bindPopup("<b>Biología</b><br>").openPopup();
+    marker([42.16979, -8.68809]).addTo(map).bindPopup("<b>Teleco</b><br>").openPopup();
 
     let waypoints: any[] = [];
 
-    waypoints= await this.addCurrentLocationMarker(map,waypoints)
- 
+    waypoints = await this.addCurrentLocationMarker(map, waypoints)
+
     // Verificar si la máquina teleco tiene algún producto con valor 1
     if (Object.values(this.nivelesActualizar["Telecomunicación"]).includes(1)) {
       console.log("Teleco tiene que reponerse")
-      waypoints.push(L.latLng(42.16979,-8.68809)); // Coordenadas para Teleco
+      waypoints.push(L.latLng(42.16979, -8.68809)); // Coordenadas para Teleco
     }
 
     // Verificar si la máquina minas tiene algún producto con valor 1
     if (Object.values(this.nivelesActualizar["Minas"]).includes(1)) {
       console.log("Minas tiene que reponerse")
-      waypoints.push(L.latLng(42.16876,-8.68843)); // Coordenadas para Minas
+      waypoints.push(L.latLng(42.16876, -8.68843)); // Coordenadas para Minas
     }
     // Verificar si la máquina teleco tiene algún producto con valor 1
     if (Object.values(this.nivelesActualizar["Industriales"]).includes(1)) {
       console.log("Industriales tiene que reponerse")
-      waypoints.push(L.latLng(42.16785,-8.68943)); // Coordenadas para Teleco
+      waypoints.push(L.latLng(42.16785, -8.68943)); // Coordenadas para Teleco
     }
 
     // Verificar si la máquina minas tiene algún producto con valor 1
     if (Object.values(this.nivelesActualizar["Biología"]).includes(1)) {
       console.log("Biología tiene que reponerse")
-      waypoints.push(L.latLng(42.16719,-8.68528)); // Coordenadas para Minas
+      waypoints.push(L.latLng(42.16719, -8.68528)); // Coordenadas para Minas
     }
     console.log(waypoints)
     // Agregar la ruta solo si hay al menos dos waypoints
@@ -123,103 +127,108 @@ export class MapPage implements OnInit, AfterViewInit {
         show: true
       }).addTo(map);
     }
-  
+
 
     //alert("Se ha creado una ruta para reponer:\n" + this.reponer.join(''));
     this.presentAlert("Nueva ruta de reposición", this.reponer.join(''))
 
-}
-  
+  }
 
-subscribeToTopics() {
-  this.isConnection = true;
-  var respuestasRecibidas=0;
 
-  // Definir los nombres de las máquinas y sus respectivos tópicos
-  const maquinasYTopics = [
-    { nombre: "Telecomunicación", topic: "teleco/nivel" },
-    { nombre: "Minas", topic: "minas/nivel" },
-    { nombre: "Biología", topic: "biologia/nivel" },
-    { nombre: "Industriales", topic: "industriales/nivel" }
-  ];
+  subscribeToTopics() {
+    this.isConnection = true;
+    var respuestasRecibidas = 0;
 
-  // Suscribirse a los tópicos
-  maquinasYTopics.forEach(maquinaYTopic => {
-    const { nombre, topic } = maquinaYTopic;
+    // Definir los nombres de las máquinas y sus respectivos tópicos
+    const maquinasYTopics = [
+      { nombre: "Telecomunicación", topic: "teleco/nivel" },
+      { nombre: "Minas", topic: "minas/nivel" },
+      { nombre: "Biología", topic: "biologia/nivel" },
+      { nombre: "Industriales", topic: "industriales/nivel" }
+    ];
 
-    // Intenta desuscribirte del tópico anterior si ya estás suscrito
-    if (this.subscriptions[nombre]) {
-      this.subscriptions[nombre].unsubscribe();
-      console.log(`Desuscripto del tópico anterior de ${nombre}.`);
-    }
+    // Suscribirse a los tópicos
+    maquinasYTopics.forEach(maquinaYTopic => {
+      const { nombre, topic } = maquinaYTopic;
 
-    // Intenta suscribirte al nuevo tópico
-    this.subscriptions[nombre] = this.mqttService.observe(topic).subscribe({
-      next: (message: IMqttMessage) => {
-        this.receiveNews += message.payload.toString() + '\n';
-        this.lastLineLevels = message.payload.toString();
-        console.log(message.payload.toString());// Convertir el mensaje recibido a un objeto JavaScript
-        let data = JSON.parse(message.payload.toString());
-      
-        console.log("Actualizado")
-
-        if(data.niveles.nivel_agua_pr < 30) {
-          console.log(`${nombre} tiene que reponer agua`);
-          this.nivelesActualizar[nombre]["agua"] = 1;
-          this.reponer.push(nombre+ " - Agua \n")
-        }
-        if(data.niveles.nivel_cafe_pr < 30) {
-          console.log(`${nombre} tiene que reponer café`);
-          this.nivelesActualizar[nombre]["café"] = 1;
-          this.reponer.push(nombre+ " - Café\n")
-        }
-        if(data.niveles.nivel_leche_pr < 30) {
-          console.log(`${nombre} tiene que reponer leche`);
-          this.nivelesActualizar[nombre]["leche"] = 1;
-          this.reponer.push(nombre+ " - leche\n")
-        }
-        if(data.niveles.patatillas_u < 3) {
-          console.log(`${nombre} tiene que reponer patatas`);
-          this.nivelesActualizar[nombre]["patatas"] = 1;
-          this.reponer.push(nombre+ " - Patatillas\n")
-        }
-
-         // Incrementar el contador de respuestas recibidas
-         respuestasRecibidas++;
-
-         // Verificar si se han recibido las cuatro respuestas
-         if (respuestasRecibidas === 4) {
-            this.mapIsVisible=true;
-            // Llamar a la función para configurar la ruta
-            this.configurarRuta();
-         }
-      },
-      error: (error: any) => {
-        this.isConnection = false;
-        console.error(`Error de conexión para ${nombre}: ${error}`);
+      if (nombre === "Telecomunicación") {
+        this.mqttClient = this.mqttPrototipoService;
+      } else {
+        this.mqttClient = this.mqttServerService;
       }
+
+      // Intenta desuscribirte del tópico anterior si ya estás suscrito
+      if (this.subscriptions[nombre]) {
+        this.subscriptions[nombre].unsubscribe();
+        console.log(`Desuscripto del tópico anterior de ${nombre}.`);
+      }
+
+      // Intenta suscribirte al nuevo tópico
+      this.subscriptions[nombre] = this.mqttClient.observe(topic).subscribe({
+        next: (message: IMqttMessage) => {
+          this.receiveNews += message.payload.toString() + '\n';
+          this.lastLineLevels = message.payload.toString();
+          console.log(message.payload.toString());// Convertir el mensaje recibido a un objeto JavaScript
+          let data = JSON.parse(message.payload.toString());
+
+          console.log("Actualizado")
+
+          if (data.niveles.nivel_agua_pr < 30) {
+            console.log(`${nombre} tiene que reponer agua`);
+            this.nivelesActualizar[nombre]["agua"] = 1;
+            this.reponer.push(nombre + " - Agua \n")
+          }
+          if (data.niveles.nivel_cafe_pr < 30) {
+            console.log(`${nombre} tiene que reponer café`);
+            this.nivelesActualizar[nombre]["café"] = 1;
+            this.reponer.push(nombre + " - Café\n")
+          }
+          if (data.niveles.nivel_leche_pr < 30) {
+            console.log(`${nombre} tiene que reponer leche`);
+            this.nivelesActualizar[nombre]["leche"] = 1;
+            this.reponer.push(nombre + " - leche\n")
+          }
+          if (data.niveles.patatillas_u < 3) {
+            console.log(`${nombre} tiene que reponer patatas`);
+            this.nivelesActualizar[nombre]["patatas"] = 1;
+            this.reponer.push(nombre + " - Patatillas\n")
+          }
+
+          // Incrementar el contador de respuestas recibidas
+          respuestasRecibidas++;
+
+          // Verificar si se han recibido las cuatro respuestas
+          if (respuestasRecibidas === 4) {
+            this.mapIsVisible = true;
+            this.configurarRuta();
+          }
+        },
+        error: (error: any) => {
+          this.isConnection = false;
+          console.error(`Error de conexión para ${nombre}: ${error}`);
+        }
+      });
     });
-  });
-  
-}
-async addCurrentLocationMarker(map: any, waypoints: any[]): Promise<any[]> {
-  return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
 
-      L.marker([lat, lon])
-        .addTo(map)
-        .bindPopup('¡Estás aquí!')
-        .openPopup();
+  }
+  async addCurrentLocationMarker(map: any, waypoints: any[]): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
 
-      waypoints.push(L.latLng(lat, lon));
+        L.marker([lat, lon])
+          .addTo(map)
+          .bindPopup('¡Estás aquí!')
+          .openPopup();
 
-      resolve(waypoints); // Resolver la promesa con los waypoints actualizados
-    }, (error) => {
-      console.error('Error obteniendo la ubicación: ', error);
-      resolve(waypoints); // Resolver la promesa con los waypoints existentes si hay un error
+        waypoints.push(L.latLng(lat, lon));
+
+        resolve(waypoints); // Resolver la promesa con los waypoints actualizados
+      }, (error) => {
+        console.error('Error obteniendo la ubicación: ', error);
+        resolve(waypoints); // Resolver la promesa con los waypoints existentes si hay un error
+      });
     });
-  });
-}
+  }
 }

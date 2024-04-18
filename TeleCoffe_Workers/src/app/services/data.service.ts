@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Firestore, addDoc, collection, setDoc, doc, getDoc, updateDoc, query, getDocs } from '@angular/fire/firestore';
-import { UserService } from './user.service'; 
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
-  
+
 
   constructor(public firestore: Firestore, private userService: UserService) { }
 
   async actualizarNiveles(data: any, nombreMaquina: string) {
-    
+
     const uid = this.userService.getUserUid();
     if (!uid) {
       console.error('No hay un usuario autenticado.');
       return;
     }
-  
+
     // Obtenemos datos del user
     const datosUser: any = await this.obetenerDatosUsuario();
 
@@ -26,7 +26,7 @@ export class DataService {
 
     // Nombre del reponedor (puedes cambiarlo según sea necesario)
     const nombreReponedor = datosUser.nombre + "" + datosUser.apellidos;
-    
+
     // Modificar la variable niveles para agregar la fecha y el reponedor
     data.fecha = fechaActual;
     data.reponedor = nombreReponedor;
@@ -34,7 +34,7 @@ export class DataService {
 
     console.log(data)
 
-  
+
     // Referencia a la subcolección de niveless para el usuario actual
     const nivelessRef = collection(this.firestore, `niveles/${nombreMaquina.toLocaleLowerCase()}/historial_reposiciones`);
 
@@ -48,8 +48,8 @@ export class DataService {
       return null;
     }
   }
-  
-  
+
+
   async VerIncidencia() {
     try {
       const querySnapshot = await getDocs(collection(this.firestore, 'incidencias'));
@@ -88,5 +88,5 @@ export class DataService {
     }
   }
 
-  
+
 }

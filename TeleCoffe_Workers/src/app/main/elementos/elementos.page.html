@@ -11,21 +11,23 @@
       <div class="contenedores-content" *ngIf="selectedCategory === 'consumos'">
         <div *ngFor="let product of product[selectedCategory]" class="producto">
           <button color="transparent" (click)="showOverlay(product.name)">
-            <div class="tanque"  *ngIf="product.name !== 'Patatillas'">
+            <div class="tanque" *ngIf="product.name !== 'Patatillas'">
               <div class="contenido" [ngStyle]="{
                 'height': product.porcentaje+ '%',
                 'background-color': obtenerColorTanque(product.name)
               }">
               </div>
-              
-              <h2 id="porcentaje"[ngStyle]="{'color': obtenerColorPorcentaje(product.porcentaje)}">{{product.porcentaje}}%</h2>
+
+              <h2 id="porcentaje" [ngStyle]="{'color': obtenerColorPorcentaje(product.porcentaje)}">
+                {{product.porcentaje}}%</h2>
             </div>
             <div *ngIf="product.name !== 'Patatillas'" class="nombre">
               <div class="nombre">{{ product.name }}</div>
             </div>
             <div *ngIf="product.name === 'Patatillas'" class="nombre">
-              <h2 id="porcentaje"[ngStyle]="{'color': obtenerColorPorcentaje(product.porcentaje)}">{{product.porcentaje}}</h2>
-              <h2 id="porcentaje"[ngStyle]="{'color': obtenerColorPorcentaje(product.porcentaje)}">Unidades</h2>
+              <h2 id="porcentaje" [ngStyle]="{'color': obtenerColorPorcentaje(product.porcentaje)}">
+                {{product.porcentaje}}</h2>
+              <h2 id="porcentaje" [ngStyle]="{'color': obtenerColorPorcentaje(product.porcentaje)}">Unidades</h2>
               <div class="nombre">{{ product.name }}</div>
             </div>
           </button>
@@ -47,20 +49,21 @@
             <h2>Leche</h2>
             <hr class="linea-decorativa">
           </div>
-          <div class="title-box" (click)="selectCategory('patatillas')" [ngClass]="{'active': selectedCategory === 'patatillas'}">
+          <div class="title-box" (click)="selectCategory('patatillas')"
+            [ngClass]="{'active': selectedCategory === 'patatillas'}">
             <h2>Patatas</h2>
             <hr class="linea-decorativa">
           </div>
-          <div class="title-box" (click)="selectCategory('ventas')" [ngClass]="{'active': selectedCategory === 'ventas'}">
+          <div class="title-box" (click)="selectCategory('ventas')"
+            [ngClass]="{'active': selectedCategory === 'ventas'}">
             <h2>Ventas</h2>
             <hr class="linea-decorativa">
           </div>
         </div>
-        
+
         <div class="maquina-directo grafico-box">
-          <div  *ngIf="this.selectedCategory !=='consumos'">
-              <ngx-charts-bar-vertical 
-              [view]="graficasNiveles[this.selectedCategory].viewSize"
+          <div *ngIf="this.selectedCategory !=='consumos'">
+            <ngx-charts-bar-vertical [view]="graficasNiveles[this.selectedCategory].viewSize"
               [results]="graficasNiveles[this.selectedCategory].data"
               [xAxisLabel]="graficasNiveles[this.selectedCategory].xAxisLabel"
               [yAxisLabel]="graficasNiveles[this.selectedCategory].yAxisLabel"
@@ -72,25 +75,26 @@
               [gradient]="graficasNiveles[this.selectedCategory].gradient"
               [showGridLines]="graficasNiveles[this.selectedCategory].showGridLines"
               [yScaleMax]="graficasNiveles[this.selectedCategory].yScaleMax">
-              </ngx-charts-bar-vertical>
-              
-              <div class="selector-fecha" *ngIf="this.selectedCategory ==='ventas'">
-                <label for="fecha"></label>
-                <select id="fecha" [(ngModel)]="selectedDate" (change)="updateChart()">
-                  <option *ngFor="let fecha of fechasDisponibles">{{ fecha }}</option>
-                </select>
-              </div>
-          </div> 
+            </ngx-charts-bar-vertical>
 
-          
-        </div>  
-      </div>  
-      
-          
+            <div class="selector-fecha" *ngIf="this.selectedCategory ==='ventas'">
+              <label for="fecha"></label>
+              <select id="fecha" [(ngModel)]="selectedDate" (change)="updateChart()">
+                <option *ngFor="let fecha of fechasDisponibles">{{ fecha }}</option>
+              </select>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+
     </div>
 
     <div class="categoria-content">
-      <div class="title-box" (click)="selectCategory('consumos')" [ngClass]="{'active': selectedCategory === 'consumos'}">
+      <div class="title-box" (click)="selectCategory('consumos')"
+        [ngClass]="{'active': selectedCategory === 'consumos'}">
         <h2>Consumos</h2>
         <hr class="linea-decorativa">
       </div>
@@ -106,7 +110,8 @@
         <h2 style="color: #70442b;"><b>{{ productoSeleccionado }}</b></h2>
         <div class="selector-azucar">
           <b style="color: black">Cantidad</b>
-          <input type="number" [(ngModel)]="amountToAdd" placeholder="Cantidad a añadir" (input)="validateAmount($event)">
+          <input type="number" [(ngModel)]="amountToAdd" placeholder="Cantidad a añadir"
+            (input)="validateAmount($event)">
         </div>
         <button (click)="addBalance(productoSeleccionado)">Añadir</button>
         <button (click)="closeOverlay()">Cancelar</button>

@@ -10,13 +10,13 @@
       <div *ngFor="let product of products" class="producto">
         <div class="foto-producto">
           <button (click)="redirect_to_elementos(product.name)">
-            <img [src]="product.img" class="producto-foto"/>
+            <img [src]="product.img" class="producto-foto" />
           </button>
-                  
+
         </div>
         <div class="texto-producto">
-            <p>{{ product.name }}</p>
+          <p>{{ product.name }}</p>
         </div>
       </div>
+    </div>
   </div>
-</div>

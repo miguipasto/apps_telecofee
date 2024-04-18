@@ -9,7 +9,7 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
   background-color: #70442b;
   height: 50%;
   width: 100%;
@@ -34,7 +34,7 @@
 }
 
 .logo {
-  width: 100%; /* Asegura que el logo ocupe todo el tamaño de su contenedor */
+  width: 100%;
   height: 100%;
 }
 
@@ -56,8 +56,8 @@
   grid-template-rows: 5fr 1fr 1fr;
 }
 
-.log-in-buttons, 
-.log-in-form, 
+.log-in-buttons,
+.log-in-form,
 .log-in-button,
 .forgot-password {
   display: block;
@@ -71,20 +71,20 @@
 .btn {
   display: block;
   padding: 10px 20px;
-  background-color: #fff; 
+  background-color: #fff;
   cursor: pointer;
-  outline: none; 
+  outline: none;
   color: black;
 }
 
 // Formulario
-.log-in-form{
+.log-in-form {
   margin-top: 5%;
   justify-content: center;
   align-items: center;
 }
 
-.log-in-form h2{
+.log-in-form h2 {
   text-align: center;
   font-size: 24px;
   font-family: Nunito;
@@ -100,11 +100,11 @@
 }
 
 .log-in-button button {
-  cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
-  border: none; /* Remueve el borde del botón */
-  border-radius: 50px; /* Esquinas redondeadas para el botón */
+  cursor: pointer;
+  border: none;
+  border-radius: 50px;
   background-color: #e9dbab;
-  color: white; /* Color del texto del botón */
+  color: white;
   font-size: 20px;
   justify-content: center;
   width: 80vw;
@@ -115,19 +115,19 @@
   color: #2b2222;
 }
 
-.forgot-password{
+.forgot-password {
   display: grid;
   justify-content: center;
   align-items: center;
 }
 
 .forgot-password button {
-  cursor: pointer; /* Cambia el cursor a mano cuando se pasa sobre el botón */
-  border: none; /* Remueve el borde del botón */
-  border-radius: 50px; /* Esquinas redondeadas para el botón */
+  cursor: pointer;
+  border: none;
+  border-radius: 50px;
   border-width: 0px;
   background-color: transparent;
-  color: white; /* Color del texto del botón */
+  color: white;
   font-size: 20px;
   justify-content: center;
   width: 80vw;

@@ -17,7 +17,10 @@
   height: 91vh;
 }
 
-.ellipse-1, .ellipse-2, .ellipse-3, .ellipse-4 {
+.ellipse-1,
+.ellipse-2,
+.ellipse-3,
+.ellipse-4 {
   background-color: #70442b;
   border-radius: 50%;
   position: absolute;
@@ -29,20 +32,23 @@
   top: 15%;
   left: 76%;
 }
+
 .ellipse-3 {
   height: 40%;
   width: 50%;
   top: -15%;
   left: -15%;
 }
+
 .ellipse-4 {
   height: 30%;
   width: 30%;
   top: 86%;
   left: 72%;
 }
+
 .ellipse-2 {
-  height:32%;
+  height: 32%;
   width: 32%;
   top: 57%;
   left: -12%;
@@ -68,8 +74,8 @@
 }
 
 
-.login-button{
+.login-button {
   background: transparent;
   border-width: 0px;
-  
+
 }
