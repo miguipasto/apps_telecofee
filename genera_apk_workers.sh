@@ -26,6 +26,8 @@ npx cap add android && npm run build && npx cap copy android && npx cap sync and
 # Sync resources and build Android
 echo "Syncing resources and building Android..."
 rsync -av $RESOURCES_PATH ./android/app/src/main/res/
+cp ../Resources/TeleCoffee_Workers/build.gradle ./android/app/build.gradle
+cp ../Resources/TeleCoffee_Workers/AndroidManifest.xml ./android/app/src/main/AndroidManifest.xml
 npx cap copy android && npx cap sync android
 
 # Build using Gradle

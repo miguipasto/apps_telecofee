@@ -263,7 +263,7 @@ export class MaquinasEstadisticasComponent implements OnInit {
 
         // Asigna los datos procesados a la gráfica correspondiente
         this.graficasHistorialProducto[producto].data = datosProducto;
-        console.log(this.graficasHistorialProducto[producto].data);
+        //console.log(this.graficasHistorialProducto[producto].data);
     });
 }
 
@@ -293,6 +293,8 @@ export class MaquinasEstadisticasComponent implements OnInit {
       ventasPorProducto[producto] += 1;
 
     });
+
+    console.log(compras)
 
     //Actualizamos los datos
     this.ventasDiarias = ventas;

@@ -78,47 +78,91 @@ export class MapPage implements OnInit, AfterViewInit {
     await alert.present();
   }
 
-  async configurarRuta() {
+  // async configurarRuta() {
 
-    console.log("Configurando ruta...")
+  //   console.log("Configurando ruta...")
+  //   const map = new Map('map').setView([42.16926, -8.68377], 15.4);
+  //   tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  //     maxZoom: 20,
+  //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  //   }).addTo(map);
+
+  //   marker([42.16876, -8.68843]).addTo(map).bindPopup("<b>Minas</b><br>").openPopup();
+  //   marker([42.16785, -8.68943]).addTo(map).bindPopup("<b>Industriales</b><br>").openPopup();
+  //   marker([42.16719, -8.68528]).addTo(map).bindPopup("<b>Biología</b><br>").openPopup();
+  //   marker([42.16979, -8.68809]).addTo(map).bindPopup("<b>Teleco</b><br>").openPopup();
+
+  //   let waypoints: any[] = [];
+
+  //   waypoints = await this.addCurrentLocationMarker(map, waypoints)
+
+  //   // Verificar si la máquina teleco tiene algún producto con valor 1
+  //   if (Object.values(this.nivelesActualizar["Telecomunicación"]).includes(1)) {
+  //     console.log("Teleco tiene que reponerse")
+  //     waypoints.push(L.latLng(42.16979, -8.68809)); // Coordenadas para Teleco
+  //   }
+
+  //   // Verificar si la máquina minas tiene algún producto con valor 1
+  //   if (Object.values(this.nivelesActualizar["Minas"]).includes(1)) {
+  //     console.log("Minas tiene que reponerse")
+  //     waypoints.push(L.latLng(42.16876, -8.68843)); // Coordenadas para Minas
+  //   }
+  //   // Verificar si la máquina teleco tiene algún producto con valor 1
+  //   if (Object.values(this.nivelesActualizar["Industriales"]).includes(1)) {
+  //     console.log("Industriales tiene que reponerse")
+  //     waypoints.push(L.latLng(42.16785, -8.68943)); // Coordenadas para Teleco
+  //   }
+
+  //   // Verificar si la máquina minas tiene algún producto con valor 1
+  //   if (Object.values(this.nivelesActualizar["Biología"]).includes(1)) {
+  //     console.log("Biología tiene que reponerse")
+  //     waypoints.push(L.latLng(42.16719, -8.68528)); // Coordenadas para Minas
+  //   }
+  //   console.log(waypoints)
+  //   // Agregar la ruta solo si hay al menos dos waypoints
+  //   if (waypoints.length >= 2) {
+  //     L.Routing.control({
+  //       waypoints: waypoints,
+  //       routeWhileDragging: true,
+  //       show: true
+  //     }).addTo(map);
+  //   }
+
+
+  //   alert("Se ha creado una ruta para reponer:\n" + this.reponer.join(''));
+  //   //this.presentAlert("Nueva ruta de reposición", this.reponer.join('\n'))
+  //   this.reponer = []
+
+  // }
+
+  async configurarRuta() {
+    console.log("Configurando ruta...");
     const map = new Map('map').setView([42.16926, -8.68377], 15.4);
     tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 20,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
-
-    marker([42.16876, -8.68843]).addTo(map).bindPopup("<b>Minas</b><br>").openPopup();
-    marker([42.16785, -8.68943]).addTo(map).bindPopup("<b>Industriales</b><br>").openPopup();
-    marker([42.16719, -8.68528]).addTo(map).bindPopup("<b>Biología</b><br>").openPopup();
-    marker([42.16979, -8.68809]).addTo(map).bindPopup("<b>Teleco</b><br>").openPopup();
-
+  
     let waypoints: any[] = [];
-
-    waypoints = await this.addCurrentLocationMarker(map, waypoints)
-
-    // Verificar si la máquina teleco tiene algún producto con valor 1
-    if (Object.values(this.nivelesActualizar["Telecomunicación"]).includes(1)) {
-      console.log("Teleco tiene que reponerse")
-      waypoints.push(L.latLng(42.16979, -8.68809)); // Coordenadas para Teleco
-    }
-
-    // Verificar si la máquina minas tiene algún producto con valor 1
-    if (Object.values(this.nivelesActualizar["Minas"]).includes(1)) {
-      console.log("Minas tiene que reponerse")
-      waypoints.push(L.latLng(42.16876, -8.68843)); // Coordenadas para Minas
-    }
-    // Verificar si la máquina teleco tiene algún producto con valor 1
-    if (Object.values(this.nivelesActualizar["Industriales"]).includes(1)) {
-      console.log("Industriales tiene que reponerse")
-      waypoints.push(L.latLng(42.16785, -8.68943)); // Coordenadas para Teleco
-    }
-
-    // Verificar si la máquina minas tiene algún producto con valor 1
-    if (Object.values(this.nivelesActualizar["Biología"]).includes(1)) {
-      console.log("Biología tiene que reponerse")
-      waypoints.push(L.latLng(42.16719, -8.68528)); // Coordenadas para Minas
-    }
-    console.log(waypoints)
+    waypoints = await this.addCurrentLocationMarker(map, waypoints);
+  
+    const maquinas = [
+      { nombre: "Telecomunicación", coords: [42.16979, -8.68809] as [number, number] },
+      { nombre: "Minas", coords: [42.16876, -8.68843] as [number, number] },
+      { nombre: "Industriales", coords: [42.16785, -8.68943] as [number, number] },
+      { nombre: "Biología", coords: [42.16719, -8.68528] as [number, number] },
+    ];
+    
+    maquinas.forEach(maquina => {
+      if (Object.values(this.nivelesActualizar[maquina.nombre]).includes(1)) {
+        console.log(`${maquina.nombre} tiene que reponerse`);
+        marker(maquina.coords).addTo(map).bindPopup(`<b>${maquina.nombre}</b><br>`).openPopup();
+        waypoints.push(L.latLng(...maquina.coords));
+      }
+    });
+    
+  
+    console.log(waypoints);
     // Agregar la ruta solo si hay al menos dos waypoints
     if (waypoints.length >= 2) {
       L.Routing.control({
@@ -127,13 +171,12 @@ export class MapPage implements OnInit, AfterViewInit {
         show: true
       }).addTo(map);
     }
-
-
-    //alert("Se ha creado una ruta para reponer:\n" + this.reponer.join(''));
-    this.presentAlert("Nueva ruta de reposición", this.reponer.join(''))
-
+  
+    alert("Se ha creado una ruta para reponer:\n" + this.reponer.join(''));
+    //this.presentAlert("Nueva ruta de reposición", this.reponer.join('\n'))
+    this.reponer = [];
   }
-
+  
 
   subscribeToTopics() {
     this.isConnection = true;
