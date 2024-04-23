@@ -9,6 +9,7 @@ const int sensor1 = 6;
 const int sensor2 = 7;
 const int fototransistor = 2;
 double distancia1, distancia2;
+boolean fototransistor_activo = false;
 
 const int HX711_dout = 4;  // MCU > HX711 dout pin
 const int HX711_sck = 5;   // MCU > HX711 sck pin
@@ -26,7 +27,7 @@ void setup() {
   Serial.println("Starting...");
   
   pinMode(fototransistor, INPUT);
-  attachInterrupt(digitalPinToInterrupt(fototransistor), fototransistor_activo, RISING);
+  attachInterrupt(digitalPinToInterrupt(fototransistor), activo, RISING);
   
   LoadCell.begin();
   //calibracion = 400,01
@@ -84,9 +85,18 @@ void measureAndReport() {
   Serial.print(F(", \"sensor_2_cm\": "));
   Serial.print(distancia2);
   Serial.println(F(" }"));
+
+  if (fototransistor_activo == true){
+    fototransistor_activo = false;
+    Serial.println("Fototransistor: 1");
+    delay(200);
+
+  }
 }
 
 
-void fototransistor_activo() {
-  Serial.println("Fototransistor: 1");
+void activo() {
+  //Serial.println("Fototransistor: 1");
+
+  fototransistor_activo = true;
 }
