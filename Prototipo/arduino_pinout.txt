@@ -1,0 +1,7 @@
+3,3V => VCC LED infrarrojo
+5 V => VCC protoboard (fila exterior)
+GND => GND protoboard (fila interior)
+D2 => LED verde
+D4 => DT (celda carga)
+D5 => SCK (celda carga)
+D6, D7 => Data (ultrasonicos)

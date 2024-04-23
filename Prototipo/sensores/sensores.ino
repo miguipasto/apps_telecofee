@@ -29,11 +29,12 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(fototransistor), fototransistor_activo, RISING);
   
   LoadCell.begin();
+  //calibracion = 400,01
   float calibrationValue = 696.0; // Carga el valor de calibración según sea necesario
   #if defined(ESP8266) || defined(ESP32)
   EEPROM.begin(512);
-  EEPROM.get(calVal_eepromAddress, calibrationValue);
   #endif
+  EEPROM.get(calVal_eepromAddress, calibrationValue);
   
   LoadCell.start(2000, true);  // Tiempo de estabilización 2000ms, tara al inicio
   if (LoadCell.getTareTimeoutFlag()) {

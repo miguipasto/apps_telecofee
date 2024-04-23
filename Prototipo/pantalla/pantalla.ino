@@ -108,10 +108,10 @@ void showCodeScreen(String code) {
   screen.println("Introduzca el");
 
   // Mostramos Intro, parte 2
-  screen.setCursor(20, 90);
+  screen.setCursor(50, 90);
   screen.setTextColor(COLOR_RGB565_WHITE);
   screen.setTextSize(3);
-  screen.println("siguiente codigo");
+  screen.println("siguiente PIN");
 
   // Mostramos Intro, parte 3
   screen.setCursor(75, 120);
@@ -120,7 +120,7 @@ void showCodeScreen(String code) {
   screen.println("en la app:");
   
   // Mostramos Código
-  screen.setCursor(130, 165);
+  screen.setCursor(115, 165);
   screen.setTextColor(COLOR_RGB565_WHITE);
   screen.setTextSize(3);
   screen.println(code);
@@ -136,10 +136,10 @@ void showWelcomeMessage() {
   screen.println("");
 
   // Mostramos Intro, parte 1
-  screen.setCursor(30, 60);
+  screen.setCursor(65, 60);
   screen.setTextColor(COLOR_RGB565_WHITE);
   screen.setTextSize(3);
-  screen.println("¡ BIENVENIDO !");
+  screen.println("BIENVENIDO");
 
   // Mostramos Intro, parte 2
   screen.setCursor(40, 120);
@@ -163,10 +163,10 @@ void showProcessing() {
   screen.println("");
 
   // Mostramos Intro, parte 1
-  screen.setCursor(30, 60);
+  screen.setCursor(60, 60);
   screen.setTextColor(COLOR_RGB565_WHITE);
   screen.setTextSize(3);
-  screen.println("Codigo correcto");
+  screen.println("PIN correcto");
 
   // Mostramos Intro, parte 2
   screen.setCursor(40, 120);
@@ -193,10 +193,10 @@ void showTake() {
   screen.setCursor(30, 60);
   screen.setTextColor(COLOR_RGB565_WHITE);
   screen.setTextSize(3);
-  screen.println("¡ Gracias !");
+  screen.println("Muchas gracias");
 
   // Mostramos Intro, parte 2
-  screen.setCursor(60, 120);
+  screen.setCursor(70, 120);
   screen.setTextColor(COLOR_RGB565_WHITE);
   screen.setTextSize(3);
   screen.println("Recoja su");
@@ -215,47 +215,47 @@ void showInitialScreen() {
   screen.setTextSize(3); 
   screen.print("");   
 
-  screen.setCursor(80, 300);
+  screen.setCursor(65, 300);
   screen.setTextColor(COLOR_RGB565_WHITE);
 
   screen.setTextSize(3);
   screen.print("TeleCoffee "); 
 
   //ASA
-  screen.drawCircle(180,410,13,COLOR_RGB565_WHITE);
-  screen.fillCircle(180,410,13,COLOR_RGB565_WHITE);
-  screen.drawCircle(180,410,8,COLOR_RGB565_BLACK);
-  screen.fillCircle(180,410,8,COLOR_RGB565_BLACK);    
+  screen.drawCircle(165,410,13,COLOR_RGB565_WHITE);
+  screen.fillCircle(165,410,13,COLOR_RGB565_WHITE);
+  screen.drawCircle(165,410,8,COLOR_RGB565_BLACK);
+  screen.fillCircle(165,410,8,COLOR_RGB565_BLACK);    
 
   //PLATO + TAZA
-  screen.drawRect(125,430,70,5,COLOR_RGB565_LGRAY);
-  screen.fillRect(125,430,70,5,COLOR_RGB565_LGRAY);
-  screen.drawRoundRect(130,435,60,3,3,COLOR_RGB565_LGRAY);
-  screen.fillRoundRect(130,435,60,3,3,COLOR_RGB565_LGRAY);   
-  screen.drawRect(140,390,40,40,COLOR_RGB565_WHITE);
-  screen.fillRect(140,390,40,40,COLOR_RGB565_WHITE);
+  screen.drawRect(110,430,70,5,COLOR_RGB565_LGRAY);
+  screen.fillRect(110,430,70,5,COLOR_RGB565_LGRAY);
+  screen.drawRoundRect(115,435,60,3,3,COLOR_RGB565_LGRAY);
+  screen.fillRoundRect(115,435,60,3,3,COLOR_RGB565_LGRAY);   
+  screen.drawRect(125,390,40,40,COLOR_RGB565_WHITE);
+  screen.fillRect(125,390,40,40,COLOR_RGB565_WHITE);
 
   //HUMO
+  screen.drawRoundRect(130,365,5,15,3,COLOR_RGB565_LGRAY);
+  screen.fillRoundRect(130,365,5,15,3,COLOR_RGB565_LGRAY); 
+  screen.drawCircle(126,368,5,COLOR_RGB565_BLACK);
+  screen.fillCircle(126,368,5,COLOR_RGB565_BLACK);  
+  screen.drawCircle(138,374,5,COLOR_RGB565_BLACK);
+  screen.fillCircle(138,374,5,COLOR_RGB565_BLACK);   
+
   screen.drawRoundRect(145,365,5,15,3,COLOR_RGB565_LGRAY);
   screen.fillRoundRect(145,365,5,15,3,COLOR_RGB565_LGRAY); 
   screen.drawCircle(141,368,5,COLOR_RGB565_BLACK);
   screen.fillCircle(141,368,5,COLOR_RGB565_BLACK);  
   screen.drawCircle(153,374,5,COLOR_RGB565_BLACK);
-  screen.fillCircle(153,374,5,COLOR_RGB565_BLACK);   
+  screen.fillCircle(153,374,5,COLOR_RGB565_BLACK);
 
-  screen.drawRoundRect(160,365,5,15,3,COLOR_RGB565_LGRAY);
-  screen.fillRoundRect(160,365,5,15,3,COLOR_RGB565_LGRAY); 
-  screen.drawCircle(156,368,5,COLOR_RGB565_BLACK);
-  screen.fillCircle(156,368,5,COLOR_RGB565_BLACK);  
-  screen.drawCircle(168,374,5,COLOR_RGB565_BLACK);
-  screen.fillCircle(168,374,5,COLOR_RGB565_BLACK);
-
-  screen.drawRoundRect(173,365,5,15,3,COLOR_RGB565_LGRAY);
-  screen.fillRoundRect(173,365,5,15,3,COLOR_RGB565_LGRAY); 
-  screen.drawCircle(169,368,5,COLOR_RGB565_BLACK);
-  screen.fillCircle(169,368,5,COLOR_RGB565_BLACK);  
-  screen.drawCircle(181,374,5,COLOR_RGB565_BLACK);
-  screen.fillCircle(181,374,5,COLOR_RGB565_BLACK); 
+  screen.drawRoundRect(158,365,5,15,3,COLOR_RGB565_LGRAY);
+  screen.fillRoundRect(158,365,5,15,3,COLOR_RGB565_LGRAY); 
+  screen.drawCircle(154,368,5,COLOR_RGB565_BLACK);
+  screen.fillCircle(154,368,5,COLOR_RGB565_BLACK);  
+  screen.drawCircle(166,374,5,COLOR_RGB565_BLACK);
+  screen.fillCircle(166,374,5,COLOR_RGB565_BLACK); 
 
   //TC
   screen.setCursor(0, 400);
@@ -263,7 +263,7 @@ void showInitialScreen() {
   screen.setTextSize(2); 
   screen.print("");   
 
-  screen.setCursor(149, 405);
+  screen.setCursor(134, 405);
   screen.setTextColor(COLOR_RGB565_BLACK);
   screen.setTextSize(2); 
   screen.print("TC");  
