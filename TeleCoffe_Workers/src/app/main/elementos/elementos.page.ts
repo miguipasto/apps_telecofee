@@ -73,6 +73,8 @@ export class ElementosPage implements OnInit, AfterViewInit {
     "Leche": 0.50
   };
 
+  maximo = { "Café": 250, "Agua": 1500, "Leche": 1500, "Patatillas": 15, "cafe": 250}
+
 
   nombresMaquinas: { [key: string]: string } = {
     Telecomunicación: "teleco",
@@ -130,6 +132,7 @@ export class ElementosPage implements OnInit, AfterViewInit {
         this.initializeDates();
         this.initializeSelectedDate();
         this.updateChart();
+        this.setTimeoutForLoading(10000); //MS
       }
     });
 
@@ -385,45 +388,45 @@ export class ElementosPage implements OnInit, AfterViewInit {
     let data = JSON.parse(this.lastLineLevels);
     if (this.amountToAdd != null) {
       if (nombre == 'Patatillas') {
-        if (this.amountToAdd > 10) {
-            this.product["consumos"][3].porcentaje = 10;
+        if (this.amountToAdd > this.maximo[nombre]) {
+            this.product["consumos"][3].porcentaje = 100;
+            data.niveles.patatillas_u = this.maximo[nombre];
             data.niveles.patatillas_pr = 100;
-            data.niveles.patatillas_u = 10;
         } else {
-            this.product["consumos"][3].porcentaje = Math.floor((this.amountToAdd * 100) / 10);
-            data.niveles.patatillas_pr = Math.floor((this.amountToAdd * 100) / 10);
+            this.product["consumos"][3].porcentaje = this.amountToAdd; // Sólo para las patatillas
+            data.niveles.patatillas_pr = Math.floor((this.amountToAdd * 100) / this.maximo[nombre]);
             data.niveles.patatillas_u = this.amountToAdd;
         }
     } else if (nombre == 'Café') {
-        if (this.amountToAdd > 100) {
+        if (this.amountToAdd > this.maximo[nombre]) {
             this.product["consumos"][1].porcentaje = 100;
-            data.niveles.nivel_cafe_gr = 100;
+            data.niveles.nivel_cafe_gr = this.maximo[nombre];
             data.niveles.nivel_cafe_pr = 100;
         } else {
-            this.product["consumos"][1].porcentaje = Math.floor((this.amountToAdd * 100) / 100);
-            data.niveles.nivel_cafe_pr = Math.floor((this.amountToAdd * 100) / 100);
+            this.product["consumos"][1].porcentaje = Math.floor((this.amountToAdd * 100) / this.maximo[nombre]);
+            data.niveles.nivel_cafe_pr = Math.floor((this.amountToAdd * 100) / this.maximo[nombre]);
             data.niveles.nivel_cafe_gr = this.amountToAdd;
         }
     } else {
         if (nombre == 'Agua') {
-            if (this.amountToAdd > 200) {
+            if (this.amountToAdd > this.maximo[nombre]) {
                 this.product["consumos"][0].porcentaje = 100;
-                data.niveles.nivel_agua_ml = 200;
+                data.niveles.nivel_agua_ml = this.maximo[nombre];
                 data.niveles.nivel_agua_pr = 100;
             } else {
-                this.product["consumos"][0].porcentaje = Math.floor((this.amountToAdd * 100) / 200);
-                data.niveles.nivel_agua_pr = Math.floor((this.amountToAdd * 100) / 200);
+                this.product["consumos"][0].porcentaje = Math.floor((this.amountToAdd * 100) / this.maximo[nombre]);
+                data.niveles.nivel_agua_pr = Math.floor((this.amountToAdd * 100) / this.maximo[nombre]);
                 data.niveles.nivel_agua_ml = this.amountToAdd;
             }
         }
         if (nombre == 'Leche') {
-            if (this.amountToAdd > 200) {
+            if (this.amountToAdd > this.maximo[nombre]) {
                 this.product["consumos"][2].porcentaje = 100;
-                data.niveles.nivel_leche_ml = 200;
+                data.niveles.nivel_leche_ml = this.maximo[nombre];
                 data.niveles.nivel_leche_pr = 100;
             } else {
-                this.product["consumos"][2].porcentaje = Math.floor((this.amountToAdd * 100) / 200);
-                data.niveles.nivel_leche_pr = Math.floor((this.amountToAdd * 100) / 200);
+                this.product["consumos"][2].porcentaje = Math.floor((this.amountToAdd * 100) / this.maximo[nombre]);
+                data.niveles.nivel_leche_pr = Math.floor((this.amountToAdd * 100) / this.maximo[nombre]);
                 data.niveles.nivel_leche_ml = this.amountToAdd;
             }
         }
@@ -455,24 +458,24 @@ export class ElementosPage implements OnInit, AfterViewInit {
     if (this.productoSeleccionado == "Patatillas") {
       if (isNaN(value) || value < 0) {
         this.amountToAdd = 0;
-      } else if (value > 10) {
-        this.amountToAdd = 10;
+      } else if (value > this.maximo[this.productoSeleccionado]) {
+        this.amountToAdd = this.maximo[this.productoSeleccionado];
       } else {
-        this.amountToAdd = Math.floor(value);
+        this.amountToAdd = value;
       }
     } else if (this.productoSeleccionado == "cafe") {
       if (isNaN(value) || value < 0) {
         this.amountToAdd = 0;
-      } else if (value > 100) {
-        this.amountToAdd = 100;
+      } else if (value > this.maximo[this.productoSeleccionado]) {
+        this.amountToAdd = this.maximo[this.productoSeleccionado];
       } else {
         this.amountToAdd = value;
       }
     } else {
       if (isNaN(value) || value < 0) {
         this.amountToAdd = 0;
-      } else if (value > 200) {
-        this.amountToAdd = 200;
+      } else if (value > this.maximo['Agua']) {
+        this.amountToAdd = this.maximo['Agua'];
       } else {
         this.amountToAdd = value;
       }
@@ -616,6 +619,17 @@ export class ElementosPage implements OnInit, AfterViewInit {
     const mesStr = (mes < 10) ? '0' + mes : mes;
 
     return diaStr + '-' + mesStr + '-' + año;
+  }
+
+  private setTimeoutForLoading(time: any) {
+    const timeoutDuration = time;
+
+    setTimeout(() => {
+      if (this.isLoading) {
+        this.isLoading = false;
+        this.presentAlert('Timeout', 'No se ha podido conectar con la máquina solicitada, por favor inténtelo de nuevo.');
+      }
+    }, timeoutDuration);
   }
 
 }
