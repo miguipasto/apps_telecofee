@@ -27,7 +27,7 @@ maquinas = ["minas", "industriales", "teleco", "biologia"]
 niveles = [{'maquina': maquina, "fecha": "", "niveles": []} for maquina in maquinas]
 compras = [{'maquina': maquina, "compras": []} for maquina in maquinas]
 compras_ids = set()
-niveles_maximos = {"nivel_cafe_gr": 250, "nivel_leche_ml": 15000, "nivel_agua_ml": 15000, "patatillas_u": 15}
+niveles_maximos = {"nivel_cafe_gr": 250, "nivel_leche_ml": 1500, "nivel_agua_ml": 1500, "patatillas_u": 15}
 
 # Estados de la comunicación
 ESTADO_ESPERANDO_COMPRA = 0
