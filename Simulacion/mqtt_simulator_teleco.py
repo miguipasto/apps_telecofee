@@ -225,7 +225,7 @@ def main():
         print("\n### PUBLICANDO DATOS EN MQTT ###\n")
         while True:
             actualizar_publicacion_mqtt()
-            time.sleep(5) 
+            time.sleep(3)
     except KeyboardInterrupt:
         print("Deteniendo el sistema por solicitud del usuario.")
         cliente.loop_stop()
