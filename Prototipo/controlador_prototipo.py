@@ -6,8 +6,8 @@ import threading
 import paho.mqtt.client as mqtt
 
 # Configuraciones de hardware
-arduino_sensores = serial.Serial(port='/dev/ttyACM1', baudrate=57600, timeout=1)
-arduino_pantalla = serial.Serial(port='/dev/ttyACM0', baudrate=115200, timeout=1)
+arduino_sensores = serial.Serial(port='/dev/ttyACM0', baudrate=57600, timeout=1)
+arduino_pantalla = serial.Serial(port='/dev/ttyACM1', baudrate=115200, timeout=1)
 
 # Configuraciones de los niveles de productos
 niveles_maximos = {
@@ -47,16 +47,33 @@ MENSAJE_SUCCESS_COMPRA = "SUCCESS: Compra realizada correctamente"
 MENSAJE_ERROR_CODIGO = "ERROR: Código incorrecto"
 CODIGO_MASTER = "3333"
 
-def convert_cm_to_ml(distance_measured, width=13.5, length=24.5, height=16.5):
-    liquid_height = height - distance_measured
-    return round((liquid_height * width * length), 2)
+def convert_cm_to_ml(distance_measured, width=12, length=17.5, height=7.14):
+    distancia_ajuste = 4.81
+    liquid_height = (height - distance_measured) + distancia_ajuste
+    nivel_ml = round((liquid_height * width * length), 2)
+    print("Nivel calculado en ml:", nivel_ml)
+
+    if nivel_ml >= 1500:
+        nivel_ml = 1500
+        print("Nivel ajustado a 1500 ml debido a la capacidad máxima")
+
+    if nivel_ml < 0:
+        nivel_ml = 0
+        print("Nivel ajustado a 0 ml debido a la capacidad máxima")
+
+    return nivel_ml
+
 
 def update_levels(data_dict):
     for key, sensor_key in zip(["nivel_cafe_gr", "nivel_leche_ml", "nivel_agua_ml"], ["peso_gr", "sensor_1_cm", "sensor_2_cm"]):
-        if key.endswith("_ml"):
+        if key == "nivel_leche_ml" or key == "nivel_agua_ml":
             niveles["niveles"][key] = convert_cm_to_ml(data_dict[sensor_key])
         else:
             niveles["niveles"][key] = data_dict[sensor_key]
+
+        if key == "nivel_cafe_gr" and niveles["niveles"][key] < 0:
+            niveles["niveles"][key] = 0
+
         niveles["niveles"][key[:-3] + "_pr"] = round((niveles["niveles"][key] / niveles_maximos[key]) * 100, 2)
     niveles["niveles"]["patatillas_pr"] = round((niveles["niveles"]["patatillas_u"] / niveles_maximos["patatillas_u"]) * 100, 2)
 
@@ -106,6 +123,7 @@ def setup_mqtt_client():
 def on_connect(client, userdata, flags, rc, properties=None):
     print("Conectado al broker MQTT exitosamente!")
     client.subscribe('teleco/compra')
+    client.subscribe('reposicion')
 
 def on_disconnect(client, userdata, rc=None, properties=None):
     print("Desconexión del broker MQTT completada.")
@@ -127,11 +145,16 @@ def gestionar_compra(mensaje):
             send_to_arduino('3,')
             cliente.publish('teleco/compra', MENSAJE_SUCCESS_COMPRA)
             estado_maquina = 0
+            time.sleep(5)
             send_to_arduino('4,')
             time.sleep(5)
             send_to_arduino('2,')
         else:
             cliente.publish('teleco/compra', MENSAJE_ERROR_CODIGO)
+            send_to_arduino('2,')
+    elif mensaje.startswith('teleco'):
+        nivel_patatillas = mensaje.split(':')[1]
+        niveles["niveles"]["patatillas_u"] = int(nivel_patatillas)
 
 def timeout():
     global estado_maquina
@@ -141,6 +164,7 @@ def timeout():
 
 if __name__ == "__main__":
     setup_mqtt_client()
+    time.sleep(2)
     try:
         send_to_arduino('2,')
         read_arduino_sensores()
