@@ -48,6 +48,7 @@ MENSAJE_ERROR_CODIGO = "ERROR: Código incorrecto"
 CODIGO_MASTER = "3333"
 
 def convert_cm_to_ml(distance_measured, width=12, length=17.5, height=7.14):
+    print(distance_measured)
     distancia_ajuste = 4.81
     liquid_height = (height - distance_measured) + distancia_ajuste
     nivel_ml = round((liquid_height * width * length), 2)
