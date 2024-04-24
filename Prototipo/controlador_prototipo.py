@@ -78,8 +78,9 @@ def update_levels(data_dict):
     niveles["niveles"]["patatillas_pr"] = round((niveles["niveles"]["patatillas_u"] / niveles_maximos["patatillas_u"]) * 100, 2)
 
 def product_ack():
-    if niveles["niveles"]["patatillas_u"] > 0:
-        niveles["niveles"]["patatillas_u"] -= 1
+    if estado_maquina == 1:
+        if niveles["niveles"]["patatillas_u"] > 0:
+            niveles["niveles"]["patatillas_u"] -= 1
 
 def send_levels():
     json_data = json.dumps(niveles)
