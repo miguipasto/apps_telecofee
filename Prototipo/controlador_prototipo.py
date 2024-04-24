@@ -50,9 +50,12 @@ CODIGO_MASTER = "3333"
 def convert_cm_to_ml(distance_measured, width=12, length=17.5, height=7.14):
     print(distance_measured)
     distancia_ajuste = 4.81
-    liquid_height = (height - distance_measured) + distancia_ajuste
-    nivel_ml = round((liquid_height * width * length), 2)
-    print("Nivel calculado en ml:", nivel_ml)
+    liquid_height = 0
+
+    if (distance_measured > 0):
+        liquid_height = (height - distance_measured) + distancia_ajuste
+        nivel_ml = round((liquid_height * width * length), 2)
+        print("Nivel calculado en ml:", nivel_ml)
 
     if nivel_ml >= 1500:
         nivel_ml = 1500
