@@ -11,7 +11,7 @@ arduino_pantalla = serial.Serial(port='/dev/ttyACM1', baudrate=115200, timeout=1
 
 # Configuraciones de los niveles de productos
 niveles_maximos = {
-    "nivel_cafe_gr": 250,
+    "nivel_cafe_gr": 150,
     "nivel_leche_ml": 1500,
     "nivel_agua_ml": 1500,
     "patatillas_u": 15

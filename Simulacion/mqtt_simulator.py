@@ -27,7 +27,7 @@ maquinas = ["minas", "industriales", "biologia"]
 niveles = [{'maquina': maquina, "fecha": "", "niveles": []} for maquina in maquinas]
 compras = [{'maquina': maquina, "compras": []} for maquina in maquinas]
 compras_ids = set()
-niveles_maximos = {"nivel_cafe_gr": 250, "nivel_leche_ml": 1500, "nivel_agua_ml": 1500, "patatillas_u": 15}
+niveles_maximos = {"nivel_cafe_gr": 150, "nivel_leche_ml": 1500, "nivel_agua_ml": 1500, "patatillas_u": 15}
 
 # Estados de la comunicación
 ESTADO_ESPERANDO_COMPRA = 0
@@ -149,13 +149,13 @@ def actualizar_nivel(compra_data):
 def obtener_nuevo_nivel(producto, nivel_actual):
     # Esta función actualiza los niveles basándose en el producto comprado
     if producto == 'Café con leche':
-        nivel_actual['nivel_leche_ml'] = nivel_actual.get('nivel_leche_ml') - 10
+        nivel_actual['nivel_leche_ml'] = nivel_actual.get('nivel_leche_ml') - 100
         nivel_actual['nivel_leche_pr'] = round((nivel_actual.get('nivel_leche_ml')*100) / niveles_maximos.get('nivel_leche_ml'), 2)
 
         nivel_actual['nivel_cafe_gr'] = nivel_actual.get('nivel_cafe_gr') - 5
         nivel_actual['nivel_cafe_pr'] = round((nivel_actual.get('nivel_cafe_gr')*100) / niveles_maximos.get('nivel_cafe_gr'), 2)
     elif producto == 'Café americano':
-        nivel_actual['nivel_agua_ml'] = nivel_actual.get('nivel_agua_ml') - 10
+        nivel_actual['nivel_agua_ml'] = nivel_actual.get('nivel_agua_ml') - 100
         nivel_actual['nivel_agua_pr'] = round((nivel_actual.get('nivel_agua_ml')*100) / niveles_maximos.get('nivel_agua_ml'), 2)
 
         nivel_actual['nivel_cafe_gr'] = nivel_actual.get('nivel_cafe_gr') - 5
