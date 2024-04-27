@@ -194,7 +194,7 @@ export class MaquinasEstadisticasComponent implements OnInit {
         this.graficaNivelDirecto.data = newData;
         
         // // Recalculamos las compras
-        // this.obtenerCompras("","");
+        this.obtenerCompras("","");
       }
     } catch (error) {
       console.error('Error al procesar el mensaje:', error);

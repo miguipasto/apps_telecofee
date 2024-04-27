@@ -157,13 +157,13 @@ export class HomeComponent implements OnInit{
 
   adjustGraphSize() {
     const width = this.maquinasNivelStyle.nativeElement.offsetWidth - 50;
-    const height = this.maquinasNivelStyle.nativeElement.offsetHeight - 100;
+    const height = this.maquinasNivelStyle.nativeElement.offsetHeight - 90;
     this.viewSizeNivel = [width, height];
     this.inicializarGraficasNiveles();
     this.mostrarGraficasNivel = true;
 
     const widthVentas = this.ventasStyle.nativeElement.offsetWidth - 60;
-    const heighInferior = this.ventasStyle.nativeElement.offsetHeight - 80;
+    const heighInferior = this.ventasStyle.nativeElement.offsetHeight - 70;
     this.graficaVentas.viewSize = [widthVentas,heighInferior];
     this.mostrarGraficaVentas = true;    
 
