@@ -105,7 +105,7 @@ def on_disconnect(cliente, userdata, rc=None, properties=None):
     logging.info("Desconexión del broker MQTT completada.")
 
 def on_publish(cliente, userdata, mid, rc=None, properties=None):
-    logging.info(" ")
+    logging.info("")
 
 def on_message(cliente, userdata, message):
     mensaje = message.payload.decode()
@@ -115,7 +115,7 @@ def on_message(cliente, userdata, message):
     if topico.endswith("compra"):
         gestionar_compra(mensaje,topico)
     elif topico == "reposicion":
-        logging.info("\n### NUEVA REPOSICION ###\n")
+        logging.info("NUEVA REPOSICION")
         time.sleep(2)
         obtener_historial_reposiciones(db_workers,mensaje)
 
