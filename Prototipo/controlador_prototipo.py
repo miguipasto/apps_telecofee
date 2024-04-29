@@ -48,7 +48,6 @@ MENSAJE_ERROR_CODIGO = "ERROR: Código incorrecto"
 CODIGO_MASTER = "3333"
 
 def convert_cm_to_ml(distance_measured, width=12, length=17.5, height=7.14):
-    print(distance_measured)
     distancia_ajuste = 4.81
     nivel_ml = 0
 
@@ -82,9 +81,8 @@ def update_levels(data_dict):
     niveles["niveles"]["patatillas_pr"] = round((niveles["niveles"]["patatillas_u"] / niveles_maximos["patatillas_u"]) * 100, 2)
 
 def product_ack():
-    if estado_maquina == 1:
-        if niveles["niveles"]["patatillas_u"] > 0:
-            niveles["niveles"]["patatillas_u"] -= 1
+    if niveles["niveles"]["patatillas_u"] > 0:
+        niveles["niveles"]["patatillas_u"] -= 1
 
 def send_levels():
     json_data = json.dumps(niveles)
