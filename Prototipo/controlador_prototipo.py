@@ -4,6 +4,13 @@ import json
 import random
 import threading
 import paho.mqtt.client as mqtt
+import logging
+
+# lOGS
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename='controlador_prototipo.log',
+                    filemode='w')
 
 # Configuraciones de hardware
 arduino_sensores = serial.Serial(port='/dev/ttyACM0', baudrate=57600, timeout=1)
@@ -54,15 +61,15 @@ def convert_cm_to_ml(distance_measured, width=12, length=17.5, height=7.14):
     if (distance_measured > 0):
         liquid_height = (height - distance_measured) + distancia_ajuste
         nivel_ml = round((liquid_height * width * length), 2)
-        print("Nivel calculado en ml:", nivel_ml)
+        logging.info("Nivel calculado en ml:", nivel_ml)
 
     if nivel_ml >= 1500:
         nivel_ml = 1500
-        print("Nivel ajustado a 1500 ml debido a la capacidad máxima")
+        logging.info("Nivel ajustado a 1500 ml debido a la capacidad máxima")
 
     if nivel_ml < 0:
         nivel_ml = 0
-        print("Nivel ajustado a 0 ml debido a la capacidad máxima")
+        logging.info("Nivel ajustado a 0 ml debido a la capacidad máxima")
 
     return nivel_ml
 
@@ -87,7 +94,7 @@ def product_ack():
 def send_levels():
     json_data = json.dumps(niveles)
     cliente.publish(f"teleco/nivel", json_data)
-    print(json_data)
+    logging.info(json_data)
 
 def send_to_arduino(send_str):
     send_str += ';'
@@ -106,7 +113,7 @@ def read_arduino_sensores():
                 update_levels(data_dict)
                 send_levels()
             else:
-                print(data_str)
+                logging.info(data_str)
 
 # Implementación de funciones MQTT
 def setup_mqtt_client():
@@ -119,17 +126,17 @@ def setup_mqtt_client():
     try:
         cliente.connect(MQTT_BROKER_ADDRESS, MQTT_PORT)
         cliente.loop_start()
-        print("Intentando conectar con el broker MQTT...")
+        logging.info("Intentando conectar con el broker MQTT...")
     except Exception as e:
-        print(f"Error al intentar conectar con el broker MQTT: {e}")
+        logging.error(f"Error al intentar conectar con el broker MQTT: {e}")
 
 def on_connect(client, userdata, flags, rc, properties=None):
-    print("Conectado al broker MQTT exitosamente!")
+    logging.info("Conectado al broker MQTT exitosamente!")
     client.subscribe('teleco/compra')
     client.subscribe('reposicion')
 
 def on_disconnect(client, userdata, rc=None, properties=None):
-    print("Desconexión del broker MQTT completada.")
+    logging.error("Desconexión del broker MQTT completada.")
 
 def on_message(client, userdata, message):
     gestionar_compra(message.payload.decode())
