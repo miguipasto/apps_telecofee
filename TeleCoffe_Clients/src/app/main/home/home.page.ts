@@ -37,7 +37,7 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.subscribeToTopic(this.maquinaSeleccionada);
-    this.setTimeoutForLoading(10000); //MS
+    this.setTimeoutForLoading(15000); //MS
   }
 
   selectedCategory: string = 'cafe'; // Valor inicial para mostrar algo al inicio
@@ -60,7 +60,7 @@ export class HomePage implements OnInit {
     } else {
       this.mqttClient = this.mqttServerService;
     }
-    this.setTimeoutForLoading(10000); //MS
+    this.setTimeoutForLoading(15000); //MS
     this.subscribeToTopic(this.maquinaSeleccionada);
     
   }

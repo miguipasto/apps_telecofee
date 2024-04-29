@@ -132,7 +132,7 @@ export class ElementosPage implements OnInit, AfterViewInit {
         this.initializeDates();
         this.initializeSelectedDate();
         this.updateChart();
-        this.setTimeoutForLoading(10000); //MS
+        this.setTimeoutForLoading(15000); //MS
       }
     });
 

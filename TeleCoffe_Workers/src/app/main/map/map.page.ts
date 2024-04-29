@@ -78,63 +78,6 @@ export class MapPage implements OnInit, AfterViewInit {
     await alert.present();
   }
 
-  // async configurarRuta() {
-
-  //   console.log("Configurando ruta...")
-  //   const map = new Map('map').setView([42.16926, -8.68377], 15.4);
-  //   tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  //     maxZoom: 20,
-  //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  //   }).addTo(map);
-
-  //   marker([42.16876, -8.68843]).addTo(map).bindPopup("<b>Minas</b><br>").openPopup();
-  //   marker([42.16785, -8.68943]).addTo(map).bindPopup("<b>Industriales</b><br>").openPopup();
-  //   marker([42.16719, -8.68528]).addTo(map).bindPopup("<b>Biología</b><br>").openPopup();
-  //   marker([42.16979, -8.68809]).addTo(map).bindPopup("<b>Teleco</b><br>").openPopup();
-
-  //   let waypoints: any[] = [];
-
-  //   waypoints = await this.addCurrentLocationMarker(map, waypoints)
-
-  //   // Verificar si la máquina teleco tiene algún producto con valor 1
-  //   if (Object.values(this.nivelesActualizar["Telecomunicación"]).includes(1)) {
-  //     console.log("Teleco tiene que reponerse")
-  //     waypoints.push(L.latLng(42.16979, -8.68809)); // Coordenadas para Teleco
-  //   }
-
-  //   // Verificar si la máquina minas tiene algún producto con valor 1
-  //   if (Object.values(this.nivelesActualizar["Minas"]).includes(1)) {
-  //     console.log("Minas tiene que reponerse")
-  //     waypoints.push(L.latLng(42.16876, -8.68843)); // Coordenadas para Minas
-  //   }
-  //   // Verificar si la máquina teleco tiene algún producto con valor 1
-  //   if (Object.values(this.nivelesActualizar["Industriales"]).includes(1)) {
-  //     console.log("Industriales tiene que reponerse")
-  //     waypoints.push(L.latLng(42.16785, -8.68943)); // Coordenadas para Teleco
-  //   }
-
-  //   // Verificar si la máquina minas tiene algún producto con valor 1
-  //   if (Object.values(this.nivelesActualizar["Biología"]).includes(1)) {
-  //     console.log("Biología tiene que reponerse")
-  //     waypoints.push(L.latLng(42.16719, -8.68528)); // Coordenadas para Minas
-  //   }
-  //   console.log(waypoints)
-  //   // Agregar la ruta solo si hay al menos dos waypoints
-  //   if (waypoints.length >= 2) {
-  //     L.Routing.control({
-  //       waypoints: waypoints,
-  //       routeWhileDragging: true,
-  //       show: true
-  //     }).addTo(map);
-  //   }
-
-
-  //   alert("Se ha creado una ruta para reponer:\n" + this.reponer.join(''));
-  //   //this.presentAlert("Nueva ruta de reposición", this.reponer.join('\n'))
-  //   this.reponer = []
-
-  // }
-
   async configurarRuta() {
     console.log("Configurando ruta...");
     const map = new Map('map').setView([42.16926, -8.68377], 15.4);
@@ -180,7 +123,7 @@ export class MapPage implements OnInit, AfterViewInit {
 
   subscribeToTopics() {
     this.isConnection = true;
-    var respuestasRecibidas = 0;
+    var respuestasRecibidas = {"minas": 0, "industriales": 0, "teleco": 0, "biologia": 0}
 
     // Definir los nombres de las máquinas y sus respectivos tópicos
     const maquinasYTopics = [
@@ -195,7 +138,7 @@ export class MapPage implements OnInit, AfterViewInit {
       const { nombre, topic } = maquinaYTopic;
 
       if (nombre === "Telecomunicación") {
-        this.mqttClient = this.mqttPrototipoService;
+        this.mqttClient = this.mqttServerService;
       } else {
         this.mqttClient = this.mqttServerService;
       }
@@ -203,18 +146,14 @@ export class MapPage implements OnInit, AfterViewInit {
       // Intenta desuscribirte del tópico anterior si ya estás suscrito
       if (this.subscriptions[nombre]) {
         this.subscriptions[nombre].unsubscribe();
-        console.log(`Desuscripto del tópico anterior de ${nombre}.`);
       }
 
       // Intenta suscribirte al nuevo tópico
       this.subscriptions[nombre] = this.mqttClient.observe(topic).subscribe({
         next: (message: IMqttMessage) => {
           this.receiveNews += message.payload.toString() + '\n';
-          this.lastLineLevels = message.payload.toString();
-          console.log(message.payload.toString());// Convertir el mensaje recibido a un objeto JavaScript
           let data = JSON.parse(message.payload.toString());
-
-          console.log("Actualizado")
+          //console.log(data)
 
           if (data.niveles.nivel_agua_pr < 30) {
             console.log(`${nombre} tiene que reponer agua`);
@@ -238,10 +177,11 @@ export class MapPage implements OnInit, AfterViewInit {
           }
 
           // Incrementar el contador de respuestas recibidas
-          respuestasRecibidas++;
+          respuestasRecibidas[data.maquina as keyof typeof respuestasRecibidas]++;
+          //console.log(respuestasRecibidas)
 
           // Verificar si se han recibido las cuatro respuestas
-          if (respuestasRecibidas === 4) {
+          if (Object.values(respuestasRecibidas).every(count => count > 0)) {
             this.mapIsVisible = true;
             this.configurarRuta();
           }
