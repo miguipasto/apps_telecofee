@@ -157,13 +157,13 @@ export class HomeComponent implements OnInit{
 
   adjustGraphSize() {
     const width = this.maquinasNivelStyle.nativeElement.offsetWidth - 50;
-    const height = this.maquinasNivelStyle.nativeElement.offsetHeight - 90;
+    const height = this.maquinasNivelStyle.nativeElement.offsetHeight - 100;
     this.viewSizeNivel = [width, height];
     this.inicializarGraficasNiveles();
     this.mostrarGraficasNivel = true;
 
     const widthVentas = this.ventasStyle.nativeElement.offsetWidth - 60;
-    const heighInferior = this.ventasStyle.nativeElement.offsetHeight - 70;
+    const heighInferior = this.ventasStyle.nativeElement.offsetHeight - 80;
     this.graficaVentas.viewSize = [widthVentas,heighInferior];
     this.mostrarGraficaVentas = true;    
 
@@ -440,7 +440,7 @@ export class HomeComponent implements OnInit{
           this.receiveNews += message.payload.toString() + '\n';
           //console.log(`Received message: ${message.payload.toString()} from topic: ${topico}`)
           if(message.payload.toString().startsWith("SUCCESS")){
-            this.sleep(5);
+            this.sleep(3);
             this.obtenerCompras("","")
           }
           
