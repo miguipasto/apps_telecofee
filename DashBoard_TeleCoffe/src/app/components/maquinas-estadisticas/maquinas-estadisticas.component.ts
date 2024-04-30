@@ -158,7 +158,7 @@ export class MaquinasEstadisticasComponent implements OnInit {
 
   adjustGraphSize() {
     const widthCircular = this.masVendido.nativeElement.offsetWidth - 20;
-    const heighCircular = this.masVendido.nativeElement.offsetHeight - 70;
+    const heighCircular = this.masVendido.nativeElement.offsetHeight - 80;
     this.graficaCircular.viewSize = [widthCircular,heighCircular];
     this.mostrarGraficaCircular = true;  
 
