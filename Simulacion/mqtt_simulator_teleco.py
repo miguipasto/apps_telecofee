@@ -190,7 +190,7 @@ def gestionar_compra(mensaje_str, topico):
         verificar_codigo_compra(maquina, topico, codigo_cliente)
 
     elif mensaje_str.startswith(MENSAJE_SUCCESS_COMPRA):
-        time.sleep(10)
+        time.sleep(3)
         obtener_compras(db_clients)
 
 def preparar_compra(maquina, topico):

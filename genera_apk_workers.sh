@@ -41,6 +41,6 @@ cp ./android/app/build/outputs/apk/debug/app-debug.apk "../$APK_DESTINATION"
 
 # Delete temp folder
 cd ..
-#rm -rf $PROJECT_PATH
+rm -rf $PROJECT_PATH
 
 echo "Process completed successfully!"
