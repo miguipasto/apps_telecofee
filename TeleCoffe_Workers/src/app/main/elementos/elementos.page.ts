@@ -151,6 +151,9 @@ export class ElementosPage implements OnInit, AfterViewInit {
     const width = 330;
     const height = 370;
 
+    // const width = 600;
+    // const height = 400;
+    
     // Establece la vista con el ancho y la altura calculados
     this.viewSizeNivel = [width, height];
     this.inicializarGraficasNiveles();

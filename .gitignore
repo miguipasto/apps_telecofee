@@ -1,3 +1,4 @@
 *.apk
 *_temp/
 *.log
+*_tab/
