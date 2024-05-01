@@ -110,7 +110,7 @@
         <h2 style="color: #70442b;"><b>{{ productoSeleccionado }}</b></h2>
         <div class="selector-azucar">
           <b style="color: black">Cantidad</b>
-          <input type="number" [(ngModel)]="amountToAdd" placeholder="Cantidad a añadir"
+          <input type="number" [(ngModel)]="amountToAdd" placeholder="Cantidad"
             (input)="validateAmount($event)">
         </div>
         <button (click)="addBalance(productoSeleccionado)">Añadir</button>

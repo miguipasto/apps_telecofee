@@ -138,7 +138,7 @@ export class MapPage implements OnInit, AfterViewInit {
       const { nombre, topic } = maquinaYTopic;
 
       if (nombre === "Telecomunicación") {
-        this.mqttClient = this.mqttServerService;
+        this.mqttClient = this.mqttPrototipoService;
       } else {
         this.mqttClient = this.mqttServerService;
       }
