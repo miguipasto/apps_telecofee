@@ -102,19 +102,20 @@ def send_to_arduino(send_str):
 
 def read_arduino_sensores():
     while True:
+        send_levels()
+        time.sleep(2)
         #data_bytes = arduino_sensores.readline()[:-2]
-        data_bytes = "Fototransistor: 1"
-        if data_bytes:
-            data_str = data_bytes.decode()
-            if data_str.startswith("Fototransistor"):
-                product_ack()
-                send_levels()
-            elif data_str.startswith("{"):
-                data_dict = json.loads(data_str)
-                update_levels(data_dict)
-                send_levels()
-            else:
-                print(data_str)
+        # if data_bytes:
+        #     data_str = data_bytes.decode()
+        #     if data_str.startswith("Fototransistor"):
+        #         product_ack()
+        #         send_levels()
+        #     elif data_str.startswith("{"):
+        #         data_dict = json.loads(data_str)
+        #         update_levels(data_dict)
+        #         send_levels()
+        #     else:
+        #         print(data_str)
 
 # Implementación de funciones MQTT
 def setup_mqtt_client():
