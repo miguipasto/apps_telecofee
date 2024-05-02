@@ -438,7 +438,7 @@ export class ElementosPage implements OnInit, AfterViewInit {
       // Actualizamos en Firebase
       this.dataService.actualizarNiveles(data, this.nombresMaquinas[this.nombre])
       // Avisamos por MQTT
-      this.nuevaReposicon(data['maquina']);
+      this.nuevaReposicon(data['maquina'], data.niveles.patatillas_u);
 
       this.presentAlert("Producto actualizado correctamente.", "")
 
@@ -447,8 +447,8 @@ export class ElementosPage implements OnInit, AfterViewInit {
     }
   }
 
-  nuevaReposicon(maquina: String) {
-    this.mqttClient.publish(`reposicion`, `${maquina}`).subscribe({
+  nuevaReposicon(maquina: String, patatillas: Number) {
+    this.mqttClient.publish(`reposicion`, `${maquina}:${patatillas}`).subscribe({
       next: () => console.log(`Nueva repisicion ${maquina}`),
       error: (error: any) => {
         console.error("Error al publicar mensaje:", error);
