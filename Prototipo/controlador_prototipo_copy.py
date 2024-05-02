@@ -103,7 +103,7 @@ def send_to_arduino(send_str):
 def read_arduino_sensores():
     while True:
         #data_bytes = arduino_sensores.readline()[:-2]
-        data_bytes =""
+        data_bytes = "Fototransistor: 1"
         if data_bytes:
             data_str = data_bytes.decode()
             if data_str.startswith("Fototransistor"):
