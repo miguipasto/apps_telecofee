@@ -165,6 +165,7 @@ def gestionar_compra(mensaje):
             cliente.publish('teleco/compra', MENSAJE_ERROR_CODIGO)
             send_to_arduino('2,')
     elif mensaje.startswith('teleco'):
+        print(mensaje)
         nivel_patatillas = mensaje.split(':')[1]
         niveles["niveles"]["patatillas_u"] = int(nivel_patatillas)
 
